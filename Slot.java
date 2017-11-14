@@ -2,7 +2,7 @@
 * Slot.java
 * A class implementing time slots, which can be either a course or lab/tutorial
 * type timeslot
-* @author Shane Sims
+* @author Shane Sims, Justina, Chi
 * version: 11 November 2017
 */
 
@@ -24,14 +24,14 @@ public class Slot {
   private final int maxInSlot;
   private final int minInSlot;
   
-  private final ArrayList<int> overlappingSlots;
-  private final ArrayList<int> coursesAssigned;
+  private final ArrayList<int> overlappingSlotIDs;
+  private ArrayList<int> assignedCourselabIDs;
 
 
   // Example use:
   // Slot testSlot = new Slot(true, LocalTime.of(9,0), LocalTime.of(10,30), "MO", 4, 1);
 
-  public Slot(boolean type, LocalTime start, LocalTime end, String day, int max, int min){
+  public Slot(boolean type, LocalTime start, LocalTime end, String day, int max, int min, ArrayList<int> overlappingSlotIDs){
     this.id = counter.incrementAndGet();
     this.slotType = type;
     this.startTime = start;
@@ -39,6 +39,7 @@ public class Slot {
     this.day = day;
     this.maxInSlot = max;
     this.minInSlot = min;
+    this.overlappingSlotIDs = overlappingSlotIDs;
 
   }
 
@@ -71,11 +72,11 @@ public class Slot {
   }
   
   public ArrayList<int> getOverlappingSlots(){
-	return overlappingSlots;
+	return overlappingSlotIDs;
   }
   
-  public ArrayList<int> getCoursesAssigned(){
-	return coursesAssigned;
+  public ArrayList<int> getAssignedCourselabIDs(){
+	return assignedCourselabIDs;
   }
 
 }
