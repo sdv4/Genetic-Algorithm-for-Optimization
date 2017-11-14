@@ -71,7 +71,7 @@ public class Slot {
     return minInSlot;
   }
   
-  public ArrayList<int> getOverlappingSlots(){
+  public ArrayList<int> getOverlappingSlotIDs(){
 	return overlappingSlotIDs;
   }
   
