@@ -2,13 +2,14 @@
 * Slot.java
 * A class implementing time slots, which can be either a course or lab/tutorial
 * type timeslot
-* @author Shane Sims, Justina, Chi
+* @author Shane Sims
 * version: 11 November 2017
 */
 
 import java.time.LocalTime;
 import java.lang.Number.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
 
 public class Slot {
 
@@ -24,14 +25,14 @@ public class Slot {
   private final int maxInSlot;
   private final int minInSlot;
   
-  private final ArrayList<int> overlappingSlotIDs;
-  private ArrayList<int> assignedCourselabIDs;
+  private int [] overlappingSlotIDs;
+  private int [] assignedIDs;
 
 
   // Example use:
   // Slot testSlot = new Slot(true, LocalTime.of(9,0), LocalTime.of(10,30), "MO", 4, 1);
 
-  public Slot(boolean type, LocalTime start, LocalTime end, String day, int max, int min, ArrayList<int> overlappingSlotIDs){
+  public Slot(boolean type, LocalTime start, LocalTime end, String day, int max, int min){
     this.id = counter.incrementAndGet();
     this.slotType = type;
     this.startTime = start;
@@ -39,7 +40,8 @@ public class Slot {
     this.day = day;
     this.maxInSlot = max;
     this.minInSlot = min;
-    this.overlappingSlotIDs = overlappingSlotIDs;
+    this.overlappingSlotIDs = new int[20];
+    this.assignedIDs = new int[20];
 
   }
 
@@ -71,12 +73,12 @@ public class Slot {
     return minInSlot;
   }
   
-  public ArrayList<int> getOverlappingSlotIDs(){
+  public int[] getOverlappingSlots(){
 	return overlappingSlotIDs;
   }
   
-  public ArrayList<int> getAssignedCourselabIDs(){
-	return assignedCourselabIDs;
+  public int[] getCoursesAssigned(){
+	return assignedIDs;
   }
 
 }
