@@ -23,6 +23,9 @@ public class Slot {
   private final String day;
   private final int maxInSlot;
   private final int minInSlot;
+  
+  private final ArrayList<int> overlappingSlots;
+  private final ArrayList<int> coursesAssigned;
 
 
   // Example use:
@@ -65,6 +68,14 @@ public class Slot {
 
   public int getMin(){
     return minInSlot;
+  }
+  
+  public ArrayList<int> getOverlappingSlots(){
+	return overlappingSlots;
+  }
+  
+  public ArrayList<int> getCoursesAssigned(){
+	return coursesAssigned;
   }
 
 }
