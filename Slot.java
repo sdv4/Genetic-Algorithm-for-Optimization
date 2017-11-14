@@ -25,8 +25,8 @@ public class Slot {
   private final int maxInSlot;
   private final int minInSlot;
   
-  private int [] overlappingSlotIDs;
-  private int [] assignedIDs;
+  private ArrayList<Integer> overlappingSlotIDs;
+  private ArrayList<Integer> assignedIDs;
 
 
   // Example use:
@@ -40,8 +40,8 @@ public class Slot {
     this.day = day;
     this.maxInSlot = max;
     this.minInSlot = min;
-    this.overlappingSlotIDs = new int[20];
-    this.assignedIDs = new int[20];
+    this.overlappingSlotIDs = new ArrayList<>();
+    this.assignedIDs = new ArrayList<>();
 
   }
 
@@ -73,11 +73,11 @@ public class Slot {
     return minInSlot;
   }
   
-  public int[] getOverlappingSlots(){
+  public ArrayList<Integer>  getOverlappingSlots(){
 	return overlappingSlotIDs;
   }
   
-  public int[] getCoursesAssigned(){
+  public ArrayList<Integer>  getCoursesAssigned(){
 	return assignedIDs;
   }
 
