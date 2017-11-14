@@ -88,8 +88,8 @@ public class CourseLab {
 				isCompatible = false;
 				return isCompatible;//return false is there is at least one inCompatible CourseLab in assigned Slot
 			}
-			else{
-				//check slots that are overlapping with assigned SlotId to see if they hold CourseLabs that are incompatible with this CourseLab
+			else{//check slots that are overlapping with assigned SlotId to see if they hold CourseLabs that are incompatible with this CourseLab
+			ArrayList<int>overlappingSlotIDs = Slots[assignedSlotId].getOverlappingSlotIDs();
 			}
 		}
 		return isCompatible;
