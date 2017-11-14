@@ -99,6 +99,6 @@ public class CourseLab {
 				}
 			}
 		}
-		return isCompatible;
+		return isCompatible;//if isCompatible not updated to false in loops, return default value true
 	}
 }
