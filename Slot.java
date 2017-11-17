@@ -9,6 +9,7 @@
 import java.time.LocalTime;
 import java.lang.Number.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
 
 public class Slot {
 
@@ -23,6 +24,9 @@ public class Slot {
   private final String day;
   private final int maxInSlot;
   private final int minInSlot;
+  
+  private ArrayList<Integer> overlappingSlotIDs;
+  private ArrayList<Integer> assignedIDs;
 
 
   // Example use:
@@ -36,6 +40,8 @@ public class Slot {
     this.day = day;
     this.maxInSlot = max;
     this.minInSlot = min;
+    this.overlappingSlotIDs = new ArrayList<>();
+    this.assignedIDs = new ArrayList<>();
 
   }
 
@@ -65,6 +71,14 @@ public class Slot {
 
   public int getMin(){
     return minInSlot;
+  }
+  
+  public ArrayList<Integer>  getOverlappingSlots(){
+	return overlappingSlotIDs;
+  }
+  
+  public ArrayList<Integer>  getCoursesAssigned(){
+	return assignedIDs;
   }
 
 }
