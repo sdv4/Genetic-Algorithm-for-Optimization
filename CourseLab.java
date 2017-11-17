@@ -3,7 +3,7 @@
  * version: 1
  * date: 11-11-2017
  */
-//This is a generalized class for Course or Lab objects; 
+//This is a generalized class for Course or Lab objects;
 //Id's for all courses/labs will be unique.
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,10 +18,10 @@ public class CourseLab {
 	private final int labNumber;
 	private final boolean isCourse;
 	private final boolean isLab;
-	
+
 	private ArrayList<CourseLab> notCompatibleCoursesLabs;//replaces associatedLecture/Course/Lab, plus additional not compatible CourseLabs
 	private int slotId = -1;//default value is -1 for unassigned slot
-	
+
 	public CourseLab(String name, int id, int lectureNumber, int labNumber, boolean isCourse, boolean isLab){
 		this.name = name;
 		this.id = counter.incrementAndGet();
@@ -29,9 +29,9 @@ public class CourseLab {
 		this.labNumber = labNumber;
 		this.isCourse = isCourse;
 		this.isLab = isLab;
-		
+
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -71,11 +71,12 @@ public class CourseLab {
 	public void setSlotId(int slotId) {
 		this.slotId = slotId;
 	}
-	
+
 	/**
 	 * iterate through list notCompatibleCoursesLabs
 	 * @return true if slotid is compatible, false if not compatible
 	 */
+	/*
 	public boolean checkCompatible(){
 		int assignedSlotId = this.getSlotId();
 		boolean isCompatible = true;
@@ -100,5 +101,5 @@ public class CourseLab {
 			}
 		}
 		return isCompatible;//if isCompatible not updated to false in loops, return default value true
-	}
+	}*/
 }

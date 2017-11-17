@@ -2,7 +2,8 @@
 * OTS.java
 * Or Tree Search is a class for
 * implementing an or-tree based search. It includes a nested class for the nodes
-* of the or-tree
+* of the or-tree. It can be used as the global environment for Or-tree seaches
+* conducted in the scope of our larger set based search environment
 * @author Shane Sims
 * version: 17 November 2017
 */
@@ -10,6 +11,8 @@
 import java.util.*;                                                             // for HashMap
 
 public class OTS{
+
+  //Instance variables
   protected otsNode root;
   protected CourseLab[] listOfCoursesAndLabs;
   protected Slot[] listOfTimeSlots;
@@ -22,6 +25,16 @@ public class OTS{
   // to the OTS constructor. This probably makes more sense as this indexVector will be used in
   // the GA as well.
 
+  //Constructor
+  public OTS(HashMap<Integer, Integer> indexVector, CourseLab[] coursesAndLabs, Slot[] timeSlots){
+    this.root = new otsNode(null, (new int[coursesAndLabs.length]));
+    this.listOfCoursesAndLabs = coursesAndLabs;
+    this.listOfTimeSlots = timeSlots;
+    this.indexVector = indexVector;
+
+  }
+
+  //Nested class for Otree instantiation
   protected class otsNode{
     public static final int YES = 1;
     public static final int NO = 2;
@@ -48,16 +61,16 @@ public class OTS{
       return this.depth;
     }
 
-  }
+  }// end otsNode Class
 
+  //
 
-  public OTS(HaskMap<Integer, Integer> indexVector, CourseLab[] coursesAndLabs, Slot[] timeSlots){
-    this.root = otsNode(null, (new int[coursesAndLabs.length()]));
-    this.listOfCoursesAndLabs = coursesAndLabs;
-    this.listOfTimeSlots = timeSlots;
-    this.indexVector = indexVector;
+  // main method for testing - TODO: delete when class fully implemented and tested
+//  public static void main(String[] args){
+//    int[] testvec = new int[20];
+//    otsNode root = new otsNode(null, testvec);
+// }
 
-  }
 
 
 }
