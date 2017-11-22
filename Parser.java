@@ -53,12 +53,8 @@ public class Parser {
 	}
 	
 	/**
-	 * The main parsing function. Parses the textfile into its appropriate data structures.
+	 * Starting method. This method is invoked after creating the Parser object
 	 */
-	public static void main(String[]args){
-		Parser aParser = new Parser("deptinst1.txt");
-		aParser.start();
-	}
 	public void start() {
 		File file = new File(filepath);
 		try{
@@ -88,6 +84,56 @@ public class Parser {
 			e.printStackTrace();
 		}
 	}
+	
+	//
+	// GETTER METHODS
+	//
+	//
+	
+	/**
+	 * Returns list of all CourseLabs
+	 * @return ArrayList of type CourseLab
+	 */
+	public ArrayList<CourseLab> getCourseLabList(){
+		return courseLabList;
+	}
+	
+	/**
+	 * Returns list of all Courses
+	 * @return ArrayList of type Course
+	 */
+	public ArrayList<Course> getCourseList(){
+		return courseList;
+	}
+	
+	/**
+	 * Returns list of all Labs
+	 * @return ArrayList of type Lab
+	 */
+	public ArrayList<Lab> getLabList(){
+		return labList;
+	}
+	
+	/**
+	 * Returns list of all Lab Slots
+	 * @return ArrayList of type Slot
+	 */
+	public ArrayList<Slot> getLabSlotList(){
+		return slotLList;
+	}
+	
+	/**
+	 * Returns list of all Course Slots
+	 * @return ArrayList of type Slot
+	 */
+	public ArrayList<Slot> getCourseSlotList(){
+		return slotCList;
+	}
+	
+	//
+	// PRIVATE METHODS
+	//
+	//
 	
 	/**
 	 * Parses and adds the course slots entries from the text file to the corresponding array list.
