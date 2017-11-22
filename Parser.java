@@ -56,7 +56,7 @@ public class Parser {
 	 * The main parsing function. Parses the textfile into its appropriate data structures.
 	 */
 	public static void main(String[]args){
-		Parser aParser = new Parser("ShortExample.txt");
+		Parser aParser = new Parser("deptinst1.txt");
 		aParser.start();
 	}
 	public void start() {
@@ -296,16 +296,10 @@ public class Parser {
 	 */
 	private void findLabTut(Course course){
 		ArrayList<CourseLab> list = new ArrayList<>();
-		
-		
-		//String fullcname = course.name()+" LEC 0"+course.getLecNum();
-		
-		
-		
 		for(int i = 0; i<labList.size(); i++) {
 			if(labList.get(i).getAssociatedLecture().equals(course)) {
 				Lab l = labList.get(i);
-				list.add(new CourseLab(l.name(), l.getId(), l.getAssociatedLecId(), l.getLabNum(), false, true));
+				list.add(new CourseLab(l.name(), l.getId(), l.getAssociatedLecture().getLecNum(), l.getLabNum(), false, true));
 			}
 		}
 		
@@ -342,7 +336,7 @@ public class Parser {
 		}
 		System.out.println("\nList of sorted course and lab list:");
 		for(int i =0; i<courseLabList.size(); i++){
-			System.out.println(courseLabList.get(i).getName());
+			System.out.println(courseLabList.get(i).getName()+" Lecture: "+courseLabList.get(i).getLectureNumber());
 		}
 	}
 }
