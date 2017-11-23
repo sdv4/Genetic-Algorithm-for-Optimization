@@ -288,13 +288,17 @@ public class Parser {
 //			if(i == 0)												// DEBUG
 //				System.out.println("DEBUG: " + c.name());
 			courseLabList.add(new CourseLab(c.name(), c.getId(), c.getLecNum(), -1, true, false));	// add course to entry
-			while((i < (courseList.size()-1)) && (c.name().equals((courseList.get(i+1)).name()))){
-				Course c2 = courseList.get(i+1);
-				courseLabList.add(new CourseLab(c2.name(), c2.getId(), c2.getLecNum(), -1, true, false));
-				i++;
+			ArrayList<CourseLab> theLabs = findLabTutPrePocess(c);
+			if(((theLabs.get(0)).getLectureNumber()) == null){
+				while((i < (courseList.size()-1)) && (c.name().equals((courseList.get(i+1)).name()))){
+					Course c2 = courseList.get(i+1);
+					courseLabList.add(new CourseLab(c2.name(), c2.getId(), c2.getLecNum(), -1, true, false));
+					i++;
 
+				}
 			}
-			findLabTut(c);
+			findLabTut(theLabs);
+
 		}
 
 	}
@@ -304,7 +308,7 @@ public class Parser {
 	 * @param course The labs to be found that corresponds to the course
 	 * @return The list of sorted labs
 	 */
-	private void findLabTut(Course course){
+	private ArrayList<CourseLab> findLabTutPrePocess(Course course){
 		ArrayList<CourseLab> list = new ArrayList<>();
 		for(int i = 0; i<labList.size(); i++) {
 			if(labList.get(i).getAssociatedLecture().equals(course)) {
@@ -320,6 +324,11 @@ public class Parser {
 				return x.compareTo(y);
 			}
 		});
+		//courseLabList.addAll(list);
+		return list;
+	}
+
+	private void findLabTut(ArrayList<CourseLab> list){
 		courseLabList.addAll(list);
 	}
 
