@@ -1,4 +1,4 @@
-package main;
+//package main;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -34,7 +34,7 @@ public class Lab {
   public int getAssociatedLecId(){
     return associatedLecture.getId();
   }
-  
+
   public Course getAssociatedLecture() {
 	  return associatedLecture;
   }

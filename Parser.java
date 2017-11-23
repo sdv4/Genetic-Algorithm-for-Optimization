@@ -1,11 +1,11 @@
-package main;
+//package main;
 
 /**
  * @author Kevin Naval
  * version:
  * 0.1-11-11-2017
  * 0.2-16-11-2017
- * 
+ *
  * TODO
  * 	- modify parser to include one tutorial to many course number relation
  */
@@ -31,11 +31,11 @@ public class Parser {
 	private ArrayList<Slot>		slotLList;
 	private ArrayList<Slot>		slotCList;
 	private ArrayList<CourseLab> courseLabList;
-	
+
 	public Parser() {
-		
+
 	}
-	
+
 	/**
 	 * The primary constructor. This initializes declared variables to null values.
 	 * @param filepath The file path of the textfile that contains the entries.
@@ -51,12 +51,12 @@ public class Parser {
 		this.courseLabList = new ArrayList<>();
 		this.filepath	= filepath;
 	}
-	
+
 	/**
 	 * The main parsing function. Parses the textfile into its appropriate data structures.
 	 */
 	public static void main(String[]args){
-		Parser aParser = new Parser("ShortExample.txt");
+		Parser aParser = new Parser("deptinst2.txt");
 		aParser.start();
 	}
 	public void start() {
@@ -88,7 +88,7 @@ public class Parser {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Parses and adds the course slots entries from the text file to the corresponding array list.
 	 * @param buf The buffered reader variable to read the entries from.
@@ -101,7 +101,7 @@ public class Parser {
 		int h2 = -1;
 		int m1 = -1;
 		int m2 = -1;
-		
+
 		try{
 			line = buf.readLine();								// reads first entry to line
 			while(!line.equals("")){
@@ -112,8 +112,8 @@ public class Parser {
 				hm = entry[1].split(":");						// splits the time entry to hours and minutes: h1, m1 respectively
 				h1 = Integer.parseInt(hm[0]);
 				m1 = Integer.parseInt(hm[1]);
-				
-				//adjusts end time according to the day entry (+1hour for MWD, +1hour 30mins for TTh)				
+
+				//adjusts end time according to the day entry (+1hour for MWD, +1hour 30mins for TTh)
 				if(entry[0].equals("MO") || entry[0].equals("WE") || entry[0].equals("FR")) {
 					h2 = h1+1;
 					m2 = m1;
@@ -125,7 +125,7 @@ public class Parser {
 						h2++;
 						m2 = m2-60;
 					}
-				}				
+				}
 				slotCList.add(new Slot(true, LocalTime.of(h1,m1), LocalTime.of(h2, m2), entry[0], Integer.parseInt(entry[2]), Integer.parseInt(entry[3])));
 				line = buf.readLine();							// reads next entry to line
 			}
@@ -133,9 +133,9 @@ public class Parser {
 		catch (IOException e){
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	/**
 	 * Parse and add the lab slot entries from the text file to the corresponding array list.
 	 * @param buf The buffered reader to read the entries.
@@ -148,7 +148,7 @@ public class Parser {
 		int h2 = -1;
 		int m1 = -1;
 		int m2 = -1;
-		
+
 		try{
 			line = buf.readLine();								// reads first entry to line
 			while(!line.equals("")){
@@ -161,8 +161,8 @@ public class Parser {
 				hm[1] = hm[1].replaceAll(" ","");
 				h1 = Integer.parseInt(hm[0]);
 				m1 = Integer.parseInt(hm[1]);
-				
-				//adjusts end time according to the day entry (+1hour for MWD, +1hour 30mins for TTh)				
+
+				//adjusts end time according to the day entry (+1hour for MWD, +1hour 30mins for TTh)
 				if(entry[0].equals("MO") || entry[0].equals("WE")) {
 					h2 = h1+1;
 					m2 = m1;
@@ -178,7 +178,7 @@ public class Parser {
 						h2++;
 						m2 = m2-60;
 					}
-				}				
+				}
 				slotLList.add(new Slot(true, LocalTime.of(h1,m1), LocalTime.of(h2, m2), entry[0], Integer.parseInt(entry[2]), Integer.parseInt(entry[3])));
 				line = buf.readLine();							// reads next entry to line
 			}
@@ -186,7 +186,7 @@ public class Parser {
 		catch (IOException e){
 			e.printStackTrace();
 		}
-		
+
 	}
 	/**
 	 * Parse and add the course entries from the text file to the corresponding array list.
@@ -197,31 +197,31 @@ public class Parser {
 	    String[] entry;
 	    String courseName = "";
 	    String courseLecture = "";
-	    
+
 	    try{
 	      line = buf.readLine();				// reada first entry to line
 	      while(!line.equals("")){
-	        
+
 	        int lecIndex = line.indexOf("LEC");
 	        courseName = line.substring(0,lecIndex);
 	        courseName = courseName.replaceAll("[ ]+"," ");
 	        courseLecture = line.substring(lecIndex);
 	        courseLecture = courseLecture.replaceAll("[ ]+"," ");
-	        
+
 	        entry = courseLecture.split(" ");
-	        
+
 	        courseList.add(new Course(courseName.trim(), Integer.parseInt(entry[1])));
-	        
+
 	        line = buf.readLine();
 	      }
-	      
-	           
+
+
 	    }
 	    catch(IOException e){
 	      e.printStackTrace();
 	    }
 	}
-	
+
 	/**
 	 * Parse and add the course entries from the text file to the corresponding array list.
 	 * @param buf The buffered reader to read the entries.
@@ -235,7 +235,7 @@ public class Parser {
 		String labLecture = "";
 		int index = -1;
 		int lecNum = -1;
-		
+
 		try {
 			line = buf.readLine();
 			while(!line.equals("")) {
@@ -251,12 +251,12 @@ public class Parser {
 				}
 				entry = labLectureFull.split(" ");
 				if(entry.length>2) {						// stores lecture number to lecNum
-					lecNum = Integer.parseInt(entry[3]);	
+					lecNum = Integer.parseInt(entry[3]);
 				}
 				labLecture = entry[0]+" "+entry[1];			// stores lecture name to labLecture
 				Course c = null;
 
-				for(int i = 0; i<courseList.size(); i++) {			// finds matching course name and lecture number from course list, store a match to variable of type Course 
+				for(int i = 0; i<courseList.size(); i++) {			// finds matching course name and lecture number from course list, store a match to variable of type Course
 					if(courseList.get(i).name().equals(labLecture) && courseList.get(i).getLecNum()==lecNum) {
 						c = courseList.get(i);
 					}
@@ -264,31 +264,41 @@ public class Parser {
 				if(c!=null) {			// if a course is found, create lab object and add to list
 					entry = labNumberStr.split(" ");
 					labList.add(new Lab(labName, Integer.parseInt(entry[1]), c));
-					
+
 					//System.out.println(labName + " added");
-				}				
+				}
 				line = buf.readLine();
 			}
-			
+
 		}
 		catch(IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
+	//private Boolean sameCourseDiffSection(String c1, String c2){}
+
 	/**
 	 * Merges course and lab list to a sorted order (eg. C1,L11,L12,C2,C11,...)
 	 */
 	private void zipCourseLab() {
 		ArrayList<Object> olist = new ArrayList<>();
-		for(int i = 0;i<courseList.size(); i++){			
-			Course c = courseList.get(i);	
+		for(int i = 0;i<courseList.size(); i++){
+			Course c = courseList.get(i);
+//			if(i == 0)												// DEBUG
+//				System.out.println("DEBUG: " + c.name());
 			courseLabList.add(new CourseLab(c.name(), c.getId(), c.getLecNum(), -1, true, false));	// add course to entry
+			while((i < (courseList.size()-1)) && (c.name().equals((courseList.get(i+1)).name()))){
+				Course c2 = courseList.get(i+1);
+				courseLabList.add(new CourseLab(c2.name(), c2.getId(), c2.getLecNum(), -1, true, false));
+				i++;
+
+			}
 			findLabTut(c);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Supplementary method to zipCourseLab() that returns a list of sorted labs that corresponds to a given course
 	 * @param course The labs to be found that corresponds to the course
@@ -296,19 +306,13 @@ public class Parser {
 	 */
 	private void findLabTut(Course course){
 		ArrayList<CourseLab> list = new ArrayList<>();
-		
-		
-		//String fullcname = course.name()+" LEC 0"+course.getLecNum();
-		
-		
-		
 		for(int i = 0; i<labList.size(); i++) {
 			if(labList.get(i).getAssociatedLecture().equals(course)) {
 				Lab l = labList.get(i);
-				list.add(new CourseLab(l.name(), l.getId(), l.getAssociatedLecId(), l.getLabNum(), false, true));
+				list.add(new CourseLab(l.name(), l.getId(), l.getAssociatedLecture().getLecNum(), l.getLabNum(), false, true));
 			}
 		}
-		
+
 		Collections.sort(list, new Comparator<CourseLab>() {
 			public int compare(CourseLab one, CourseLab other) {
 				Integer x = new Integer(one.getLabNumber());
@@ -318,18 +322,18 @@ public class Parser {
 		});
 		courseLabList.addAll(list);
 	}
-	
+
 	private void printLists() {
 		System.out.println("List of courses:");
 		for(int i = 0; i<courseList.size(); i++) {
 			System.out.println(courseList.get(i).name()+" LEC: "+courseList.get(i).getLecNum());
 		}
-		
+
 		System.out.println("\nList of labs:");
 		for(int i = 0; i<labList.size(); i++) {
 			System.out.println(labList.get(i).name()+" LAB: "+labList.get(i).getLabNum());
 		}
-		
+
 		System.out.println("\nList of course slots:");
 		for(int i = 0; i<slotCList.size(); i++) {
 			Slot s = slotCList.get(i);
@@ -342,7 +346,7 @@ public class Parser {
 		}
 		System.out.println("\nList of sorted course and lab list:");
 		for(int i =0; i<courseLabList.size(); i++){
-			System.out.println(courseLabList.get(i).getName());
+			System.out.println(courseLabList.get(i).getName()+" Lecture: "+courseLabList.get(i).getLectureNumber());
 		}
 	}
 }
