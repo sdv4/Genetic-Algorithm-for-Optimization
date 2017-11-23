@@ -249,10 +249,16 @@ public class Parser {
 	      while(!line.equals("")){
 	        
 	        int lecIndex = line.indexOf("LEC");
-	        courseName = line.substring(0,lecIndex);
-	        courseName = courseName.replaceAll("[ ]+"," ");
+	        
+	        courseName = line;
+	        
+//	        courseName = line.substring(0,lecIndex);
+//	        courseName = courseName.replaceAll("[ ]+"," ");
 	        courseLecture = line.substring(lecIndex);
 	        courseLecture = courseLecture.replaceAll("[ ]+"," ");
+	        
+	        //DEBUG
+	        //System.out.println(courseName + " || " + courseLecture);
 	        
 	        entry = courseLecture.split(" ");
 	        
@@ -281,6 +287,7 @@ public class Parser {
 		String labLecture = "";
 		int index = -1;
 		int lecNum = -1;
+		boolean valid = false;
 		
 		try {
 			line = buf.readLine();
@@ -299,20 +306,36 @@ public class Parser {
 				if(entry.length>2) {						// stores lecture number to lecNum
 					lecNum = Integer.parseInt(entry[3]);	
 				}
+				else {
+					lecNum = 0;
+				}
+				
 				labLecture = entry[0]+" "+entry[1];			// stores lecture name to labLecture
+				
 				Course c = null;
 
-				for(int i = 0; i<courseList.size(); i++) {			// finds matching course name and lecture number from course list, store a match to variable of type Course 
-					if(courseList.get(i).name().equals(labLecture) && courseList.get(i).getLecNum()==lecNum) {
+				for(int i = 0; i<courseList.size(); i++) {			// finds matching course name and lecture number from course list, store a match to variable of type Course
+						
+					if(courseList.get(i).name().equals(labLectureFull.trim()) && courseList.get(i).getLecNum()==lecNum) {
 						c = courseList.get(i);
+						valid = true;
 					}
+					else if(courseList.get(i).name().equals(labLectureFull.trim()) && lecNum==0 ) {
+						valid = true;
+					}
+					//TODO - add condition where labs with no lecture number is handled
 				}
-				if(c!=null) {			// if a course is found, create lab object and add to list
+				if(valid) {			// if entry is valid (a lab with an associated course or no course(generic)
 					entry = labNumberStr.split(" ");
-					labList.add(new Lab(labName, Integer.parseInt(entry[1]), c));
 					
+					if(c!=null)
+						labList.add(new Lab(labName, Integer.parseInt(entry[1]), c));
+					else
+						labList.add(new Lab(labName, Integer.parseInt(entry[1]), null));
 					//System.out.println(labName + " added");
-				}				
+				}
+				
+				valid = false;
 				line = buf.readLine();
 			}
 			
@@ -343,7 +366,7 @@ public class Parser {
 	private void findLabTut(Course course){
 		ArrayList<CourseLab> list = new ArrayList<>();
 		for(int i = 0; i<labList.size(); i++) {
-			if(labList.get(i).getAssociatedLecture().equals(course)) {
+			if(labList.get(i).getAssociatedLecture().equals(course)) {			
 				Lab l = labList.get(i);
 				list.add(new CourseLab(l.name(), l.getId(), l.getAssociatedLecture().getLecNum(), l.getLabNum(), false, true));
 			}
@@ -385,4 +408,16 @@ public class Parser {
 			System.out.println(courseLabList.get(i).getName()+" Lecture: "+courseLabList.get(i).getLectureNumber());
 		}
 	}
+	
+	/*
+	 *	Course - Full course name (eg. CPSC 433 LEC 01)
+	 *	Lab - Full lab name (eg. CPSC 433 TUT 01)
+	 *
+	 * - If !Lab.contains(LEC) --> All lecture classes share the same lab/tut
+	 * 		-> store all related lectures to a list-type attribute
+	 * 
+	 *	Translating to a vector:
+	 *		-> 
+	 * 
+	 */
 }
