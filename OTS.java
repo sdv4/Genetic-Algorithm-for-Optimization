@@ -63,7 +63,7 @@ public class OTS{
     }
 
   }
-  // end otsNode Class
+  // end otsNode Class 
 
 	public int[] getIndividual(){
 		foundIndividual = 0;
