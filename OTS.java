@@ -8,7 +8,8 @@
 * version: 17 November 2017
 */
 
-import java.util.*;                                                             // for HashMap
+import java.util.*;                                                             // for Random
+
 
 public class OTS{
 
@@ -69,20 +70,82 @@ public class OTS{
 	public setChildren(ArrayList<otsNode> childrenArray){
 		this.children = childrenArray;
 	}
+	
+	public ArrayList<Integer> getAssign(){
+		return this.assign;
+	}
+	
+	public int getSolvedStatus(){
+		return this.solvedStatus;
+	}
+	
+	public void setSolvedStatus(int i){
+		this.solvedStatus = i;
+	}
 
   }
   // end otsNode Class 
 
-	public int[] getIndividual(){
+	public ArrayList<Integer> getIndividual(){
 		foundIndividual = 0;
-		Altern(root);
+		altern(root);
+		otsNode currentNode = root;
 		while (foundIndividual == 0){
-			
+			currentNode = chooseNode(currentNode);
+			if (currentNode.getAssign.size() == courseLabList.size()){
+				foundIndividual = 1;
+			}
+			else{
+				if (currentNode.getChildren().size() == 0){
+					altern(currentNode);
+				}
+			}
 		}
+		return currentNode.getAssign();
 	}
 	
-	private ArrayList<otsNode> Altern(otsNode aNode){
-		bool isL
+	private ArrayList<otsNode> altern(otsNode aNode){
+		ArrayList<Integer> parentVector = aNode.getAssign();
+		ArrayList<otsNode> children = new ArrayList<>();
+		int size = parentVector.size();
+		if (courseLabList.get(size+1).isCourse()){
+			for (int i = 1; i<=slotCList.size(); i++){
+				children.add(new otsNode(aNode, (ArrayList<Integer>) parentVector.clone().add(i)))
+			}
+		}
+		else{
+			for (int i = slotCList.size()+1; i<=slotCList.size()+slotLList.size(); i++){
+				children.add(new otsNode(aNode, (ArrayList<Integer>) parentVector.clone().add(i)))
+			}
+		}
+		
+	}
+	
+	private otsNode chooseNode(otsNode aNode){
+		ArrayList<otsNode> children = aNode.getChildren();
+		ArrayList<otsNode> validChildren = new ArrayList<>();
+		for (int i=0; i<children.size(); i++){
+			if (children.get(i).getSolvedStatus != 2 && constr(children.get(i).getAssign) == true)
+			{
+				validChildren.add(children.get(i));
+			else{
+				children.get(i).setSolvedStatus(2);
+			}
+		}
+		
+		int randSize = validChildren.size();
+		
+		if (randSize == 0){
+			aNode.setSolvedStatus(2);
+			validChildren = chooseNode(aNode.getParent());
+		}
+		
+		randSize = validChildren.size();
+		Random rand = new Random();
+		int n = rand.nextInt(randSize); 
+		
+		return validChildren.get(n);
+		
 	}
 	
 	
