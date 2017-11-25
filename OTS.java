@@ -29,7 +29,7 @@ public class OTS{
 
   //Constructor
   public OTS(ArrayList <CourseLab> coursesAndLabs,  ArrayList<Slot> courseSlots, ArrayList<Slot> labSlots){
-    this.root = new otsNode(null, (new int[coursesAndLabs.length]));
+    this.root = new otsNode(null, (new ArrayList<>()));
     this.courseLabList = coursesAndLabs;
     this.slotCList = courseSlots;
     this.slotLList = labSlots;
@@ -43,11 +43,11 @@ public class OTS{
 
     protected otsNode parent;
     protected int depth;
-    protected int[] assign;                                                     // let 0 represent ?, and 1-int.max represent time slot id
+    protected ArrayList<Integer> assign;                                                     // let 0 represent ?, and 1-int.max represent time slot id
     protected int solvedStatus;
     protected ArrayList<otsNode> children;                                      //Note: using ArrayList to permit resizing with we delete 'no' nodes
 
-    otsNode(otsNode parent, int[] assign){
+    otsNode(otsNode parent, ArrayList<Integer> assign){
       this.parent = parent;
       this.assign = assign;
       this.solvedStatus = TBD;
@@ -59,22 +59,30 @@ public class OTS{
 
     //public accessor and mutator methods - may not need these since data is protected
     public int getDepth(){
-      return this.depth;
+		return this.depth;
     }
+    
+    public ArrayList<otsNode> getChildren(){
+		return this.children;
+	}
+	
+	public setChildren(ArrayList<otsNode> childrenArray){
+		this.children = childrenArray;
+	}
 
   }
   // end otsNode Class 
 
 	public int[] getIndividual(){
 		foundIndividual = 0;
-		
+		Altern(root);
 		while (foundIndividual == 0){
 			
 		}
 	}
 	
-	private ArrayList<otsNode> Altern(){
-	
+	private ArrayList<otsNode> Altern(otsNode aNode){
+		bool isL
 	}
 	
 	
