@@ -67,7 +67,7 @@ public class OTS{
 		return this.children;
 	}
 	
-	public setChildren(ArrayList<otsNode> childrenArray){
+	public void setChildren(ArrayList<otsNode> childrenArray){
 		this.children = childrenArray;
 	}
 	
@@ -82,6 +82,10 @@ public class OTS{
 	public void setSolvedStatus(int i){
 		this.solvedStatus = i;
 	}
+	
+	public otsNode getParent(){
+		return this.parent;
+	}
 
   }
   // end otsNode Class 
@@ -92,7 +96,7 @@ public class OTS{
 		otsNode currentNode = root;
 		while (foundIndividual == 0){
 			currentNode = chooseNode(currentNode);
-			if (currentNode.getAssign.size() == courseLabList.size()){
+			if (currentNode.getAssign().size() == courseLabList.size()){
 				foundIndividual = 1;
 			}
 			else{
@@ -110,12 +114,16 @@ public class OTS{
 		int size = parentVector.size();
 		if (courseLabList.get(size+1).isCourse()){
 			for (int i = 1; i<=slotCList.size(); i++){
-				children.add(new otsNode(aNode, (ArrayList<Integer>) parentVector.clone().add(i)))
+				ArrayList<Integer> copy = (ArrayList<Integer>) parentVector.clone();
+				copy.add(i);
+				children.add(new otsNode(aNode, copy));
 			}
 		}
 		else{
 			for (int i = slotCList.size()+1; i<=slotCList.size()+slotLList.size(); i++){
-				children.add(new otsNode(aNode, (ArrayList<Integer>) parentVector.clone().add(i)))
+				ArrayList<Integer> copy = (ArrayList<Integer>) parentVector.clone();
+				copy.add(i);
+				children.add(new otsNode(aNode, copy));
 			}
 		}
 		
@@ -125,9 +133,10 @@ public class OTS{
 		ArrayList<otsNode> children = aNode.getChildren();
 		ArrayList<otsNode> validChildren = new ArrayList<>();
 		for (int i=0; i<children.size(); i++){
-			if (children.get(i).getSolvedStatus != 2 && constr(children.get(i).getAssign) == true)
+			if (children.get(i).getSolvedStatus() != 2 && constr(children.get(i).getAssign()) == true)
 			{
 				validChildren.add(children.get(i));
+			}
 			else{
 				children.get(i).setSolvedStatus(2);
 			}
@@ -137,7 +146,7 @@ public class OTS{
 		
 		if (randSize == 0){
 			aNode.setSolvedStatus(2);
-			validChildren = chooseNode(aNode.getParent());
+			//validChildren = chooseNode(aNode.getParent());
 		}
 		
 		randSize = validChildren.size();

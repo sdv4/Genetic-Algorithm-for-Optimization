@@ -534,19 +534,19 @@ public class Parser {
 	}
 	
 	private void parseGeneralNotCompatible(){
-		for (int i = 0; i < courseListLab.size(); i++){
+		for (int i = 0; i < courseLabList.size(); i++){
 			CourseLab aCourseLab1 = courseLabList.get(i);
-			if (aCourseLab1.isLec()){
+			if (aCourseLab1.isCourse()){
 				for (int j = 0; j < courseLabList.size(); j++){
-					CourseLab aCourseLab2 = courseLabList.get(j)
-					if (aCourseLab1.getName().Equals(aCourseLab2.getAssociatedLec()) && aCourseLab2.isLab()){
+					CourseLab aCourseLab2 = courseLabList.get(j);
+					if (aCourseLab1.getGeneralName().equals(aCourseLab2.getGeneralName()) && aCourseLab2.isLab()){
 						ArrayList<CourseLab> notCompatibleList1 = aCourseLab1.getNotCompatibleCoursesLabs();
 						ArrayList<CourseLab> notCompatibleList2 = aCourseLab2.getNotCompatibleCoursesLabs();
 						
 						notCompatibleList1.add(aCourseLab2);
 						notCompatibleList2.add(aCourseLab1);
 					}
-					if (aCourseLab1.getName() ///general tutorial
+					//if (aCourseLab1.getName() ///general tutorial
 				}
 				
 			}
