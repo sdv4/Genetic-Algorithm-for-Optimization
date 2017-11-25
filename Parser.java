@@ -225,7 +225,7 @@ public class Parser {
 						m2 = m2-60;
 					}
 				}				
-				slotLList.add(new Slot(true, LocalTime.of(h1,m1), LocalTime.of(h2, m2), entry[0], Integer.parseInt(entry[2]), Integer.parseInt(entry[3])));
+				slotLList.add(new Slot(false, LocalTime.of(h1,m1), LocalTime.of(h2, m2), entry[0], Integer.parseInt(entry[2]), Integer.parseInt(entry[3])));
 				line = buf.readLine();							// reads next entry to line
 			}
 		}
@@ -246,140 +246,19 @@ public class Parser {
 	    
 	    try{
 	      line = buf.readLine();				// reada first entry to line
-	      while(!line.equals("")){
-	        
-	        int lecIndex = line.indexOf("LEC");
-	        
+	      while(!line.equals("")){	        
+	        int lecIndex = line.indexOf("LEC");	        
 	        courseName = line;
-	        
-//	        courseName = line.substring(0,lecIndex);
-//	        courseName = courseName.replaceAll("[ ]+"," ");
 	        courseLecture = line.substring(lecIndex);
 	        courseLecture = courseLecture.replaceAll("[ ]+"," ");
-	        
-	        //DEBUG
-	        //System.out.println(courseName + " || " + courseLecture);
-	        
-	        entry = courseLecture.split(" ");
-	        
-	        courseList.add(new Course(courseName.trim(), Integer.parseInt(entry[1])));
-	        
+	        entry = courseLecture.split(" ");	        
+	        courseList.add(new Course(courseName.trim(), Integer.parseInt(entry[1])));	        
 	        line = buf.readLine();
-	      }
-	      
-	           
+	      }   
 	    }
 	    catch(IOException e){
 	      e.printStackTrace();
 	    }
-	}
-	
-	/**
-	 * Parse and add the course entries from the text file to the corresponding array list.
-	 * @param buf The buffered reader to read the entries.
-	 */
-	private void parseLabs(BufferedReader buf) {
-		String line = "";
-		String[] entry;
-		String labName = "";
-		String labNumberStr = "";
-		String labLectureFull = "";
-		String labLecture = "";
-		int index = -1;
-		int lecNum = -1;
-		boolean valid = false;
-		
-		try {
-			line = buf.readLine();
-			while(!line.equals("")) {
-				line = line.replaceAll("[ ]+", " ");
-				labName = line;
-				if((index=line.indexOf("TUT"))!=-1) {			// stores full lecture name to labLectureFull
-					labLectureFull = line.substring(0, index);
-					labNumberStr = line.substring(index);
-				}
-				else if((index = line.indexOf("LAB"))!=-1) {
-					labLectureFull = line.substring(0, index);
-					labNumberStr = line.substring(index);
-				}
-				entry = labLectureFull.split(" ");
-				if(entry.length>2) {						// stores lecture number to lecNum
-					lecNum = Integer.parseInt(entry[3]);	
-				}
-				else {
-					lecNum = 0;
-				}
-				
-				labLecture = entry[0]+" "+entry[1];			// stores lecture name to labLecture
-				
-				Course c = null;
-
-				for(int i = 0; i<courseList.size(); i++) {			// finds matching course name and lecture number from course list, store a match to variable of type Course
-						
-					if(courseList.get(i).name().equals(labLectureFull.trim()) && courseList.get(i).getLecNum()==lecNum) {
-						c = courseList.get(i);
-						valid = true;
-					}
-					else if(courseList.get(i).name().equals(labLectureFull.trim()) && lecNum==0 ) {
-						valid = true;
-					}
-					//TODO - add condition where labs with no lecture number is handled
-				}
-				if(valid) {			// if entry is valid (a lab with an associated course or no course(generic)
-					entry = labNumberStr.split(" ");
-					
-					if(c!=null)
-						labList.add(new Lab(labName, Integer.parseInt(entry[1]), c));
-					else
-						labList.add(new Lab(labName, Integer.parseInt(entry[1]), null));
-					//System.out.println(labName + " added");
-				}
-				
-				valid = false;
-				line = buf.readLine();
-			}
-			
-		}
-		catch(IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * Merges course and lab list to a sorted order (eg. C1,L11,L12,C2,C11,...)
-	 */
-	private void zipCourseLab() {
-		ArrayList<Object> olist = new ArrayList<>();
-		for(int i = 0;i<courseList.size(); i++){			
-			Course c = courseList.get(i);	
-			courseLabList.add(new CourseLab(c.name(), c.getId(), c.getLecNum(), -1, true, false));	// add course to entry
-			findLabTut(c);
-		}
-		
-	}
-	
-	/**
-	 * Supplementary method to zipCourseLab() that returns a list of sorted labs that corresponds to a given course
-	 * @param course The labs to be found that corresponds to the course
-	 * @return The list of sorted labs
-	 */
-	private void findLabTut(Course course){
-		ArrayList<CourseLab> list = new ArrayList<>();
-		for(int i = 0; i<labList.size(); i++) {
-			if(labList.get(i).getAssociatedLecture().equals(course)) {			
-				Lab l = labList.get(i);
-				list.add(new CourseLab(l.name(), l.getId(), l.getAssociatedLecture().getLecNum(), l.getLabNum(), false, true));
-			}
-		}
-		
-		Collections.sort(list, new Comparator<CourseLab>() {
-			public int compare(CourseLab one, CourseLab other) {
-				Integer x = new Integer(one.getLabNumber());
-				Integer y = new Integer(other.getLabNumber());
-				return x.compareTo(y);
-			}
-		});
-		courseLabList.addAll(list);
 	}
 	
 	private void printLists() {
@@ -405,19 +284,73 @@ public class Parser {
 		}
 		System.out.println("\nList of sorted course and lab list:");
 		for(int i =0; i<courseLabList.size(); i++){
-			System.out.println(courseLabList.get(i).getName()+" Lecture: "+courseLabList.get(i).getLectureNumber());
+			System.out.println(courseLabList.get(i).getName());
 		}
 	}
 	
-	/*
-	 *	Course - Full course name (eg. CPSC 433 LEC 01)
-	 *	Lab - Full lab name (eg. CPSC 433 TUT 01)
-	 *
-	 * - If !Lab.contains(LEC) --> All lecture classes share the same lab/tut
-	 * 		-> store all related lectures to a list-type attribute
-	 * 
-	 *	Translating to a vector:
-	 *		-> 
-	 * 
-	 */
+	private void zipCourseLab() {
+		int cnum = -1;
+		ArrayList<CourseLab> generic = new ArrayList<CourseLab>();
+		
+		for(int i = 0; i<courseList.size(); i++) {		// traverse course list
+			Course c = courseList.get(i);
+			String[] ss = c.name().split(" ");
+			cnum = Integer.parseInt(ss[1]);
+			courseLabList.add(new CourseLab(c.name(), c.getId(), c.getLecNum(), -1, true, false, null));	// add course to entry
+			int cindex = courseLabList.size()-1;		// index of latest course type entry
+			
+			for(int j = 0; j<labList.size(); j++) {		// traverse lab list
+				Lab l = labList.get(j);
+				if(l.name().contains(c.name())) {		// lab is associated with the current lecture num
+					courseLabList.add(new CourseLab(l.name(), l.getId(), c.getLecNum(), l.getLabNum(), false, true, courseLabList.get(cindex)));	// add lab to entry
+				}
+				else if(!l.name().contains("LEC") && l.name().contains(Integer.toString(cnum))) {	// lab is NOT associated with current lecture num, but is associated with course num = GENERIC
+					if((i+1)!=courseList.size()) {				// if not end of list
+						Course c2 = courseList.get(i+1);
+						String[] ss2 = c2.name().split(" ");
+						int cnumnxt = Integer.parseInt(ss2[1]); 						
+						if(cnum!=cnumnxt) {
+							String cpar = ss[0]+" "+ss[1];
+							if(l.name().contains(cpar))
+								courseLabList.add(new CourseLab(l.name(), l.getId(), -1, l.getLabNum(), false, true, null));
+						}
+					}
+					else {										// handling end of course list entry
+						String cpar = ss[0]+" "+ss[1];
+						if(l.name().contains(cpar))
+							courseLabList.add(new CourseLab(l.name(), l.getId(), -1, l.getLabNum(), false, true, null));
+					}
+				}
+			}
+		}
+	}
+	
+	private void parseLabs(BufferedReader buf) {
+		String line = "";
+		
+		try {
+			line = buf.readLine();							// line is the full lab name
+			line.trim();
+			while(!line.equals("")){
+				line = line.replaceAll("[ ]+", " ");		// replaces multiple whitespace to a single whitespace
+				int index = -1;
+				if(line.contains("TUT"))					// stores index of TUT or LAB in line entry
+					index = line.indexOf("TUT");
+				else if(line.contains("LAB"))
+					index = line.indexOf("LAB");
+				if(index >-1) {								// if there is an index of tut or lab, record lab number and add to lab list
+					int num = Integer.parseInt(line.substring(index+4));
+					labList.add(new Lab(line, num, null));
+				}
+				line = buf.readLine();
+			}
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
+		catch(NumberFormatException e) {
+			e.printStackTrace();
+		}
+		
+	}
 }
