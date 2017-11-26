@@ -18,6 +18,7 @@ public class OTS{
   protected ArrayList<CourseLab> courseLabList;
   protected ArrayList<Slot> slotCList;
   protected ArrayList<Slot> slotLList;
+  protected ArrayList<Slot> slotList;
   protected int foundIndividual;
 
   protected Map<Integer,Integer> indexVector;                             // init as HashMap Key is the course/lab id and value is the index of the course/lab position in a solution vector
@@ -34,6 +35,9 @@ public class OTS{
     this.courseLabList = coursesAndLabs;
     this.slotCList = courseSlots;
     this.slotLList = labSlots;
+    this.slotList =  new ArrayList<Slot>();
+    this.slotList.addAll(this.slotCList);
+    this.slotList.addAll(this.slotLList);
   }
 
   //Nested class for Otree instantiation
@@ -203,31 +207,139 @@ public class OTS{
 		
 	}
 	
+	/*
+	 * check if assign is valid (against hard constraints)
+	 * returns true for valid, false for invalid
+	 */
 	public boolean constr(int[] assign) {
-		for(int i = 0; i < this.courseLabList.size(); i++){
-			System.out.println("Courselab " + this.courseLabList.get(i).getId() +" is not compatible with");
-			for(int j = 0; i < this.courseLabList.get(i).getNotCompatibleCoursesLabs().size(); i++){
-				System.out.println(this.courseLabList.get(i).getNotCompatibleCoursesLabs().get(j).getId());
-			}
-		}
-		
-		for(int i = 0; i < this.slotCList.size(); i++){
-			System.out.println("slotC "+ this.slotCList.get(i).getId() +" is not compatible with");
-			for(int j = 0; j < this.slotCList.get(i).getOverlappingSlots().size(); j++){
-				System.out.println(this.slotCList.get(i).getOverlappingSlots().get(j));
-			}
-		}
-		
-		for(int i = 0; i < this.slotLList.size(); i++){
-			System.out.println("slotL "+ this.slotLList.get(i).getId() +" is not compatible with");
-			for(int j = 0; j < this.slotLList.get(i).getOverlappingSlots().size(); j++){
-				System.out.println(this.slotLList.get(i).getOverlappingSlots().get(j));
-			}
-		}
-		
+		assign = new int[]{ 0,3,0,5};//sample assignment
+		//check every index in array
+		for(int i = 0; i < assign.length; i++){
+			int slotId = assign[i];
+			if (slotId == 0){ continue;}//no slot index assigned, move to next index
+			//else get list of not compatibles at index i of courseLabs list
+			ArrayList<CourseLab> ImNotCompatibleWithCoursesLabs = this.courseLabList.get(i).getNotCompatibleCoursesLabs();
+//			for(int z = 0; z < ImNotCompatibleWithCoursesLabs.size(); z++){
+//				System.out.println(ImNotCompatibleWithCoursesLabs.get(z).getId());
+//			}
+			//loop through remaining slotIds in assign vector and find all matches
+			for(int j = i + 1; j < assign.length; j++){//check index i against every index j (after i)
+				int otherSlotId = assign[j];//get one of remaining slotIds
+				//4 cases, 
+				if(otherSlotId == 0){//no slot id assigned, skip THIS CASE PASSED
+					continue; 
+				}
+				else if( slotId == otherSlotId){//matches current slotId THIS CASE PASSED
+					System.out.println("found matching slotID " + otherSlotId);
+					//loop through assigned Ids and look for incompatible courses
+					ArrayList<Integer> assignedIDs = this.slotList.get(slotId-1).getCoursesAssigned();
+//					assignedIDs = new ArrayList<Integer>(Arrays.asList(1, 3, 4, 6));
+//					for(int k = 0; k < assignedIDs.size(); k++){
+//						System.out.println("assignedID " + assignedIDs.get(k));
+//					}
+					for(int k = 0; k < assignedIDs.size(); k++){
+						for(int l = 0; l < ImNotCompatibleWithCoursesLabs.size(); l++){//every index l is compared against every index k
+							if(assignedIDs.get(k) == ImNotCompatibleWithCoursesLabs.get(l).getId()){
+								return false;//a match is found not compatibles
+							}
+						}//end of loop l
+					}//end of loop k
+				}
+				else if(slotsOverlap(slotId, otherSlotId)){//slots overlap 
+					System.out.println("found overlapping slot ID " + otherSlotId);
+					ArrayList<Integer> assignedIDsInOverlappingSlot = this.slotList.get(otherSlotId-1).getCoursesAssigned();
+					for(int k = 0; k < assignedIDsInOverlappingSlot.size(); k++){
+						for(int l = 0; l < ImNotCompatibleWithCoursesLabs.size(); l++){//every index l is compared against every index k
+							if(assignedIDsInOverlappingSlot.get(k) == ImNotCompatibleWithCoursesLabs.get(l).getId()){
+								return false;//a match is found not compatibles
+							}
+						}//end of loop l
+					}//end of loop k
+				}
+				else{
+					continue;
+				}
+			}//end of loop j
+		}//end of loop i
+		//print to console the notCompatibles/overlappingSlots
+//		for(int i = 0; i < this.courseLabList.size(); i++){
+//			System.out.println(i+"Courselab " + this.courseLabList.get(i).getId() +" " + this.courseLabList.get(i).getName() +" is not compatible with");
+//			for(int j = 0; j < this.courseLabList.get(i).getNotCompatibleCoursesLabs().size(); j++){
+//				System.out.println(this.courseLabList.get(i).getNotCompatibleCoursesLabs().get(j).getId());
+//			}
+//		}
+//		for(int i = 0; i < this.slotCList.size(); i++){
+//			System.out.println(i + "slotC "+ this.slotCList.get(i).getId() +" is not compatible with");
+//			for(int j = 0; j < this.slotCList.get(i).getOverlappingSlots().size(); j++){
+//				System.out.println(this.slotCList.get(i).getOverlappingSlots().get(j));
+//			}
+//		}
+//		
+//		for(int i = 0; i < this.slotLList.size(); i++){
+//			System.out.println(i+"slotL "+ this.slotLList.get(i).getId() +" is not compatible with");
+//			for(int j = 0; j < this.slotLList.get(i).getOverlappingSlots().size(); j++){
+//				System.out.println(this.slotLList.get(i).getOverlappingSlots().get(j));
+//			}
+//		}
 		return true;
 	}
 
+	/*
+	 * check if two slots are overlapping
+	 * param: slotId: ID of a slot, otherSlotId: ID of another slot
+	 * returns: true if overlapping, false if not overlapping
+	 */
+	public boolean slotsOverlap(int slotId, int otherSlotId){
+		ArrayList<Integer>  overlappingSlots = this.slotList.get(slotId-1).getOverlappingSlots();
+		for(int i=0; i < overlappingSlots.size(); i++){
+			if(otherSlotId == overlappingSlots.get(i)){
+				return true;//found overlapping slots
+			}
+		}
+		return false;
+	}
+	
+//	public ArrayList<Integer> getSlotIDsThatOverlap(int slotId, int otherSlotId){
+//		ArrayList<Integer> overlappingSlots = this.slotList.get(slotId-1).getOverlappingSlots();
+//		overlappingSlots = new ArrayList<Integer>(Arrays.asList(6,7,8,9));
+//		ArrayList<Integer> slotIDsThatOverlap = new ArrayList<Integer>();
+//		for(int i=0; i < overlappingSlots.size(); i++){
+//			if(otherSlotId == overlappingSlots.get(i)){
+//				slotIDsThatOverlap.add(otherSlotId);
+//			}
+//		}
+//		return slotIDsThatOverlap;
+//	}
+	
+//	public boolean checkCompatible(){
+//	int assignedSlotId = this.getSlotId();
+//	boolean isCompatible = true;
+//	for(int i = 0; i < this.notCompatibleCoursesLabs.size(); i++){
+//		int notCompatibleSlotId = this.notCompatibleCoursesLabs.get(i).getSlotId();
+//		if(notCompatibleSlotId == -1){
+//			continue;//move to end of for loop i, if it doesn't have Slot assigned
+//		}
+	
+//		else if(assignedSlotId == notCompatibleSlotId){
+//			isCompatible = false;
+//			return isCompatible;//return false is there is at least one inCompatible CourseLab in assigned Slot
+//		}
+	
+	
+//		else{//check slots that are overlapping with assigned SlotId to see if they hold CourseLabs that are incompatible with this CourseLab
+//		        ArrayList<Integer> overlappingSlotIDs = Slots[assignedSlotId].getOverlappingSlotIDs();
+//			for(int j = 0; j < overlappingSlotIDs.size(); j++){
+//				notCompatibleSlotId = overlappingSlotIDs.get(j);//notCompatible id is updated to overlapping slotid
+//				if(assignedSlotId == notCompatibleSlotId){
+//					isCompatible = false;
+//					return isCompatible;
+//				}
+//			}
+//		}
+//	}
+//	return isCompatible;//if isCompatible not updated to false in loops, return default value true
+//}
+	
   // main method for testing - TODO: delete when class fully implemented and tested
 //  public static void main(String[] args){
 //    int[] testvec = new int[20];

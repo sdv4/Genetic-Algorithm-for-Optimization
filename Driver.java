@@ -112,7 +112,8 @@ public class Driver extends JFrame{
 		aParser.start();
 		
 		OTS tester = new OTS(aParser.getCourseLabList(),  aParser.getCourseSlotList(), aParser.getLabSlotList());
-		tester.constr(tester.root.assign);
+		boolean outcome = tester.constr(tester.root.assign);
+		System.out.println("Result of constr is " + outcome);
 	}
 //	
 //	public boolean constr(ArrayList<Integer> pr, ArrayList<CourseLab> courseLabList, ArrayList<Slot> slotCList, ArrayList<Slot> slotLList) {
