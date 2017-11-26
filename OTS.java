@@ -19,7 +19,6 @@ public class OTS{
   protected ArrayList<Slot> slotCList;
   protected ArrayList<Slot> slotLList;
   protected int foundIndividual;
-  protected int[] root;
 
   protected Map<Integer,Integer> indexVector;                             // init as HashMap Key is the course/lab id and value is the index of the course/lab position in a solution vector
   //TODO: will need to discuss when to imitialize this.
@@ -31,11 +30,10 @@ public class OTS{
 
   //Constructor
   public OTS(ArrayList <CourseLab> coursesAndLabs,  ArrayList<Slot> courseSlots, ArrayList<Slot> labSlots){
-    this.root = new otsNode(null, (new ArrayList<>()));
+    this.root = new otsNode(null, (new int[coursesAndLabs.size()]));
     this.courseLabList = coursesAndLabs;
     this.slotCList = courseSlots;
     this.slotLList = labSlots;
-    this.root = new int[courseLabList.size()];
   }
 
   //Nested class for Otree instantiation
@@ -101,7 +99,7 @@ public class OTS{
 		otsNode currentNode = root;
 		while (foundIndividual == 0){
 			currentNode = chooseNode(currentNode);
-			if (isFullVector(currentNode){
+			if (isFullVector(currentNode)){
 				foundIndividual = 1;
 			}
 			else{
@@ -121,7 +119,7 @@ public class OTS{
 	
 	public boolean isFullVector(otsNode aNode){
 		int[] aNodeVector = aNode.getAssign();
-		for (int i; i<aNode.length;i++){
+		for (int i; i<aNodeVector.length;i++){
 			if (aNodeVector[i] == 0)
 				return false;
 		}
@@ -142,19 +140,19 @@ public class OTS{
 					int[] copy = parentVector.clone();
 					copy[index] = i;
 					children.add(new otsNode(aNode, copy));
-					}
 				}
 			}
-			else{											//if index in vector is a lab
-				for (int i = slotCList.size()+1; i<=slotCList.size()+slotLList.size(); i++){	//create a branch for each lab slot
-					int[] copy = parentVector.clone();
-					copy[index] = i;
-					children.add(new otsNode(aNode, copy));
-					}
-				}
+		}
+		else{											//if index in vector is a lab
+			for (int i = slotCList.size()+1; i<=slotCList.size()+slotLList.size(); i++){	//create a branch for each lab slot
+				int[] copy = parentVector.clone();
+				copy[index] = i;
+				children.add(new otsNode(aNode, copy));
 			}
-		}	
+		}
 	}
+
+
 	/**
 	 * Search for the first instance of x
 	 * @param an integer array and the key to find
@@ -163,7 +161,7 @@ public class OTS{
 	private int searchArray(int [] array, int x){	
 		int i= -1;
 		for (i = 0; i<array.length; i++){
-			if (int[i] == x)
+			if (array[i] == x)
 				break;
 		}
 		return i;
