@@ -49,7 +49,10 @@ public class Parser {
 		this.courseLabList = new ArrayList<>();
 		this.filepath	= filepath;
 	}
-	
+	public static void main(String[]args){
+		Parser aParser = new Parser("department1.txt");
+		aParser.start();
+	}
 	/**
 	 * Starting method. This method is invoked after creating the Parser object
 	 */
@@ -71,8 +74,12 @@ public class Parser {
 				if(line.contains("Labs:")) {
 					parseLabs(buf);
 				}
+				if(line.contains("Not compatible:")) {
+					parseNotCompatible(buf);
+				}
 			}
-			zipCourseLab();
+			populateOverlappingSlotsList();
+			parseGeneralNotCompatible();
 			printLists();
 			buf.close();
 		}
@@ -273,16 +280,26 @@ public class Parser {
 		System.out.println("\nList of course slots:");
 		for(int i = 0; i<slotCList.size(); i++) {
 			Slot s = slotCList.get(i);
-			System.out.println(s.getDay()+" "+s.getMax()+" "+s.getMin()+" "+s.getStart().toString());
+			System.out.print(s.getId()+": "+s.getDay()+" "+s.getMax()+" "+s.getMin()+" "+s.getStart().toString()+" "+s.getEnd()+" Overlapping slots: ");
+			ArrayList<Integer> overlappingSlots = s.getOverlappingSlots();
+			for (int j = 0; j<overlappingSlots.size(); j++){
+				System.out.print(overlappingSlots.get(j)+" ");
+			}
+			System.out.println();
 		}
 		System.out.println("\nList of lab slots:");
 		for(int i = 0; i<slotLList.size(); i++) {
 			Slot s = slotLList.get(i);
-			System.out.println(s.getDay()+" "+s.getMax()+" "+s.getMin()+" "+s.getStart().toString());
+			System.out.print(s.getId()+": "+s.getDay()+" "+s.getMax()+" "+s.getMin()+" "+s.getStart().toString()+" "+s.getEnd()+" Overlapping slots: ");
+			ArrayList<Integer> overlappingSlots = s.getOverlappingSlots();
+			for (int j = 0; j<overlappingSlots.size(); j++){
+				System.out.print(overlappingSlots.get(j)+" ");
+			}
+			System.out.println();
 		}
 		System.out.println("\nList of sorted course and lab list:");
 		for(int i =0; i<courseLabList.size(); i++){
-			System.out.println(courseLabList.get(i).getId()+": "+courseLabList.get(i).getName()+" Lecture: "+courseLabList.get(i).getLectureNumber()+"Not compatible: ");
+			System.out.println(courseLabList.get(i).getId()+": "+courseLabList.get(i).getName()+" Lecture: "+courseLabList.get(i).getLectureNumber()+" Not compatible: ");
 			ArrayList<CourseLab> notCompatibleList = courseLabList.get(i).getNotCompatibleCoursesLabs();
 			for (int y =0; y<notCompatibleList.size(); y++){
 				System.out.println(notCompatibleList.get(y).getName());
@@ -354,6 +371,7 @@ public class Parser {
 		catch(NumberFormatException e) {
 			e.printStackTrace();
 		}
+		zipCourseLab();
 		
 	}
 	
@@ -539,14 +557,22 @@ public class Parser {
 			if (aCourseLab1.isCourse()){
 				for (int j = 0; j < courseLabList.size(); j++){
 					CourseLab aCourseLab2 = courseLabList.get(j);
-					if (aCourseLab1.getGeneralName().equals(aCourseLab2.getGeneralName()) && aCourseLab2.isLab()){
+					//General tutorial incompatibility
+					if (aCourseLab1.getGeneralName().equals(aCourseLab2.getGeneralName()) && aCourseLab2.isLab() && aCourseLab2.getAssociatedLecture() == null){
 						ArrayList<CourseLab> notCompatibleList1 = aCourseLab1.getNotCompatibleCoursesLabs();
 						ArrayList<CourseLab> notCompatibleList2 = aCourseLab2.getNotCompatibleCoursesLabs();
 						
 						notCompatibleList1.add(aCourseLab2);
 						notCompatibleList2.add(aCourseLab1);
 					}
-					//if (aCourseLab1.getName() ///general tutorial
+					//Specific lecture tutorial incompatibility
+					else if (aCourseLab1.getName().equals(aCourseLab2.getSpecificLecture()) && aCourseLab1 != aCourseLab2){
+						ArrayList<CourseLab> notCompatibleList1 = aCourseLab1.getNotCompatibleCoursesLabs();
+						ArrayList<CourseLab> notCompatibleList2 = aCourseLab2.getNotCompatibleCoursesLabs();
+						
+						notCompatibleList1.add(aCourseLab2);
+						notCompatibleList2.add(aCourseLab1);
+					}
 				}
 				
 			}

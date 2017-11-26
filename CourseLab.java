@@ -20,6 +20,7 @@ public class CourseLab {
 	private final boolean isLab;
 	private final CourseLab associatedLecture;
 	private final String general;
+	private final String specificLecture;
 	
 	private ArrayList<CourseLab> notCompatibleCoursesLabs;//replaces associatedLecture/Course/Lab, plus additional not compatible CourseLabs
 	private int slotId = -1;//default value is -1 for unassigned slot
@@ -32,10 +33,13 @@ public class CourseLab {
 		this.isCourse = isCourse;
 		this.isLab = isLab;
 		this.associatedLecture = associatedLecture;
+		this.notCompatibleCoursesLabs = new ArrayList<>();
 		
 		String[] s = name.split(" ");
 		this.general = s[0]+" "+s[1];
+		this.specificLecture = s[0]+" "+s[1]+" "+s[2]+" "+s[3];
 		
+			
 	}
 	
 	public String getGeneralName() {
@@ -48,6 +52,10 @@ public class CourseLab {
 
 	public int getId() {
 		return id;
+	}
+	
+	public String getSpecificLecture(){
+		return this.specificLecture;
 	}
 
 	public int getLectureNumber() {
@@ -80,6 +88,10 @@ public class CourseLab {
 
 	public void setSlotId(int slotId) {
 		this.slotId = slotId;
+	}
+	
+	public CourseLab getAssociatedLecture(){
+		return this.associatedLecture;
 	}
 	
 	/**
