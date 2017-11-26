@@ -116,6 +116,7 @@ public class Driver extends JFrame{
 		ArrayList<Slot> slotLList = aParser.getLabSlotList();
 		
 		OTS tester = new OTS(courseLabList,  slotCList, slotLList);
+		
 		int [] anIndividual = tester.getIndividual();
 		
 		for (int i=0; i<aParser.getCourseLabList().size(); i++){
@@ -145,6 +146,8 @@ public class Driver extends JFrame{
 			}
 			System.out.println();
 		}
+		
+		
 		//boolean outcome = tester.constr(tester.root.assign);
 		//System.out.println("Result of constr is " + outcome);
 	}

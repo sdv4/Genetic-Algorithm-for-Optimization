@@ -24,6 +24,7 @@ public class CourseLab {
 	
 	private ArrayList<CourseLab> notCompatibleCoursesLabs;//replaces associatedLecture/Course/Lab, plus additional not compatible CourseLabs
 	private int slotId = -1;//default value is -1 for unassigned slot
+	private ArrayList<Integer> unwantedSlotIds;
 	
 	public CourseLab(String name, int id, int lectureNumber, int labNumber, boolean isCourse, boolean isLab, CourseLab associatedLecture){
 		this.name = name;
@@ -34,6 +35,7 @@ public class CourseLab {
 		this.isLab = isLab;
 		this.associatedLecture = associatedLecture;
 		this.notCompatibleCoursesLabs = new ArrayList<>();
+		this.unwantedSlotIds = new ArrayList<>();
 		
 		String[] s = name.split(" ");
 		this.general = s[0]+" "+s[1];
@@ -92,6 +94,10 @@ public class CourseLab {
 	
 	public CourseLab getAssociatedLecture(){
 		return this.associatedLecture;
+	}
+	
+	public ArrayList<Integer> getUnWantedList(){
+		return this.unwantedSlotIds;
 	}
 	
 	/**
