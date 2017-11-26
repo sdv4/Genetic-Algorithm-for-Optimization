@@ -18,18 +18,33 @@ public class CourseLab {
 	private final int labNumber;
 	private final boolean isCourse;
 	private final boolean isLab;
+	private final CourseLab associatedLecture;
+	private final String general;
+	private final String specificLecture;
 
 	private ArrayList<CourseLab> notCompatibleCoursesLabs;//replaces associatedLecture/Course/Lab, plus additional not compatible CourseLabs
 	private int slotId = -1;//default value is -1 for unassigned slot
+	private ArrayList<Integer> unwantedSlotIds;
 
-	public CourseLab(String name, int id, int lectureNumber, int labNumber, boolean isCourse, boolean isLab){
+//TODO: provide documentation for this constructor. What is int id argument for?
+	public CourseLab(String name, int id, int lectureNumber, int labNumber, boolean isCourse, boolean isLab, CourseLab associatedLecture){
 		this.name = name;
 		this.id = counter.incrementAndGet();
 		this.lectureNumber = lectureNumber;
 		this.labNumber = labNumber;
 		this.isCourse = isCourse;
 		this.isLab = isLab;
+		this.associatedLecture = associatedLecture;
+		this.notCompatibleCoursesLabs = new ArrayList<>();
+		this.unwantedSlotIds = new ArrayList<>();
 
+		String[] s = name.split(" ");
+		this.general = s[0]+" "+s[1];
+		this.specificLecture = s[0]+" "+s[1]+" "+s[2]+" "+s[3];
+	}
+
+	public String getGeneralName() {
+		return general;
 	}
 
 	public String getName() {
@@ -38,6 +53,10 @@ public class CourseLab {
 
 	public int getId() {
 		return id;
+	}
+
+	public String getSpecificLecture(){
+		return this.specificLecture;
 	}
 
 	public int getLectureNumber() {
@@ -72,34 +91,12 @@ public class CourseLab {
 		this.slotId = slotId;
 	}
 
-	/**
-	 * iterate through list notCompatibleCoursesLabs
-	 * @return true if slotid is compatible, false if not compatible
-	 */
-	/*
-	public boolean checkCompatible(){
-		int assignedSlotId = this.getSlotId();
-		boolean isCompatible = true;
-		for(int i = 0; i < this.notCompatibleCoursesLabs.size(); i++){
-			int notCompatibleSlotId = this.notCompatibleCoursesLabs.get(i).getSlotId();
-			if(notCompatibleSlotId == -1){
-				continue;//move to end of for loop i, if it doesn't have Slot assigned
-			}
-			else if(assignedSlotId == notCompatibleSlotId){
-				isCompatible = false;
-				return isCompatible;//return false is there is at least one inCompatible CourseLab in assigned Slot
-			}
-			else{//check slots that are overlapping with assigned SlotId to see if they hold CourseLabs that are incompatible with this CourseLab
-			        ArrayList<int> overlappingSlotIDs = Slots[assignedSlotId].getOverlappingSlotIDs();
-				for(int j = 0; j < overlappingSlotIDs.size(); j++){
-					notCompatibleSlotId = overlappingSlotIDs.get(j);//notCompatible id is updated to overlapping slotid
-					if(assignedSlotId == notCompatibleSlotId){
-						isCompatible = false;
-						return isCompatible;
-					}
-				}
-			}
-		}
-		return isCompatible;//if isCompatible not updated to false in loops, return default value true
-	}*/
+	public CourseLab getAssociatedLecture(){
+		return this.associatedLecture;
+	}
+
+	public ArrayList<Integer> getUnWantedList(){
+		return this.unwantedSlotIds;
+	}
+
 }
