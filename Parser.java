@@ -49,10 +49,7 @@ public class Parser {
 		this.courseLabList = new ArrayList<>();
 		this.filepath	= filepath;
 	}
-	public static void main(String[]args){
-		Parser aParser = new Parser("department1.txt");
-		aParser.start();
-	}
+
 	/**
 	 * Starting method. This method is invoked after creating the Parser object
 	 */
