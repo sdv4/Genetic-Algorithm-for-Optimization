@@ -14,6 +14,7 @@
 
 import java.util.*;                                                             // for HashMap
 import java.util.Arrays;
+import java.time.LocalTime;
 
 public class OTS{
 
@@ -271,10 +272,10 @@ private int searchArray(int [] array, int x){
   	 */
   	 public boolean constr(int[] assign) {
 
-          // Ensure that all 500 level courses are in different slots //
+          //// Ensure that all 500 level courses are in different slots ////
 
           ArrayList<Integer> seniorCourseSlotIds = new ArrayList<Integer>();    // Create empty list to hold slot ids of slots that contain 500 level courses
-          for(int i = 0; i < assign.length; i++){
+          for(int i = 0; i < assign.length; i++){                               //for#1
             CourseLab aCourseLab = courseLabList.get(i);
             if(aCourseLab.isCourse()){ //check if element i is a course
                 String[] courseNameNumber = (aCourseLab.getGeneralName()).split(" ");// get course number
@@ -287,9 +288,21 @@ private int searchArray(int [] array, int x){
                       seniorCourseSlotIds.add(aCourseInSlot);
                 }
             }
+          }// End for#1
 
-          }// Scan assign, for each element that is a course with number >=500, check if slot id in list. if yes, return false. if no, check next assign element
-                // Check t
+          //// Ensure that all courses with lecture number >= 9 are scheduled in evening (>= 18:00) slots  ////
+
+          for(int i = 0; i < assign.length; i++){                               //for#2: for each element in assign
+              CourseLab aCourseLab = courseLabList.get(i);
+              if(aCourseLab.isCourse() && (aCourseLab.getLectureNumber() >= 9)){   //check if if course lecture num >= 9
+                  int courseStartHour = ((slotCList.get(assign[i])).getStart()).getHour();
+                  if(courseStartHour < 18){
+                      System.out.println(aCourseLab.getName());
+                      return false;
+                  }
+              }
+
+          }// End for#2
 
           return true;
      }// End constr
@@ -365,24 +378,10 @@ private int searchArray(int [] array, int x){
 
     System.out.println("Length of CL list: " + courseLabList.size());
 
-    int[] testAssign = {1,2,3,1,2,3,1};
+    int[] testAssign = new int[183];
+    for(int i = 0; i < testAssign.length; i++)
+      testAssign[i] = 20;
     System.out.println("Constr test result: " + testOrTreeSearchInstance.constr(testAssign));
-
-    CourseLab aCourseLab = courseLabList.get(0);
-    if(aCourseLab.isCourse()){ //check if element i is a course
-        String[] courseNameNumber = (aCourseLab.getGeneralName()).split(" ");// get course number
-        int courseNumber = Integer.parseInt(courseNameNumber[1]);
-        System.out.println("Here:      ***********         : " + courseNumber);
-        //if(aCourse.get)
-    }
-
-
-
-
-
-
-    System.out.println(courseLabList.get(0).getGeneralName());
-
 
   }
 
