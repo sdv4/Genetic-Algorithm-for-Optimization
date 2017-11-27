@@ -118,7 +118,7 @@ public class OTS{
 
   /* Helper methods for controls 1 and 2 */
 
-	 /** TODO: move this to be a mutator method of otsNode
+   /** TODO: move this to be a mutator method of otsNode
 	 * Check if a vector has all classes assigned
 	 * @param the node with the vector to be checked
 	 * @return return true if all classes assigned, elsewise false.
@@ -132,7 +132,7 @@ public class OTS{
 		  return true;
 	 }
 
-	/**
+/**
 	 * Altern creates the branches for a given node depending on if the next class to be assigned
 	 * is a lecture or a lab
 	 * @param otsNode to branch from
@@ -332,11 +332,6 @@ private int searchArray(int [] array, int x){
               }
           }// End for#3
 
-
-
-
-
-
           return true;
      }// End constr
 
@@ -401,7 +396,7 @@ private int searchArray(int [] array, int x){
 
 // main method for testing - TODO: delete when class fully implemented and tested
   public static void main(String[] args){
-    Parser aParser = new Parser("deptinst1.txt");
+    Parser aParser = new Parser("deptinstShort.txt");
     aParser.start();
     ArrayList<CourseLab> courseLabList = aParser.getCourseLabList();
     ArrayList<Slot> slotCList = aParser.getCourseSlotList();
@@ -409,14 +404,17 @@ private int searchArray(int [] array, int x){
 
 		OTS testOrTreeSearchInstance = new OTS(courseLabList,  slotCList, slotLList);
 
-    System.out.println("Length of CL list: " + courseLabList.size());
+    //System.out.println("Length of CL list: " + courseLabList.size());
 
-    int[] testAssign = new int[183];
-    for(int i = 0; i < testAssign.length; i++)
-      testAssign[i] = 3;
-    System.out.println("Constr test result: " + testOrTreeSearchInstance.constr(testAssign));
+    //int[] testAssign = new int[183];
+    //for(int i = 0; i < testAssign.length; i++)
+    //  testAssign[i] = 3;
+    //System.out.println("Constr test result: " + testOrTreeSearchInstance.constr(testAssign));
     //int[] slotUseCounts = new int[slotCList.size() + slotLList.size()]; // each element index corresponds to a slotId, and the contents of the element are the number of times it has been used
     //System.out.println("number of slots: " + slotUseCounts.length);
+    int[] tAssign = testOrTreeSearchInstance.getIndividual();
+    System.out.println("Valid individual: ");
+    System.out.println(tAssign);
   }
 
 
