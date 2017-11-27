@@ -29,6 +29,7 @@ public class Parser {
 	private ArrayList<Slot>		slotLList;
 	private ArrayList<Slot>		slotCList;
 	private ArrayList<CourseLab> courseLabList;
+	private int []				partialAssign;
 	
 	public Parser() {
 		
@@ -77,9 +78,13 @@ public class Parser {
 				if(line.contains("Unwanted:")){
 					parseUnwanted(buf);
 				}
+				if(line.contains("Partial assignments:")){
+					parsePartialAssignments(buf);
+				}
 			}
 			populateOverlappingSlotsList();
 			parseGeneralNotCompatible();
+			addTuesUnwanted();
 			printLists();
 			buf.close();
 		}
@@ -133,6 +138,14 @@ public class Parser {
 	 */
 	public ArrayList<Slot> getCourseSlotList(){
 		return slotCList;
+	}
+	
+	/**
+	 * Returns partial assignment vector
+	 * @return int array
+	 */
+	public int [] getPartialAssign(){
+		return partialAssign;
 	}
 	
 	//
@@ -294,6 +307,7 @@ public class Parser {
 		}
 		zipCourseLab();
 		
+		
 	}
 	
 	private void parseNotCompatible(BufferedReader buf){
@@ -354,7 +368,7 @@ public class Parser {
 		String[] hm;
 		try {
 			line = buf.readLine();
-			System.out.println(line);
+			//System.out.println(line);
 			while(!line.equals("")) {
 				entry = line.split(",");
 				for (int i = 0; i< entry.length; i++){
@@ -384,11 +398,11 @@ public class Parser {
 							}
 						}
 						else{											//if the courseLab is a lab
-							for (int j= slotCList.size(); j<slotCList.size()+slotLList.size(); j++){
+							for (int j= 0; j<slotLList.size(); j++){
 								Slot aSlot = slotLList.get(j);
-								if (aSlot.getDay().equals(entry[1]) && aSlot.getStart().toString().equals(entry[2])){
-									aCourseLabUnwantedList.add(j);
-									System.out.println(entry[1]+" "+entry[2]);
+								if (aSlot.getDay().equals(entry[1]) && aSlot.getStart().toString().equals(time.toString())){
+									aCourseLabUnwantedList.add(aSlot.getId());
+									//System.out.println(entry[1]+" "+entry[2]);
 									break;	//
 								}
 							}
@@ -402,6 +416,70 @@ public class Parser {
 		catch(IOException e) {
 			e.printStackTrace();
 		}	
+	}
+	
+	private void parsePartialAssignments(BufferedReader buf){
+		String line = "";
+		String[] entry;
+		String[] hm;
+		try {
+			line = buf.readLine();
+
+			while(!line.equals("")) {
+				System.out.println(line);
+				entry = line.split(",");
+				for (int i = 0; i< entry.length; i++){					//split line by ",", entry[0] = course name
+					entry[i] = entry[i].trim();							//entry[1] = day, entry[2] = time
+				}
+				hm = entry[2].split(":");
+				int h1 = Integer.parseInt(hm[0]);
+				int m1 = Integer.parseInt(hm[1]);
+				LocalTime time = LocalTime.of(h1, m1);
+				System.out.println("LocalTime: "+time.toString()); 		//cast time to LocalTime for comparison
+					
+				for (int i = 0; i < courseLabList.size(); i++){			//find the courseLab with the exact same name
+					CourseLab aCourseLab = courseLabList.get(i);
+					if (entry[0].equals(aCourseLab.getName())){
+						//System.out.println("entry[0]: "+entry[0]);
+						if (aCourseLab.isCourse()){						//if the courseLab is a course
+							//System.out.println(entry[1]+" "+entry[2]);
+							for (int j= 0; j<slotCList.size(); j++){	//find slot that matches entry[1] and entry[2]
+								Slot aSlot = slotCList.get(j);
+								//System.out.println(aSlot.getDay()+" "+aSlot.getStart().toString());
+								if (aSlot.getDay().equals(entry[1]) && aSlot.getStart().toString().equals(time.toString())){ //if the slot is found, add the slot id to the unwantedIdsList for the courseLab
+									partialAssign[i] = aSlot.getId();
+									//System.out.println(entry[1]+" "+entry[2]);
+									break; //break from searching for slot
+								}
+							}
+						}
+						else{											//if the courseLab is a lab
+							for (int j= 0; j<slotLList.size(); j++){
+								System.out.println(j);
+								Slot aSlot = slotLList.get(j);
+								if (aSlot.getDay().equals(entry[1]) && aSlot.getStart().toString().equals(time.toString())){
+									partialAssign[i] = aSlot.getId();
+									System.out.println(entry[1]+" "+entry[2]);
+									break;	//
+								}
+							}
+						}
+						break;	//break from searching for courseLab
+					}		
+				}
+				line = buf.readLine();
+				if (line == null)
+					break;
+			}
+			System.out.print("partialAssign: ");
+			for (int i = 0; i<courseLabList.size(); i++){
+				System.out.print(partialAssign[i]);
+			}		
+			System.out.println();
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}			
 	}
 	
 	private void printLists() {
@@ -442,11 +520,11 @@ public class Parser {
 			for (int y =0; y<notCompatibleList.size(); y++){
 				System.out.println(notCompatibleList.get(y).getName());
 			}
-			System.out.println();
-			System.out.println("Unwanted: ");
+			System.out.print("Unwanted: ");
 			for (int j= 0; j<courseLabList.get(i).getUnWantedList().size();j++){
 				System.out.println(courseLabList.get(i).getUnWantedList().get(j)+" ");
 			}
+			System.out.println();
 			System.out.println();
 		}
 	}
@@ -486,9 +564,27 @@ public class Parser {
 				}
 			}
 		}
+		this.partialAssign = new int[courseLabList.size()];
 	}
 	
-
+	private void addTuesUnwanted(){
+		int tuesdaySlotId = 0;
+		for (int i = 0; i<slotCList.size(); i++){
+			Slot aSlot = slotCList.get(i);
+			if (aSlot.getDay().equals("TU") && aSlot.getStart().toString().equals("11:00")){
+				tuesdaySlotId = aSlot.getId();
+			}
+		}
+		if (tuesdaySlotId > 0){
+			for (int i = 0; i<courseLabList.size(); i++){
+				CourseLab aCourseLab = courseLabList.get(i);
+				if (aCourseLab.isCourse()){
+					ArrayList<Integer> unwantedList = aCourseLab.getUnWantedList();
+					unwantedList.add(tuesdaySlotId);
+				}
+			}
+		}
+	}
 	
 		 //Check for lecture slots that overlap with other lecture slots
 	private void populateOverlappingSlotsList(){
