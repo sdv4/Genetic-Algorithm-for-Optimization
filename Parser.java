@@ -5,9 +5,10 @@ package main;
  * version:
  * 0.1-11-11-2017
  * 0.2-16-11-2017
+ * 0.3-25-11-2017
  * 
  * TODO
- * 	- modify parser to include one tutorial to many course number relation
+ * - pending soft constraints
  */
 
 
@@ -251,6 +252,7 @@ public class Parser {
 	        courseName = line;
 	        courseLecture = line.substring(lecIndex);
 	        courseLecture = courseLecture.replaceAll("[ ]+"," ");
+	        courseName = courseName.replaceAll("[ ]+"," ");
 	        entry = courseLecture.split(" ");	        
 	        courseList.add(new Course(courseName.trim(), Integer.parseInt(entry[1])));	        
 	        line = buf.readLine();
@@ -261,6 +263,9 @@ public class Parser {
 	    }
 	}
 	
+	/**
+	 * 
+	 */
 	private void printLists() {
 		System.out.println("List of courses:");
 		for(int i = 0; i<courseList.size(); i++) {
@@ -288,10 +293,11 @@ public class Parser {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void zipCourseLab() {
-		int cnum = -1;
-		ArrayList<CourseLab> generic = new ArrayList<CourseLab>();
-		
+		int cnum = -1;		
 		for(int i = 0; i<courseList.size(); i++) {		// traverse course list
 			Course c = courseList.get(i);
 			String[] ss = c.name().split(" ");
