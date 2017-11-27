@@ -37,10 +37,10 @@ public class OTS{
   // @param labSlots        - the list of possible time slots that can hold courseLab objects of type lab
   ////
   public OTS(ArrayList <CourseLab> coursesAndLabs,  ArrayList<Slot> courseSlots, ArrayList<Slot> labSlots){
-    this.root = new otsNode(null, null);
     this.courseLabList = coursesAndLabs;
     this.slotCList = courseSlots;
     this.slotLList = labSlots;
+    this.root = new otsNode(null, (new int[courseLabList.size()]));
   }
 
   //Nested class for Otree instantiation
@@ -56,6 +56,7 @@ public class OTS{
       this.parent = parent;
       this.assign = assign;
       this.solvedStatus = TBD;
+      this.children = new ArrayList<otsNode>();
       if (parent == null)
         this.depth = 0;
       else
@@ -139,7 +140,7 @@ public class OTS{
 	 */
 	private void altern(otsNode aNode){
 		int[] parentVector = aNode.getAssign();				                              //get the vector from the node
-		ArrayList<otsNode> children = new ArrayList<>();
+		ArrayList<otsNode> children = new ArrayList<otsNode>();
 		int index = searchArray(parentVector, 0);			                              //get index of first unassigned class
 		if (index > -1){
 			if (courseLabList.get(index).isCourse()){		                              //if index in vector is a course
@@ -148,6 +149,7 @@ public class OTS{
 					copy[index] = i;
 					children.add(new otsNode(aNode, copy));
 				}
+        aNode.setChildren(children);
 			}
 		}
 		else{											                                                  //if index in vector is a lab
@@ -156,6 +158,7 @@ public class OTS{
 				copy[index] = i;
 				children.add(new otsNode(aNode, copy));
 			}
+      aNode.setChildren(children);
 		}
 	}
 
@@ -182,8 +185,8 @@ private int searchArray(int [] array, int x){
   */
   private otsNode chooseNode(otsNode aNode){
     ArrayList<otsNode> children = aNode.getChildren();
-    ArrayList<otsNode> validChildren = new ArrayList<>();
-    for (int i=0; i<children.size(); i++){					                            //Check if the children are valid vectors or not.
+    ArrayList<otsNode> validChildren = new ArrayList<otsNode>();
+    for (int i = 0; i < children.size(); i++){					                            //Check if the children are valid vectors or not.
       if (children.get(i).getSolvedStatus() != 2 && constr(children.get(i).getAssign()) == true){ //Add valid children to a separate list
         children.get(i).setSolvedStatus(TBD);
         validChildren.add(children.get(i));
@@ -205,7 +208,7 @@ private int searchArray(int [] array, int x){
 
   private otsNode chooseNode2(otsNode aNode, int[] parent1, int[] parent2){
     ArrayList<otsNode> children = aNode.getChildren();
-    ArrayList<otsNode> validChildren = new ArrayList<>();
+    ArrayList<otsNode> validChildren = new ArrayList<otsNode>();
     int[] aNodeVector = aNode.getAssign();
     int firstNull = aNode.getNextToSchedule();                                    //Find position of left most null entry
     // Make a children whose most recent non null node matches a parent
@@ -311,16 +314,17 @@ private int searchArray(int [] array, int x){
           // Make lists to track each time a slot is used by a course or lab
           int[] slotUseCounts = new int[slotCList.size() + slotLList.size()];   // each element index corresponds to a slotId, and the contents of the element are the number of times it has been used
           for(int i = 0; i < assign.length; i++){                               // For each slot used in assign - track how many times it was used
-              slotUseCounts[assign[i]]++;
+              slotUseCounts[assign[i]-1]++;
           }
 
           //Check each slot that was used to see if max uses violated
           for(int j = 0; j < slotUseCounts.length; j++){                        // For#3
-              System.out.println("j = " + j);
               if(slotUseCounts[j] > 0){
-                System.out.println("here");
-                if(j <= slotCList.size()){
+                if(j < slotCList.size()){
                     if(slotUseCounts[j] > slotCList.get(j).getMax()){
+                        //System.out.println("slot id: " + slotCList.get(j).getId());       //DEGUG statement TODO: delete when done debugging
+                        //System.out.println("course max for this slot: " + slotCList.get(j).getMax());//DEGUG statement TODO: delete when done debugging
+                        //System.out.println("courses assigned to this slot: " + slotUseCounts[j]);//DEGUG statement TODO: delete when done debugging
                         return false;
                     }
                 }
@@ -402,13 +406,17 @@ private int searchArray(int [] array, int x){
     ArrayList<Slot> slotCList = aParser.getCourseSlotList();
 		ArrayList<Slot> slotLList = aParser.getLabSlotList();
 
+    System.out.println(courseLabList.size());
+    System.out.println(slotCList.size());
+    System.out.println(slotLList.size());
+
 		OTS testOrTreeSearchInstance = new OTS(courseLabList,  slotCList, slotLList);
 
     //System.out.println("Length of CL list: " + courseLabList.size());
 
     //int[] testAssign = new int[183];
     //for(int i = 0; i < testAssign.length; i++)
-    //  testAssign[i] = 3;
+    //  testAssign[i] = 1;
     //System.out.println("Constr test result: " + testOrTreeSearchInstance.constr(testAssign));
     //int[] slotUseCounts = new int[slotCList.size() + slotLList.size()]; // each element index corresponds to a slotId, and the contents of the element are the number of times it has been used
     //System.out.println("number of slots: " + slotUseCounts.length);
