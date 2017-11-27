@@ -30,7 +30,7 @@ public class OTS{
 
   ////
   // Constructor - creates an Or-tree based search instance that will produce a
-  // valid (hard constraint satisfying) course assignment when appropriate method (TODO: name TBD)
+  // valid (hard constraint satisfying) course assignment when appropriate control
   // is executed.
   // @param coursesAndLabs  - the list of courseLab objects parsed from input file - also serves as index vector
   // @param courseSlots     - list of possible time slots that can hold courseLab objects of type course
@@ -273,8 +273,9 @@ private int searchArray(int [] array, int x){
   	 public boolean constr(int[] assign) {
 
           //// Ensure that all 500 level courses are in different slots ////
-
+          ////                                                          ////
           ArrayList<Integer> seniorCourseSlotIds = new ArrayList<Integer>();    // Create empty list to hold slot ids of slots that contain 500 level courses
+
           for(int i = 0; i < assign.length; i++){                               //for#1
             CourseLab aCourseLab = courseLabList.get(i);
             if(aCourseLab.isCourse()){ //check if element i is a course
@@ -291,7 +292,7 @@ private int searchArray(int [] array, int x){
           }// End for#1
 
           //// Ensure that all courses with lecture number >= 9 are scheduled in evening (>= 18:00) slots  ////
-
+          ////                                                                                            ////
           for(int i = 0; i < assign.length; i++){                               //for#2: for each element in assign
               CourseLab aCourseLab = courseLabList.get(i);
               if(aCourseLab.isCourse() && (aCourseLab.getLectureNumber() >= 9)){   //check if if course lecture num >= 9
@@ -303,6 +304,38 @@ private int searchArray(int [] array, int x){
               }
 
           }// End for#2
+
+          //// Ensure that neither coursemax or labmax are violated for each slot used in assign ////
+          ////                                                                                   ////
+
+          // Make lists to track each time a slot is used by a course or lab
+          int[] slotUseCounts = new int[slotCList.size() + slotLList.size()];   // each element index corresponds to a slotId, and the contents of the element are the number of times it has been used
+          for(int i = 0; i < assign.length; i++){                               // For each slot used in assign - track how many times it was used
+              slotUseCounts[assign[i]]++;
+          }
+
+          //Check each slot that was used to see if max uses violated
+          for(int j = 0; j < slotUseCounts.length; j++){                        // For#3
+              System.out.println("j = " + j);
+              if(slotUseCounts[j] > 0){
+                System.out.println("here");
+                if(j <= slotCList.size()){
+                    if(slotUseCounts[j] > slotCList.get(j).getMax()){
+                        return false;
+                    }
+                }
+                else{
+                    if(slotLList.get(j - slotCList.size()).getMax() > slotUseCounts[j]){
+                        return false;
+                    }
+                }
+              }
+          }// End for#3
+
+
+
+
+
 
           return true;
      }// End constr
@@ -380,9 +413,10 @@ private int searchArray(int [] array, int x){
 
     int[] testAssign = new int[183];
     for(int i = 0; i < testAssign.length; i++)
-      testAssign[i] = 20;
+      testAssign[i] = 3;
     System.out.println("Constr test result: " + testOrTreeSearchInstance.constr(testAssign));
-
+    //int[] slotUseCounts = new int[slotCList.size() + slotLList.size()]; // each element index corresponds to a slotId, and the contents of the element are the number of times it has been used
+    //System.out.println("number of slots: " + slotUseCounts.length);
   }
 
 
