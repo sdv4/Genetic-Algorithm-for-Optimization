@@ -37,13 +37,13 @@ public class OTS{
   // @param labSlots        - the list of possible time slots that can hold courseLab objects of type lab
   ////
   public OTS(ArrayList <CourseLab> coursesAndLabs,  ArrayList<Slot> courseSlots, ArrayList<Slot> labSlots){
-    this.root = new otsNode(null, null);
     this.courseLabList = coursesAndLabs;
     this.slotCList = courseSlots;
     this.slotLList = labSlots;
     this.slotList =  new ArrayList<Slot>();
     this.slotList.addAll(this.slotCList);
     this.slotList.addAll(this.slotLList);
+    this.root = new otsNode(null, new int[courseLabList.size()]);
   }
 
   //Nested class for Otree instantiation
@@ -151,6 +151,7 @@ public class OTS{
 					copy[index] = i;
 					children.add(new otsNode(aNode, copy));
 				}
+				aNode.setChildren(children);
 			}
 		}
 		else{											                                                  //if index in vector is a lab
@@ -159,6 +160,7 @@ public class OTS{
 				copy[index] = i;
 				children.add(new otsNode(aNode, copy));
 			}
+			aNode.setChildren(children);
 		}
 	}
 
@@ -312,10 +314,11 @@ private int searchArray(int [] array, int x){
 		
 		 
 
-          // Ensure that all 500 level courses are in different slots //
-
+          //// Ensure that all 500 level courses are in different slots ////
+          ////                                                          ////
           ArrayList<Integer> seniorCourseSlotIds = new ArrayList<Integer>();    // Create empty list to hold slot ids of slots that contain 500 level courses
-          for(int i = 0; i < assign.length; i++){
+
+          for(int i = 0; i < assign.length; i++){                               //for#1
             CourseLab aCourseLab = courseLabList.get(i);
             if(aCourseLab.isCourse()){ //check if element i is a course
                 String[] courseNameNumber = (aCourseLab.getGeneralName()).split(" ");// get course number
@@ -328,9 +331,50 @@ private int searchArray(int [] array, int x){
                       seniorCourseSlotIds.add(aCourseInSlot);
                 }
             }
+          }// End for#1
 
-          }// Scan assign, for each element that is a course with number >=500, check if slot id in list. if yes, return false. if no, check next assign element
-                // Check t
+          //// Ensure that all courses with lecture number >= 9 are scheduled in evening (>= 18:00) slots  ////
+          ////                                                                                            ////
+          for(int i = 0; i < assign.length; i++){                               //for#2: for each element in assign
+              CourseLab aCourseLab = courseLabList.get(i);
+              if(aCourseLab.isCourse() && (aCourseLab.getLectureNumber() >= 9)){   //check if if course lecture num >= 9
+                  int courseStartHour = ((slotCList.get(assign[i])).getStart()).getHour();
+                  if(courseStartHour < 18){
+                      System.out.println(aCourseLab.getName());
+                      return false;
+                  }
+              }
+
+          }// End for#2
+
+          //// Ensure that neither coursemax or labmax are violated for each slot used in assign ////
+          ////                                                                                   ////
+
+          // Make lists to track each time a slot is used by a course or lab
+          int[] slotUseCounts = new int[slotCList.size() + slotLList.size()];   // each element index corresponds to a slotId, and the contents of the element are the number of times it has been used
+          for(int i = 0; i < assign.length; i++){                               // For each slot used in assign - track how many times it was used
+              slotUseCounts[assign[i]-1]++;
+          }
+
+          //Check each slot that was used to see if max uses violated
+          for(int j = 0; j < slotUseCounts.length; j++){                        // For#3
+              if(slotUseCounts[j] > 0){
+                if(j < slotCList.size()){
+                    if(slotUseCounts[j] > slotCList.get(j).getMax()){
+                        //System.out.println("slot id: " + slotCList.get(j).getId());       //DEGUG statement TODO: delete when done debugging
+                        //System.out.println("course max for this slot: " + slotCList.get(j).getMax());//DEGUG statement TODO: delete when done debugging
+                        //System.out.println("courses assigned to this slot: " + slotUseCounts[j]);//DEGUG statement TODO: delete when done debugging
+                        return false;
+                    }
+                }
+                else{
+                    if(slotLList.get(j - slotCList.size()).getMax() > slotUseCounts[j]){
+                        return false;
+                    }
+                }
+              }
+          }// End for#3
+
 
           return true;
      }// End constr

@@ -3,9 +3,10 @@
  * version:
  * 0.1-11-11-2017
  * 0.2-16-11-2017
+ * 0.3-25-11-2017
  * 
  * TODO
- * 	- modify parser to include one tutorial to many course number relation
+ * 	- pending soft constraints
  */
 
 
@@ -85,6 +86,7 @@ public class Parser {
 			populateOverlappingSlotsList();
 			parseGeneralNotCompatible();
 			addTuesUnwanted();
+			add813Unwanted();
 			printLists();
 			buf.close();
 		}
@@ -269,6 +271,7 @@ public class Parser {
 	        courseName = line;
 	        courseLecture = line.substring(lecIndex);
 	        courseLecture = courseLecture.replaceAll("[ ]+"," ");
+	        courseName = courseName.replaceAll("[ ]+"," ");
 	        entry = courseLecture.split(" ");	        
 	        courseList.add(new Course(courseName.trim(), Integer.parseInt(entry[1])));	        
 	        line = buf.readLine();
@@ -531,7 +534,6 @@ public class Parser {
 	
 	private void zipCourseLab() {
 		int cnum = -1;
-		ArrayList<CourseLab> generic = new ArrayList<CourseLab>();
 		
 		for(int i = 0; i<courseList.size(); i++) {		// traverse course list
 			Course c = courseList.get(i);
@@ -567,6 +569,11 @@ public class Parser {
 		this.partialAssign = new int[courseLabList.size()];
 	}
 	
+	/*
+	 * Find the Tuesday 11:00 course slot (if it exists), and for each course, 
+	 * add the slotID for Tuesday 11:00 to its unwantedList
+	 */ 
+	
 	private void addTuesUnwanted(){
 		int tuesdaySlotId = 0;
 		for (int i = 0; i<slotCList.size(); i++){
@@ -584,6 +591,10 @@ public class Parser {
 				}
 			}
 		}
+	}
+	
+	private void add813Unwanted(){
+
 	}
 	
 		 //Check for lecture slots that overlap with other lecture slots
