@@ -14,7 +14,6 @@
 
 import java.util.*;                                                             // for HashMap
 import java.util.Arrays;
-import java.time.LocalTime;
 
 public class OTS{
 
@@ -26,11 +25,12 @@ public class OTS{
   protected ArrayList<CourseLab> courseLabList;
   protected ArrayList<Slot> slotCList;
   protected ArrayList<Slot> slotLList;
+  protected ArrayList<Slot> slotList;
   protected int foundIndividual;
 
   ////
   // Constructor - creates an Or-tree based search instance that will produce a
-  // valid (hard constraint satisfying) course assignment when appropriate control
+  // valid (hard constraint satisfying) course assignment when appropriate method (TODO: name TBD)
   // is executed.
   // @param coursesAndLabs  - the list of courseLab objects parsed from input file - also serves as index vector
   // @param courseSlots     - list of possible time slots that can hold courseLab objects of type course
@@ -40,7 +40,10 @@ public class OTS{
     this.courseLabList = coursesAndLabs;
     this.slotCList = courseSlots;
     this.slotLList = labSlots;
-    this.root = new otsNode(null, (new int[courseLabList.size()]));
+    this.slotList =  new ArrayList<Slot>();
+    this.slotList.addAll(this.slotCList);
+    this.slotList.addAll(this.slotLList);
+    this.root = new otsNode(null, new int[courseLabList.size()]);
   }
 
   //Nested class for Otree instantiation
@@ -56,11 +59,11 @@ public class OTS{
       this.parent = parent;
       this.assign = assign;
       this.solvedStatus = TBD;
-      this.children = new ArrayList<otsNode>();
       if (parent == null)
         this.depth = 0;
       else
         this.depth = parent.getDepth() + 1;
+      this.children = new ArrayList<otsNode>();
     }
 
     //public accessor and mutator methods - may not need these since data is protected
@@ -119,7 +122,7 @@ public class OTS{
 
   /* Helper methods for controls 1 and 2 */
 
-   /** TODO: move this to be a mutator method of otsNode
+	 /** TODO: move this to be a mutator method of otsNode
 	 * Check if a vector has all classes assigned
 	 * @param the node with the vector to be checked
 	 * @return return true if all classes assigned, elsewise false.
@@ -133,14 +136,14 @@ public class OTS{
 		  return true;
 	 }
 
-/**
+	/**
 	 * Altern creates the branches for a given node depending on if the next class to be assigned
 	 * is a lecture or a lab
 	 * @param otsNode to branch from
 	 */
 	private void altern(otsNode aNode){
 		int[] parentVector = aNode.getAssign();				                              //get the vector from the node
-		ArrayList<otsNode> children = new ArrayList<otsNode>();
+		ArrayList<otsNode> children = new ArrayList<>();
 		int index = searchArray(parentVector, 0);			                              //get index of first unassigned class
 		if (index > -1){
 			if (courseLabList.get(index).isCourse()){		                              //if index in vector is a course
@@ -149,7 +152,7 @@ public class OTS{
 					copy[index] = i;
 					children.add(new otsNode(aNode, copy));
 				}
-        aNode.setChildren(children);
+				aNode.setChildren(children);
 			}
 		}
 		else{											                                                  //if index in vector is a lab
@@ -158,7 +161,7 @@ public class OTS{
 				copy[index] = i;
 				children.add(new otsNode(aNode, copy));
 			}
-      aNode.setChildren(children);
+			aNode.setChildren(children);
 		}
 	}
 
@@ -185,8 +188,8 @@ private int searchArray(int [] array, int x){
   */
   private otsNode chooseNode(otsNode aNode){
     ArrayList<otsNode> children = aNode.getChildren();
-    ArrayList<otsNode> validChildren = new ArrayList<otsNode>();
-    for (int i = 0; i < children.size(); i++){					                            //Check if the children are valid vectors or not.
+    ArrayList<otsNode> validChildren = new ArrayList<>();
+    for (int i=0; i<children.size(); i++){					                            //Check if the children are valid vectors or not.
       if (children.get(i).getSolvedStatus() != 2 && constr(children.get(i).getAssign()) == true){ //Add valid children to a separate list
         children.get(i).setSolvedStatus(TBD);
         validChildren.add(children.get(i));
@@ -208,7 +211,7 @@ private int searchArray(int [] array, int x){
 
   private otsNode chooseNode2(otsNode aNode, int[] parent1, int[] parent2){
     ArrayList<otsNode> children = aNode.getChildren();
-    ArrayList<otsNode> validChildren = new ArrayList<otsNode>();
+    ArrayList<otsNode> validChildren = new ArrayList<>();
     int[] aNodeVector = aNode.getAssign();
     int firstNull = aNode.getNextToSchedule();                                    //Find position of left most null entry
     // Make a children whose most recent non null node matches a parent
@@ -273,7 +276,39 @@ private int searchArray(int [] array, int x){
   	 * check if assign is valid (against hard constraints)
   	 * returns true for valid, false for invalid
   	 */
-  	 public boolean constr(int[] assign) {
+	public boolean constr(int[] assign) {
+		 //In this loop, check for course incompatibility as well as unwanted time slots
+		for(int i = 0; i < assign.length; i++){
+			int slotId = assign[i];
+			if (slotId == 0){ continue;}//no slot index assigned, move to next index
+
+			//-----check that the course is not assigned to an unwanted slot. This includes the tuesday at 11:00 slot for courses
+			ArrayList<Integer> unwantedList = courseLabList.get(i).getUnWantedList();
+			for (int j=0; j<unwantedList.size();j++){
+				int unwantedId = unwantedList.get(j);
+				//System.out.println("unwantedId: "+unwantedId);
+				if (unwantedId == slotId){
+					//System.out.println(courseLabList.get(i).getName()+" did not want "+unwantedId);
+					return false;
+				}
+			}
+
+			//-----check for incompatibility with other courses
+			ArrayList<CourseLab> incompatibleList = this.courseLabList.get(i).getNotCompatibleCoursesLabs();
+			for (int j=0; j<incompatibleList.size(); j++){		//incompatibleLists can be optimized later****
+				int courseIndex = incompatibleList.get(j).getId();
+				int otherSlotId = assign[courseIndex-1];
+				if (otherSlotId == 0){ continue;}
+				if (slotsOverlap(slotId, otherSlotId))
+				{
+					//System.out.println("courseIndex: "+courseIndex);
+					//System.out.println("slotId: "+slotId+" otherSlotId: "+otherSlotId);
+					//System.out.println("Incompatible: "+courseLabList.get(i).getName()+", "+courseLabList.get(courseIndex-1).getName());
+					return false;
+				}
+			}
+		}//end incompatibility check
+
 
           //// Ensure that all 500 level courses are in different slots ////
           ////                                                          ////
@@ -314,7 +349,8 @@ private int searchArray(int [] array, int x){
           // Make lists to track each time a slot is used by a course or lab
           int[] slotUseCounts = new int[slotCList.size() + slotLList.size()];   // each element index corresponds to a slotId, and the contents of the element are the number of times it has been used
           for(int i = 0; i < assign.length; i++){                               // For each slot used in assign - track how many times it was used
-              slotUseCounts[assign[i]-1]++;
+              if(assign[i] != 0)
+                slotUseCounts[assign[i]-1]++;
           }
 
           //Check each slot that was used to see if max uses violated
@@ -339,20 +375,25 @@ private int searchArray(int [] array, int x){
           return true;
      }// End constr
 
+	public boolean slotsOverlap(int slotId, int otherSlotId){
+		if (slotId == otherSlotId){
+			return true;
+		}
+		ArrayList<Integer>  overlappingSlots = this.slotList.get(slotId-1).getOverlappingSlots();
+		for(int i=0; i < overlappingSlots.size(); i++){
+			if(otherSlotId == overlappingSlots.get(i)){
+				return true;//found overlapping slots
+			}
+		}
+		return false;
+	}
 
-
-
-
-
-
-
-
-
+///////////////////////// Control Functions ///////////////////////////////////
 
   // Control 1
   public int[] getIndividual(){
 	   foundIndividual = 0;
-     altern(root);
+		altern(root);
 		 otsNode currentNode = root;
 		 while (foundIndividual == 0){
 		     currentNode = chooseNode(currentNode);

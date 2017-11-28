@@ -3,9 +3,10 @@
  * version:
  * 0.1-11-11-2017
  * 0.2-16-11-2017
+ * 0.3-25-11-2017
  *
  * TODO
- * 	- modify parser to include one tutorial to many course number relation
+ * 	- pending soft constraints
  */
 
 
@@ -29,6 +30,7 @@ public class Parser {
 	private ArrayList<Slot>		slotLList;
 	private ArrayList<Slot>		slotCList;
 	private ArrayList<CourseLab> courseLabList;
+	private int []				partialAssign;
 
 	public Parser() {
 
@@ -74,9 +76,17 @@ public class Parser {
 				if(line.contains("Not compatible:")) {
 					parseNotCompatible(buf);
 				}
+				if(line.contains("Unwanted:")){
+					parseUnwanted(buf);
+				}
+				if(line.contains("Partial assignments:")){
+					parsePartialAssignments(buf);
+				}
 			}
 			populateOverlappingSlotsList();
 			parseGeneralNotCompatible();
+			addTuesUnwanted();
+			add813Unwanted();
 			printLists();
 			buf.close();
 		}
@@ -130,6 +140,14 @@ public class Parser {
 	 */
 	public ArrayList<Slot> getCourseSlotList(){
 		return slotCList;
+	}
+
+	/**
+	 * Returns partial assignment vector
+	 * @return int array
+	 */
+	public int [] getPartialAssign(){
+		return partialAssign;
 	}
 
 	//
@@ -253,6 +271,7 @@ public class Parser {
 	        courseName = line;
 	        courseLecture = line.substring(lecIndex);
 	        courseLecture = courseLecture.replaceAll("[ ]+"," ");
+	        courseName = courseName.replaceAll("[ ]+"," ");
 	        entry = courseLecture.split(" ");
 	        courseList.add(new Course(courseName.trim(), Integer.parseInt(entry[1])));
 	        line = buf.readLine();
@@ -263,7 +282,210 @@ public class Parser {
 	    }
 	}
 
-		private void printLists() {
+	private void parseLabs(BufferedReader buf) {
+		String line = "";
+
+		try {
+			line = buf.readLine();							// line is the full lab name
+			line.trim();
+			while(!line.equals("")){
+				line = line.replaceAll("[ ]+", " ");		// replaces multiple whitespace to a single whitespace
+				int index = -1;
+				if(line.contains("TUT"))					// stores index of TUT or LAB in line entry
+					index = line.indexOf("TUT");
+				else if(line.contains("LAB"))
+					index = line.indexOf("LAB");
+				if(index >-1) {								// if there is an index of tut or lab, record lab number and add to lab list
+					int num = Integer.parseInt(line.substring(index+4));
+					labList.add(new Lab(line, num, null));
+				}
+				line = buf.readLine();
+			}
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
+		catch(NumberFormatException e) {
+			e.printStackTrace();
+		}
+		zipCourseLab();
+
+
+	}
+
+	private void parseNotCompatible(BufferedReader buf){
+		String[] entry;
+		String line = "";
+		CourseLab courseLab1 = courseLabList.get(0);
+		CourseLab courseLab2 = courseLabList.get(1);
+		ArrayList<CourseLab> courseLab1NCList = courseLab1.getNotCompatibleCoursesLabs();
+		ArrayList<CourseLab> courseLab2NCList = courseLab2.getNotCompatibleCoursesLabs();
+		try {
+			line = buf.readLine();
+			//System.out.println("start");
+			while(!line.equals("")) {
+				entry = line.split(",");
+				entry[0] = entry[0].trim();
+				//System.out.println(entry[0]);
+				entry[1] = entry[1].trim();
+				//System.out.println(entry[1]);
+				//System.out.println();
+
+				for (int i = 0; i<courseLabList.size(); i++){
+					CourseLab aCourseLab = courseLabList.get(i);
+					//System.out.println(aCourseLab.getName());
+					if (entry[0].equals(aCourseLab.getName()))
+					{
+						courseLab1 = aCourseLab;
+						System.out.print(entry[0]+", ");
+					}
+					else if (entry[1].equals(aCourseLab.getName()))
+					{
+						courseLab2 = aCourseLab;
+						System.out.print(entry[1]+", ");
+					}
+				}
+
+				System.out.println();
+
+				courseLab1NCList = courseLab1.getNotCompatibleCoursesLabs();
+				courseLab2NCList = courseLab2.getNotCompatibleCoursesLabs();
+
+				courseLab1NCList.add(courseLab2);
+				courseLab2NCList.add(courseLab1);
+
+				line = buf.readLine();
+				//System.out.println(line);
+			}
+		}
+
+		catch(IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void parseUnwanted(BufferedReader buf){
+		String line = "";
+		String[] entry;
+		String[] hm;
+		try {
+			line = buf.readLine();
+			//System.out.println(line);
+			while(!line.equals("")) {
+				entry = line.split(",");
+				for (int i = 0; i< entry.length; i++){
+					entry[i] = entry[i].trim();
+				}
+				hm = entry[2].split(":");
+				int h1 = Integer.parseInt(hm[0]);
+				int m1 = Integer.parseInt(hm[1]);
+				LocalTime time = LocalTime.of(h1, m1);
+				System.out.println("LocalTime: "+time.toString()); 		//cast time to LocalTime for comparison
+
+				for (int i = 0; i < courseLabList.size(); i++){			//find the courseLab with the exact same name
+					CourseLab aCourseLab = courseLabList.get(i);
+					ArrayList<Integer> aCourseLabUnwantedList = aCourseLab.getUnWantedList();
+					if (entry[0].equals(aCourseLab.getName())){
+						//System.out.println("entry[0]: "+entry[0]);
+						if (aCourseLab.isCourse()){						//if the courseLab is a course
+							//System.out.println(entry[1]+" "+entry[2]);
+							for (int j= 0; j<slotCList.size(); j++){	//find slot that matches entry[1] and entry[2]
+								Slot aSlot = slotCList.get(j);
+								System.out.println(aSlot.getDay()+" "+aSlot.getStart().toString());
+								if (aSlot.getDay().equals(entry[1]) && aSlot.getStart().toString().equals(time.toString())){ //if the slot is found, add the slot id to the unwantedIdsList for the courseLab
+									aCourseLabUnwantedList.add(aSlot.getId());
+									//System.out.println(entry[1]+" "+entry[2]);
+									break; //break from searching for slot
+								}
+							}
+						}
+						else{											//if the courseLab is a lab
+							for (int j= 0; j<slotLList.size(); j++){
+								Slot aSlot = slotLList.get(j);
+								if (aSlot.getDay().equals(entry[1]) && aSlot.getStart().toString().equals(time.toString())){
+									aCourseLabUnwantedList.add(aSlot.getId());
+									//System.out.println(entry[1]+" "+entry[2]);
+									break;	//
+								}
+							}
+						}
+						break;	//break from searching for courseLab
+					}
+				}
+				line = buf.readLine();
+			}
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void parsePartialAssignments(BufferedReader buf){
+		String line = "";
+		String[] entry;
+		String[] hm;
+		try {
+			line = buf.readLine();
+
+			while(!line.equals("")) {
+				System.out.println(line);
+				entry = line.split(",");
+				for (int i = 0; i< entry.length; i++){					//split line by ",", entry[0] = course name
+					entry[i] = entry[i].trim();							//entry[1] = day, entry[2] = time
+				}
+				hm = entry[2].split(":");
+				int h1 = Integer.parseInt(hm[0]);
+				int m1 = Integer.parseInt(hm[1]);
+				LocalTime time = LocalTime.of(h1, m1);
+				System.out.println("LocalTime: "+time.toString()); 		//cast time to LocalTime for comparison
+
+				for (int i = 0; i < courseLabList.size(); i++){			//find the courseLab with the exact same name
+					CourseLab aCourseLab = courseLabList.get(i);
+					if (entry[0].equals(aCourseLab.getName())){
+						//System.out.println("entry[0]: "+entry[0]);
+						if (aCourseLab.isCourse()){						//if the courseLab is a course
+							//System.out.println(entry[1]+" "+entry[2]);
+							for (int j= 0; j<slotCList.size(); j++){	//find slot that matches entry[1] and entry[2]
+								Slot aSlot = slotCList.get(j);
+								//System.out.println(aSlot.getDay()+" "+aSlot.getStart().toString());
+								if (aSlot.getDay().equals(entry[1]) && aSlot.getStart().toString().equals(time.toString())){ //if the slot is found, add the slot id to the unwantedIdsList for the courseLab
+									partialAssign[i] = aSlot.getId();
+									//System.out.println(entry[1]+" "+entry[2]);
+									break; //break from searching for slot
+								}
+							}
+						}
+						else{											//if the courseLab is a lab
+							for (int j= 0; j<slotLList.size(); j++){
+								System.out.println(j);
+								Slot aSlot = slotLList.get(j);
+								if (aSlot.getDay().equals(entry[1]) && aSlot.getStart().toString().equals(time.toString())){
+									partialAssign[i] = aSlot.getId();
+									System.out.println(entry[1]+" "+entry[2]);
+									break;	//
+								}
+							}
+						}
+						break;	//break from searching for courseLab
+					}
+				}
+				line = buf.readLine();
+				if (line == null)
+					break;
+			}
+			System.out.print("partialAssign: ");
+			for (int i = 0; i<courseLabList.size(); i++){
+				System.out.print(partialAssign[i]);
+			}
+			System.out.println();
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void printLists() {
 		System.out.println("List of courses:");
 		for(int i = 0; i<courseList.size(); i++) {
 			System.out.println(courseList.get(i).name()+" LEC: "+courseList.get(i).getLecNum());
@@ -296,18 +518,22 @@ public class Parser {
 		}
 		System.out.println("\nList of sorted course and lab list:");
 		for(int i =0; i<courseLabList.size(); i++){
-			System.out.println(courseLabList.get(i).getId()+": "+courseLabList.get(i).getName()+" Lecture: "+courseLabList.get(i).getLectureNumber()+"\n Not compatible: ");
+			System.out.println(courseLabList.get(i).getId()+": "+courseLabList.get(i).getName()+" Lecture: "+courseLabList.get(i).getLectureNumber()+" Not compatible: ");
 			ArrayList<CourseLab> notCompatibleList = courseLabList.get(i).getNotCompatibleCoursesLabs();
 			for (int y =0; y<notCompatibleList.size(); y++){
 				System.out.println(notCompatibleList.get(y).getName());
 			}
+			System.out.print("Unwanted: ");
+			for (int j= 0; j<courseLabList.get(i).getUnWantedList().size();j++){
+				System.out.println(courseLabList.get(i).getUnWantedList().get(j)+" ");
+			}
+			System.out.println();
 			System.out.println();
 		}
 	}
 
 	private void zipCourseLab() {
 		int cnum = -1;
-		ArrayList<CourseLab> generic = new ArrayList<CourseLab>();
 
 		for(int i = 0; i<courseList.size(); i++) {		// traverse course list
 			Course c = courseList.get(i);
@@ -340,35 +566,34 @@ public class Parser {
 				}
 			}
 		}
+		this.partialAssign = new int[courseLabList.size()];
 	}
 
-	private void parseLabs(BufferedReader buf) {
-		String line = "";
+	/*
+	 * Find the Tuesday 11:00 course slot (if it exists), and for each course,
+	 * add the slotID for Tuesday 11:00 to its unwantedList
+	 */
 
-		try {
-			line = buf.readLine();							// line is the full lab name
-			line.trim();
-			while(!line.equals("")){
-				line = line.replaceAll("[ ]+", " ");		// replaces multiple whitespace to a single whitespace
-				int index = -1;
-				if(line.contains("TUT"))					// stores index of TUT or LAB in line entry
-					index = line.indexOf("TUT");
-				else if(line.contains("LAB"))
-					index = line.indexOf("LAB");
-				if(index >-1) {								// if there is an index of tut or lab, record lab number and add to lab list
-					int num = Integer.parseInt(line.substring(index+4));
-					labList.add(new Lab(line, num, null));
-				}
-				line = buf.readLine();
+	private void addTuesUnwanted(){
+		int tuesdaySlotId = 0;
+		for (int i = 0; i<slotCList.size(); i++){
+			Slot aSlot = slotCList.get(i);
+			if (aSlot.getDay().equals("TU") && aSlot.getStart().toString().equals("11:00")){
+				tuesdaySlotId = aSlot.getId();
 			}
 		}
-		catch(IOException e) {
-			e.printStackTrace();
+		if (tuesdaySlotId > 0){
+			for (int i = 0; i<courseLabList.size(); i++){
+				CourseLab aCourseLab = courseLabList.get(i);
+				if (aCourseLab.isCourse()){
+					ArrayList<Integer> unwantedList = aCourseLab.getUnWantedList();
+					unwantedList.add(tuesdaySlotId);
+				}
+			}
 		}
-		catch(NumberFormatException e) {
-			e.printStackTrace();
-		}
-		zipCourseLab();
+	}
+
+	private void add813Unwanted(){
 
 	}
 
@@ -496,57 +721,6 @@ public class Parser {
 		}
 	}
 
-	private void parseNotCompatible(BufferedReader buf){
-		String[] entry;
-		String line = "";
-		CourseLab courseLab1 = courseLabList.get(0);
-		CourseLab courseLab2 = courseLabList.get(1);
-		ArrayList<CourseLab> courseLab1NCList = courseLab1.getNotCompatibleCoursesLabs();
-		ArrayList<CourseLab> courseLab2NCList = courseLab2.getNotCompatibleCoursesLabs();
-		try {
-			line = buf.readLine();
-			//System.out.println("start");
-			while(!line.equals("")) {
-				entry = line.split(",");
-				entry[0] = entry[0].trim();
-				//System.out.println(entry[0]);
-				entry[1] = entry[1].trim();
-				//System.out.println(entry[1]);
-				//System.out.println();
-
-				for (int i = 0; i<courseLabList.size(); i++){
-					CourseLab aCourseLab = courseLabList.get(i);
-					//System.out.println(aCourseLab.getName());
-					if (entry[0].equals(aCourseLab.getName()))
-					{
-						courseLab1 = aCourseLab;
-						System.out.print(entry[0]+", ");
-					}
-					else if (entry[1].equals(aCourseLab.getName()))
-					{
-						courseLab2 = aCourseLab;
-						System.out.print(entry[1]+", ");
-					}
-				}
-
-				System.out.println();
-
-				courseLab1NCList = courseLab1.getNotCompatibleCoursesLabs();
-				courseLab2NCList = courseLab2.getNotCompatibleCoursesLabs();
-
-				courseLab1NCList.add(courseLab2);
-				courseLab2NCList.add(courseLab1);
-
-				line = buf.readLine();
-				//System.out.println(line);
-			}
-		}
-
-		catch(IOException e) {
-			e.printStackTrace();
-		}
-
-	}
 
 	private void parseGeneralNotCompatible(){
 		for (int i = 0; i < courseLabList.size(); i++){
