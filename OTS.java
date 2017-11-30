@@ -12,14 +12,14 @@
 * - 26 November 2017
 */
 
-import java.util.*;                                                             // for HashMap
+import java.util.*;
 import java.util.Arrays;
 
 public class OTS{
 
   public static final int YES = 1;
   public static final int NO = 2;
-  public static final int TBD = 3;                                            // This represents '?' pr in {yes,?,no}
+  public static final int TBD = 3;                                              // This represents '?' pr in {yes,?,no}
   //Instance variables
   protected otsNode root;
   protected ArrayList<CourseLab> courseLabList;
@@ -59,10 +59,14 @@ public class OTS{
       this.parent = parent;
       this.assign = assign;
       this.solvedStatus = TBD;
-      if (parent == null)
+      if (parent == null){
         this.depth = 0;
-      else
+        System.out.println("********************** DUBUG: Root node created.");
+      }
+      else{
         this.depth = parent.getDepth() + 1;
+        System.out.println("********************** DUBUG: Non-root node created.");
+      }
       this.children = new ArrayList<otsNode>();
     }
 
@@ -143,6 +147,7 @@ public class OTS{
 	 */
 	private void altern(otsNode aNode){
 		int[] parentVector = aNode.getAssign();				                              //get the vector from the node
+    //System.out.println("********************** DUBUG: parent assignment vector: " + Arrays.toString(parentVector));
 		ArrayList<otsNode> children = new ArrayList<>();
 		int index = searchArray(parentVector, 0);			                              //get index of first unassigned class
 		if (index > -1){
@@ -154,15 +159,15 @@ public class OTS{
 				}
 				aNode.setChildren(children);
 			}
-		}
-		else{											                                                  //if index in vector is a lab
-			for (int i = slotCList.size()+1; i<=slotCList.size()+slotLList.size(); i++){	//create a branch for each lab slot
-				int[] copy = parentVector.clone();
-				copy[index] = i;
-				children.add(new otsNode(aNode, copy));
-			}
-			aNode.setChildren(children);
-		}
+  		else{											                                                  //if index in vector is a lab
+  			for (int i = (slotCList.size()+1); i<=(slotCList.size()+slotLList.size()); i++){	//create a branch for each lab slot
+  				int[] copy = parentVector.clone();
+  				copy[index] = i;
+  				children.add(new otsNode(aNode, copy));
+  			}
+  			aNode.setChildren(children);
+  		}
+    }
 	}
 
 
@@ -189,18 +194,27 @@ private int searchArray(int [] array, int x){
   private otsNode chooseNode(otsNode aNode){
     ArrayList<otsNode> children = aNode.getChildren();
     ArrayList<otsNode> validChildren = new ArrayList<>();
-    for (int i=0; i<children.size(); i++){					                            //Check if the children are valid vectors or not.
-      if (children.get(i).getSolvedStatus() != 2 && constr(children.get(i).getAssign()) == true){ //Add valid children to a separate list
+    if(aNode.getParent() == null){
+      System.out.println("********************** DUBUG: In chooseNode(root)");
+      System.out.println("********************** DUBUG: root has " + children.size() + " children");
+    }
+
+    for (int i=0; i<children.size(); i++){					                            // Check if the children are valid vectors or not.
+      if (children.get(i).getSolvedStatus() != 2 && constr(children.get(i).getAssign()) == true){ // Add valid children to a separate list
         children.get(i).setSolvedStatus(TBD);
         validChildren.add(children.get(i));
       }
       else{
-        children.get(i).setSolvedStatus(2);				                              //Set invalid children to solvedStatus = NO
+        children.get(i).setSolvedStatus(NO);				                              // Set invalid child's solvedStatus = NO
       }
     }
+    if(aNode.getParent() == null){
+        System.out.println("********************** DUBUG: root has " + validChildren.size() + " valid children.");
+
+    }
     int randSize = validChildren.size();
-    if (randSize == 0){				                                                  //if all children are invalid, go back to the aNode's parent node and choose a different node
-       aNode.setSolvedStatus(2);
+    if (randSize == 0){				                                                  // If all children are invalid, go back to the aNode's parent node and choose a different node
+       aNode.setSolvedStatus(NO);
        return chooseNode(aNode.getParent());
     }
     randSize = validChildren.size();
@@ -266,10 +280,6 @@ private int searchArray(int [] array, int x){
     }
     return validChildren.get(1);    //TODO: fix this
   }
-
-
-
-
 
 
      /*
@@ -345,7 +355,7 @@ private int searchArray(int [] array, int x){
 
           //// Ensure that neither coursemax or labmax are violated for each slot used in assign ////
           ////                                                                                   ////
-
+/*
           // Make lists to track each time a slot is used by a course or lab
           int[] slotUseCounts = new int[slotCList.size() + slotLList.size()];   // each element index corresponds to a slotId, and the contents of the element are the number of times it has been used
           for(int i = 0; i < assign.length; i++){                               // For each slot used in assign - track how many times it was used
@@ -371,7 +381,7 @@ private int searchArray(int [] array, int x){
                 }
               }
           }// End for#3
-
+*/
           return true;
      }// End constr
 
@@ -394,14 +404,29 @@ private int searchArray(int [] array, int x){
   public int[] getIndividual(){
 	   foundIndividual = 0;
 		altern(root);
+
+    //System.out.println("********************** DUBUG: assignment vectors of children of root:");
+    ArrayList<otsNode> childrenOfRoot = root.getChildren();
+
+    System.out.println("********************** DUBUG: Returned from altern(root)");
+    System.out.println("********************** DUBUG: Root has " + childrenOfRoot.size() + " children.");
+    System.out.println("********************** DUBUG: assignment vectors of children of root:");
+    for(int i = 0; i < childrenOfRoot.size(); i++){                             ////////////////////////////////DEBUG
+      int[] cAssign = childrenOfRoot.get(i).getAssign();
+      System.out.println("********************** DUBUG: " + Arrays.toString(cAssign));
+      System.out.println("****************************** DUBUG: this child has " + childrenOfRoot.get(i).getChildren().size() + " children.");
+    }
+
 		 otsNode currentNode = root;
 		 while (foundIndividual == 0){
 		     currentNode = chooseNode(currentNode);
+         System.out.println("********************** DUBUG: returned from chooseNode");
 			   if (isFullVector(currentNode)){
 				       foundIndividual = 1;
 			   }
 			   else{
 				       if (currentNode.getChildren().size() == 0){
+
 					            altern(currentNode);
 				       }
 			   }
@@ -462,8 +487,7 @@ private int searchArray(int [] array, int x){
     //int[] slotUseCounts = new int[slotCList.size() + slotLList.size()]; // each element index corresponds to a slotId, and the contents of the element are the number of times it has been used
     //System.out.println("number of slots: " + slotUseCounts.length);
     int[] tAssign = testOrTreeSearchInstance.getIndividual();
-    System.out.println("Valid individual: ");
-    System.out.println(tAssign);
+    System.out.println("Valid individual: " + Arrays.toString(tAssign));
   }
 
 
