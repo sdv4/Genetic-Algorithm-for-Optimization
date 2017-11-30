@@ -299,6 +299,7 @@ private int searchArray(int [] array, int x){
 				//System.out.println("unwantedId: "+unwantedId);
 				if (unwantedId == slotId){
 					//System.out.println(courseLabList.get(i).getName()+" did not want "+unwantedId);
+          System.out.println("*******************DEBUG: Constr-unwanted failed");
 					return false;
 				}
 			}
@@ -314,6 +315,7 @@ private int searchArray(int [] array, int x){
 					//System.out.println("courseIndex: "+courseIndex);
 					//System.out.println("slotId: "+slotId+" otherSlotId: "+otherSlotId);
 					//System.out.println("Incompatible: "+courseLabList.get(i).getName()+", "+courseLabList.get(courseIndex-1).getName());
+          System.out.println("*******************DEBUG: Constr-incompatability failed");
 					return false;
 				}
 			}
@@ -329,10 +331,13 @@ private int searchArray(int [] array, int x){
             if(aCourseLab.isCourse()){ //check if element i is a course
                 String[] courseNameNumber = (aCourseLab.getGeneralName()).split(" ");// get course number
                 int courseNumber = Integer.parseInt(courseNameNumber[1]);
-                if(courseNumber >= 500){
+                if(courseNumber >= 500 & assign[i] != 0){
                   int aCourseInSlot = assign[i];
-                  if(seniorCourseSlotIds.contains(aCourseInSlot))
+                  if(seniorCourseSlotIds.contains(aCourseInSlot)){
+                      System.out.println("*******************DEBUG: Constr-500 Level in different slots failed with: ");
+                      System.out.println(Arrays.toString(assign));
                       return false;
+                  }
                   else
                       seniorCourseSlotIds.add(aCourseInSlot);
                 }
@@ -342,13 +347,17 @@ private int searchArray(int [] array, int x){
           //// Ensure that all courses with lecture number >= 9 are scheduled in evening (>= 18:00) slots  ////
           ////                                                                                            ////
           for(int i = 0; i < assign.length; i++){                               //for#2: for each element in assign
-              CourseLab aCourseLab = courseLabList.get(i);
-              if(aCourseLab.isCourse() && (aCourseLab.getLectureNumber() >= 9)){   //check if if course lecture num >= 9
-                  int courseStartHour = ((slotCList.get(assign[i])).getStart()).getHour();
-                  if(courseStartHour < 18){
-                      System.out.println(aCourseLab.getName());
-                      return false;
-                  }
+              if(assign[i] != 0){
+                CourseLab aCourseLab = courseLabList.get(i);
+                if(aCourseLab.isCourse() && (aCourseLab.getLectureNumber() >= 9)){   //check if if course lecture num >= 9
+                    int courseStartHour = ((slotCList.get(assign[i]-1)).getStart()).getHour();
+                    if(courseStartHour < 18){
+                        System.out.println(aCourseLab.getName());
+                        System.out.println("*******************DEBUG: Constr- lecture numbers>9 in different slots failed with: ");
+                        System.out.println(Arrays.toString(assign));
+                        return false;
+                    }
+                }
               }
 
           }// End for#2
@@ -466,7 +475,7 @@ private int searchArray(int [] array, int x){
 
 // main method for testing - TODO: delete when class fully implemented and tested
   public static void main(String[] args){
-    Parser aParser = new Parser("deptinstShort.txt");
+    Parser aParser = new Parser("deptinst1.txt");
     aParser.start();
     ArrayList<CourseLab> courseLabList = aParser.getCourseLabList();
     ArrayList<Slot> slotCList = aParser.getCourseSlotList();
