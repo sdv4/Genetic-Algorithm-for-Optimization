@@ -364,12 +364,12 @@ private int searchArray(int [] array, int x){
 
           //// Ensure that neither coursemax or labmax are violated for each slot used in assign ////
           ////                                                                                   ////
-/*
+
           // Make lists to track each time a slot is used by a course or lab
           int[] slotUseCounts = new int[slotCList.size() + slotLList.size()];   // each element index corresponds to a slotId, and the contents of the element are the number of times it has been used
           for(int i = 0; i < assign.length; i++){                               // For each slot used in assign - track how many times it was used
               if(assign[i] != 0)
-                slotUseCounts[assign[i]-1]++;
+                slotUseCounts[(assign[i])-1]++;
           }
 
           //Check each slot that was used to see if max uses violated
@@ -380,17 +380,24 @@ private int searchArray(int [] array, int x){
                         //System.out.println("slot id: " + slotCList.get(j).getId());       //DEGUG statement TODO: delete when done debugging
                         //System.out.println("course max for this slot: " + slotCList.get(j).getMax());//DEGUG statement TODO: delete when done debugging
                         //System.out.println("courses assigned to this slot: " + slotUseCounts[j]);//DEGUG statement TODO: delete when done debugging
+                        System.out.println("*******************DEBUG: Constr- coursemax failed: ");
+                        System.out.println("Coursemax: " + slotCList.get(j).getMax());
+                        System.out.println("Number of courses in slot with id " + (j+1) + ": " + slotUseCounts[j]);
+
                         return false;
                     }
                 }
                 else{
-                    if(slotLList.get(j - slotCList.size()).getMax() > slotUseCounts[j]){
+                    if(slotUseCounts[j] > slotLList.get(j - slotCList.size()).getMax()){
+                        System.out.println("*******************DEBUG: Constr- labmax failed: ");
+                        System.out.println("Labmax: " + (slotLList.get(j - slotCList.size()).getMax()));
+                        System.out.println("Number of courses in slot with id " + ((j - slotCList.size())+1) + ": " + slotUseCounts[j]);
                         return false;
                     }
                 }
               }
           }// End for#3
-*/
+
           return true;
      }// End constr
 
