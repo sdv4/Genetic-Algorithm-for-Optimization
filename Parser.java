@@ -4,7 +4,7 @@
  * 0.1-11-11-2017
  * 0.2-16-11-2017
  * 0.3-25-11-2017
- * 
+ *
  * TODO
  * 	- pending soft constraints
  */
@@ -31,11 +31,11 @@ public class Parser {
 	private ArrayList<Slot>		slotCList;
 	private ArrayList<CourseLab> courseLabList;
 	private int []				partialAssign;
-	
+
 	public Parser() {
-		
+
 	}
-	
+
 	/**
 	 * The primary constructor. This initializes declared variables to null values.
 	 * @param filepath The file path of the textfile that contains the entries.
@@ -96,12 +96,12 @@ public class Parser {
 			e.printStackTrace();
 		}
 	}
-	
+
 	//
 	// GETTER METHODS
 	//
 	//
-	
+
 	/**
 	 * Returns list of all CourseLabs
 	 * @return ArrayList of type CourseLab
@@ -109,7 +109,7 @@ public class Parser {
 	public ArrayList<CourseLab> getCourseLabList(){
 		return courseLabList;
 	}
-	
+
 	/**
 	 * Returns list of all Courses
 	 * @return ArrayList of type Course
@@ -117,7 +117,7 @@ public class Parser {
 	public ArrayList<Course> getCourseList(){
 		return courseList;
 	}
-	
+
 	/**
 	 * Returns list of all Labs
 	 * @return ArrayList of type Lab
@@ -125,7 +125,7 @@ public class Parser {
 	public ArrayList<Lab> getLabList(){
 		return labList;
 	}
-	
+
 	/**
 	 * Returns list of all Lab Slots
 	 * @return ArrayList of type Slot
@@ -133,7 +133,7 @@ public class Parser {
 	public ArrayList<Slot> getLabSlotList(){
 		return slotLList;
 	}
-	
+
 	/**
 	 * Returns list of all Course Slots
 	 * @return ArrayList of type Slot
@@ -141,7 +141,7 @@ public class Parser {
 	public ArrayList<Slot> getCourseSlotList(){
 		return slotCList;
 	}
-	
+
 	/**
 	 * Returns partial assignment vector
 	 * @return int array
@@ -149,12 +149,12 @@ public class Parser {
 	public int [] getPartialAssign(){
 		return partialAssign;
 	}
-	
+
 	//
 	// PRIVATE METHODS
 	//
 	//
-	
+
 	/**
 	 * Parses and adds the course slots entries from the text file to the corresponding array list.
 	 * @param buf The buffered reader variable to read the entries from.
@@ -167,7 +167,7 @@ public class Parser {
 		int h2 = -1;
 		int m1 = -1;
 		int m2 = -1;
-		
+
 		try{
 			line = buf.readLine();								// reads first entry to line
 			while(!line.equals("")){
@@ -178,8 +178,8 @@ public class Parser {
 				hm = entry[1].split(":");						// splits the time entry to hours and minutes: h1, m1 respectively
 				h1 = Integer.parseInt(hm[0]);
 				m1 = Integer.parseInt(hm[1]);
-				
-				//adjusts end time according to the day entry (+1hour for MWD, +1hour 30mins for TTh)				
+
+				//adjusts end time according to the day entry (+1hour for MWD, +1hour 30mins for TTh)
 				if(entry[0].equals("MO") || entry[0].equals("WE") || entry[0].equals("FR")) {
 					h2 = h1+1;
 					m2 = m1;
@@ -191,7 +191,7 @@ public class Parser {
 						h2++;
 						m2 = m2-60;
 					}
-				}				
+				}
 				slotCList.add(new Slot(true, LocalTime.of(h1,m1), LocalTime.of(h2, m2), entry[0], Integer.parseInt(entry[2]), Integer.parseInt(entry[3])));
 				line = buf.readLine();							// reads next entry to line
 			}
@@ -199,9 +199,9 @@ public class Parser {
 		catch (IOException e){
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	/**
 	 * Parse and add the lab slot entries from the text file to the corresponding array list.
 	 * @param buf The buffered reader to read the entries.
@@ -214,7 +214,7 @@ public class Parser {
 		int h2 = -1;
 		int m1 = -1;
 		int m2 = -1;
-		
+
 		try{
 			line = buf.readLine();								// reads first entry to line
 			while(!line.equals("")){
@@ -227,8 +227,8 @@ public class Parser {
 				hm[1] = hm[1].replaceAll(" ","");
 				h1 = Integer.parseInt(hm[0]);
 				m1 = Integer.parseInt(hm[1]);
-				
-				//adjusts end time according to the day entry (+1hour for MWD, +1hour 30mins for TTh)				
+
+				//adjusts end time according to the day entry (+1hour for MWD, +1hour 30mins for TTh)
 				if(entry[0].equals("MO") || entry[0].equals("WE")) {
 					h2 = h1+1;
 					m2 = m1;
@@ -244,7 +244,7 @@ public class Parser {
 						h2++;
 						m2 = m2-60;
 					}
-				}				
+				}
 				slotLList.add(new Slot(false, LocalTime.of(h1,m1), LocalTime.of(h2, m2), entry[0], Integer.parseInt(entry[2]), Integer.parseInt(entry[3])));
 				line = buf.readLine();							// reads next entry to line
 			}
@@ -252,7 +252,7 @@ public class Parser {
 		catch (IOException e){
 			e.printStackTrace();
 		}
-		
+
 	}
 	/**
 	 * Parse and add the course entries from the text file to the corresponding array list.
@@ -263,28 +263,28 @@ public class Parser {
 	    String[] entry;
 	    String courseName = "";
 	    String courseLecture = "";
-	    
+
 	    try{
 	      line = buf.readLine();				// reada first entry to line
-	      while(!line.equals("")){	        
-	        int lecIndex = line.indexOf("LEC");	        
+	      while(!line.equals("")){
+	        int lecIndex = line.indexOf("LEC");
 	        courseName = line;
 	        courseLecture = line.substring(lecIndex);
 	        courseLecture = courseLecture.replaceAll("[ ]+"," ");
 	        courseName = courseName.replaceAll("[ ]+"," ");
-	        entry = courseLecture.split(" ");	        
-	        courseList.add(new Course(courseName.trim(), Integer.parseInt(entry[1])));	        
+	        entry = courseLecture.split(" ");
+	        courseList.add(new Course(courseName.trim(), Integer.parseInt(entry[1])));
 	        line = buf.readLine();
-	      }   
+	      }
 	    }
 	    catch(IOException e){
 	      e.printStackTrace();
 	    }
 	}
-	
+
 	private void parseLabs(BufferedReader buf) {
 		String line = "";
-		
+
 		try {
 			line = buf.readLine();							// line is the full lab name
 			line.trim();
@@ -309,10 +309,10 @@ public class Parser {
 			e.printStackTrace();
 		}
 		zipCourseLab();
-		
-		
+
+
 	}
-	
+
 	private void parseNotCompatible(BufferedReader buf){
 		String[] entry;
 		String line = "";
@@ -330,14 +330,14 @@ public class Parser {
 				entry[1] = entry[1].trim();
 				//System.out.println(entry[1]);
 				//System.out.println();
-	
+
 				for (int i = 0; i<courseLabList.size(); i++){
 					CourseLab aCourseLab = courseLabList.get(i);
 					//System.out.println(aCourseLab.getName());
 					if (entry[0].equals(aCourseLab.getName()))
 					{
 						courseLab1 = aCourseLab;
-						System.out.print(entry[0]+", ");	
+						System.out.print(entry[0]+", ");
 					}
 					else if (entry[1].equals(aCourseLab.getName()))
 					{
@@ -345,26 +345,26 @@ public class Parser {
 						System.out.print(entry[1]+", ");
 					}
 				}
-				
+
 				System.out.println();
-				
+
 				courseLab1NCList = courseLab1.getNotCompatibleCoursesLabs();
 				courseLab2NCList = courseLab2.getNotCompatibleCoursesLabs();
-				
+
 				courseLab1NCList.add(courseLab2);
 				courseLab2NCList.add(courseLab1);
-				
+
 				line = buf.readLine();
 				//System.out.println(line);
 			}
-		}	
-			
+		}
+
 		catch(IOException e) {
 			e.printStackTrace();
-		}		
-	
+		}
+
 	}
-	
+
 	private void parseUnwanted(BufferedReader buf){
 		String line = "";
 		String[] entry;
@@ -382,7 +382,7 @@ public class Parser {
 				int m1 = Integer.parseInt(hm[1]);
 				LocalTime time = LocalTime.of(h1, m1);
 				System.out.println("LocalTime: "+time.toString()); 		//cast time to LocalTime for comparison
-					
+
 				for (int i = 0; i < courseLabList.size(); i++){			//find the courseLab with the exact same name
 					CourseLab aCourseLab = courseLabList.get(i);
 					ArrayList<Integer> aCourseLabUnwantedList = aCourseLab.getUnWantedList();
@@ -411,16 +411,16 @@ public class Parser {
 							}
 						}
 						break;	//break from searching for courseLab
-					}		
+					}
 				}
 				line = buf.readLine();
-			}		
+			}
 		}
 		catch(IOException e) {
 			e.printStackTrace();
-		}	
+		}
 	}
-	
+
 	private void parsePartialAssignments(BufferedReader buf){
 		String line = "";
 		String[] entry;
@@ -428,7 +428,7 @@ public class Parser {
 		try {
 			line = buf.readLine();
 
-			while(!line.equals("")) {
+			while(line != null && !line.equals("")) {
 				System.out.println(line);
 				entry = line.split(",");
 				for (int i = 0; i< entry.length; i++){					//split line by ",", entry[0] = course name
@@ -439,7 +439,7 @@ public class Parser {
 				int m1 = Integer.parseInt(hm[1]);
 				LocalTime time = LocalTime.of(h1, m1);
 				System.out.println("LocalTime: "+time.toString()); 		//cast time to LocalTime for comparison
-					
+
 				for (int i = 0; i < courseLabList.size(); i++){			//find the courseLab with the exact same name
 					CourseLab aCourseLab = courseLabList.get(i);
 					if (entry[0].equals(aCourseLab.getName())){
@@ -468,7 +468,7 @@ public class Parser {
 							}
 						}
 						break;	//break from searching for courseLab
-					}		
+					}
 				}
 				line = buf.readLine();
 				if (line == null)
@@ -477,25 +477,25 @@ public class Parser {
 			System.out.print("partialAssign: ");
 			for (int i = 0; i<courseLabList.size(); i++){
 				System.out.print(partialAssign[i]);
-			}		
+			}
 			System.out.println();
 		}
 		catch(IOException e) {
 			e.printStackTrace();
-		}			
+		}
 	}
-	
+
 	private void printLists() {
 		System.out.println("List of courses:");
 		for(int i = 0; i<courseList.size(); i++) {
 			System.out.println(courseList.get(i).name()+" LEC: "+courseList.get(i).getLecNum());
 		}
-		
+
 		System.out.println("\nList of labs:");
 		for(int i = 0; i<labList.size(); i++) {
 			System.out.println(labList.get(i).name()+" LAB: "+labList.get(i).getLabNum());
 		}
-		
+
 		System.out.println("\nList of course slots:");
 		for(int i = 0; i<slotCList.size(); i++) {
 			Slot s = slotCList.get(i);
@@ -531,17 +531,17 @@ public class Parser {
 			System.out.println();
 		}
 	}
-	
+
 	private void zipCourseLab() {
 		int cnum = -1;
-		
+
 		for(int i = 0; i<courseList.size(); i++) {		// traverse course list
 			Course c = courseList.get(i);
 			String[] ss = c.name().split(" ");
 			cnum = Integer.parseInt(ss[1]);
 			courseLabList.add(new CourseLab(c.name(), c.getId(), c.getLecNum(), -1, true, false, null));	// add course to entry
 			int cindex = courseLabList.size()-1;		// index of latest course type entry
-			
+
 			for(int j = 0; j<labList.size(); j++) {		// traverse lab list
 				Lab l = labList.get(j);
 				if(l.name().contains(c.name())) {		// lab is associated with the current lecture num
@@ -551,7 +551,7 @@ public class Parser {
 					if((i+1)!=courseList.size()) {				// if not end of list
 						Course c2 = courseList.get(i+1);
 						String[] ss2 = c2.name().split(" ");
-						int cnumnxt = Integer.parseInt(ss2[1]); 						
+						int cnumnxt = Integer.parseInt(ss2[1]);
 						if(cnum!=cnumnxt) {
 							String cpar = ss[0]+" "+ss[1];
 							if(l.name().contains(cpar))
@@ -568,12 +568,12 @@ public class Parser {
 		}
 		this.partialAssign = new int[courseLabList.size()];
 	}
-	
+
 	/*
-	 * Find the Tuesday 11:00 course slot (if it exists), and for each course, 
+	 * Find the Tuesday 11:00 course slot (if it exists), and for each course,
 	 * add the slotID for Tuesday 11:00 to its unwantedList
-	 */ 
-	
+	 */
+
 	private void addTuesUnwanted(){
 		int tuesdaySlotId = 0;
 		for (int i = 0; i<slotCList.size(); i++){
@@ -592,15 +592,15 @@ public class Parser {
 			}
 		}
 	}
-	
+
 	private void add813913Unwanted(){
 		//CPSC 813 constraint
 		for (int i = 0; i<slotCList.size(); i++){
 			Slot aSlot = slotCList.get(i);
 			//find the course slots that overlap with the time slot 18:00-19:00 on Tuesdays
-			if ((aSlot.getEnd().toString().equals("18:30") || aSlot.getStart().toString().equals("18:30")) && aSlot.getDay().equals("TU")) 
+			if ((aSlot.getEnd().toString().equals("18:30") || aSlot.getStart().toString().equals("18:30")) && aSlot.getDay().equals("TU"))
 			{
-				//find the CPSC 313 Lec sections and add the slotId to their unwantedList				
+				//find the CPSC 313 Lec sections and add the slotId to their unwantedList
 				for (int j = 0; j<courseLabList.size(); j++){
 					CourseLab aCourseLab = courseLabList.get(j);
 					if (aCourseLab.isCourse() && (aCourseLab.getGeneralName().equals("CPSC 313") || aCourseLab.getGeneralName().equals("CPSC 413"))){
@@ -620,7 +620,7 @@ public class Parser {
 			}
 		}
 	}
-	
+
 		 //Check for lecture slots that overlap with other lecture slots
 	private void populateOverlappingSlotsList(){
 		for (int x = 0; x < slotLList.size(); x++)
@@ -628,7 +628,7 @@ public class Parser {
 			Slot aSlot1 = slotLList.get(x);
 			ArrayList<Integer> overlapList1 = aSlot1.getOverlappingSlots();
 			LocalTime aSlot1Start = aSlot1.getStart();
-			LocalTime aSlot1End = aSlot1.getEnd(); 
+			LocalTime aSlot1End = aSlot1.getEnd();
 			String aSlot1Day = aSlot1.getDay();
 			for (int y = x+1; y < slotLList.size();y++)
 			{
@@ -639,7 +639,7 @@ public class Parser {
 				String aSlot2Day = aSlot2.getDay();
 				int aSlot1Id = aSlot1.getId();
 				int aSlot2Id = aSlot2.getId();
-			
+
 				if (aSlot1Day.equals(aSlot2Day) == true)
 				{
 					if (aSlot1Start.equals(aSlot2Start) == true || aSlot1End.equals(aSlot2End) == true)
@@ -647,7 +647,7 @@ public class Parser {
 						overlapList1.add(aSlot2Id);
 						overlapList2.add(aSlot1Id);
 					}
-					
+
 					else if (aSlot1Start.isBefore(aSlot2Start) == true && aSlot1End.isAfter(aSlot2Start) == true)
 					{
 							overlapList1.add(aSlot2Id);
@@ -657,18 +657,18 @@ public class Parser {
 					{
 							overlapList1.add(aSlot2Id);
 							overlapList2.add(aSlot1Id);
-					}  
+					}
 				}
 			}
 		}
-		
+
 		//Check for course slots overlapping with course slots
 		for (int x = 0; x < slotCList.size(); x++)
 		{
 			Slot aSlot1 = slotCList.get(x);
 			ArrayList<Integer> overlapList1 = aSlot1.getOverlappingSlots();
 			LocalTime aSlot1Start = aSlot1.getStart();
-			LocalTime aSlot1End = aSlot1.getEnd(); 
+			LocalTime aSlot1End = aSlot1.getEnd();
 			String aSlot1Day = aSlot1.getDay();
 			for (int y = x+1; y < slotCList.size();y++)
 			{
@@ -679,8 +679,8 @@ public class Parser {
 				String aSlot2Day = aSlot2.getDay();
 				int aSlot1Id = aSlot1.getId();
 				int aSlot2Id = aSlot2.getId();
-				
-				
+
+
 				if (aSlot1Day.equals(aSlot2Day))
 				{
 					if (aSlot1Start.equals(aSlot2Start) == true || aSlot1End.equals(aSlot2End) == true)
@@ -688,7 +688,7 @@ public class Parser {
 						overlapList1.add(aSlot2Id);
 						overlapList2.add(aSlot1Id);
 					}
-					
+
 					else if (aSlot1Start.isBefore(aSlot2Start) == true && aSlot1End.isAfter(aSlot2Start) == true)
 					{
 							overlapList1.add(aSlot2Id);
@@ -698,18 +698,18 @@ public class Parser {
 					{
 							overlapList1.add(aSlot2Id);
 							overlapList2.add(aSlot1Id);
-					}  
+					}
 				}
 			}
 		}
-		
+
 		//Check for lecture slots overlapping with course slots
 		for (int x = 0; x < slotLList.size(); x++)
 		{
 			Slot aSlot1 = slotLList.get(x);
 			ArrayList<Integer> overlapList1 = aSlot1.getOverlappingSlots();
 			LocalTime aSlot1Start = aSlot1.getStart();
-			LocalTime aSlot1End = aSlot1.getEnd(); 
+			LocalTime aSlot1End = aSlot1.getEnd();
 			String aSlot1Day = aSlot1.getDay();
 			for (int y = 0; y < slotCList.size();y++)
 			{
@@ -720,8 +720,8 @@ public class Parser {
 				String aSlot2Day = aSlot2.getDay();
 				int aSlot1Id = aSlot1.getId();
 				int aSlot2Id = aSlot2.getId();
-				
-				
+
+
 				if (aSlot1Day.equals(aSlot2Day))
 				{
 					if (aSlot1Start.equals(aSlot2Start) == true || aSlot1End.equals(aSlot2End) == true)
@@ -729,7 +729,7 @@ public class Parser {
 						overlapList1.add(aSlot2Id);
 						overlapList2.add(aSlot1Id);
 					}
-					
+
 					else if (aSlot1Start.isBefore(aSlot2Start) == true && aSlot1End.isAfter(aSlot2Start) == true)
 					{
 							overlapList1.add(aSlot2Id);
@@ -739,13 +739,13 @@ public class Parser {
 					{
 							overlapList1.add(aSlot2Id);
 							overlapList2.add(aSlot1Id);
-					}  
+					}
 				}
 			}
 		}
 	}
-	
-	
+
+
 	private void parseGeneralNotCompatible(){
 		for (int i = 0; i < courseLabList.size(); i++){
 			CourseLab aCourseLab1 = courseLabList.get(i);
@@ -756,7 +756,7 @@ public class Parser {
 					if (aCourseLab1.getGeneralName().equals(aCourseLab2.getGeneralName()) && aCourseLab2.isLab() && aCourseLab2.getAssociatedLecture() == null){
 						ArrayList<CourseLab> notCompatibleList1 = aCourseLab1.getNotCompatibleCoursesLabs();
 						ArrayList<CourseLab> notCompatibleList2 = aCourseLab2.getNotCompatibleCoursesLabs();
-						
+
 						notCompatibleList1.add(aCourseLab2);
 						notCompatibleList2.add(aCourseLab1);
 					}
@@ -764,12 +764,12 @@ public class Parser {
 					else if (aCourseLab1.getName().equals(aCourseLab2.getSpecificLecture()) && aCourseLab1 != aCourseLab2){
 						ArrayList<CourseLab> notCompatibleList1 = aCourseLab1.getNotCompatibleCoursesLabs();
 						ArrayList<CourseLab> notCompatibleList2 = aCourseLab2.getNotCompatibleCoursesLabs();
-						
+
 						notCompatibleList1.add(aCourseLab2);
 						notCompatibleList2.add(aCourseLab1);
 					}
 				}
-				
+
 			}
 		}
 	}
