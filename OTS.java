@@ -227,7 +227,7 @@ private int searchArray(int [] array, int x){
     ArrayList<otsNode> children = aNode.getChildren();
     ArrayList<otsNode> validChildren = new ArrayList<>();
     int[] aNodeVector = aNode.getAssign();
-    int firstNull = aNode.getNextToSchedule();                                    //Find position of left most null entry
+    int firstNull = aNode.getNextToSchedule();                                  //Find position of left most null entry
     // Make a children whose most recent non null node matches a parent
     int[] byParent1 = aNodeVector.clone();
     byParent1[firstNull] = parent1[firstNull];
@@ -252,7 +252,8 @@ private int searchArray(int [] array, int x){
     else if((constr(byParent1) == true) && (constr(byParent2) == true)){      // If both parents will produce valid child, choose one randomly
       //choose one at random
       Random rand = new Random();
-      int parent = rand.nextInt(1);                                           // If zero, use parent1, else use parent2
+      int parent = rand.nextInt(2);                                           // If zero, use parent1, else use parent2
+      System.out.println("**********************DEBUG: parent " + parent + " chosen.");
       //find the child with this partial assignment vector and then return that node
       for (otsNode child : children){
         if(Arrays.equals(child.getAssign(), parents[parent]))
@@ -282,10 +283,10 @@ private int searchArray(int [] array, int x){
   }
 
 
-     /*
-  	 * check if assign is valid (against hard constraints)
-  	 * returns true for valid, false for invalid
-  	 */
+   /*
+	 * check if assign is valid (against hard constraints)
+	 * returns true for valid, false for invalid
+	 */
 	public boolean constr(int[] assign) {
 		 //In this loop, check for course incompatibility as well as unwanted time slots
 		for(int i = 0; i < assign.length; i++){
@@ -442,7 +443,6 @@ private int searchArray(int [] array, int x){
 			   }
 			   else{
 				       if (currentNode.getChildren().size() == 0){
-
 					            altern(currentNode);
 				       }
 			   }
@@ -475,8 +475,7 @@ private int searchArray(int [] array, int x){
           altern(currentNode);
       }
     }
-    int[] offSpring = currentNode.getAssign();
-    return offSpring;
+    return currentNode.getAssign();
   }//end control2
 
 
@@ -494,16 +493,23 @@ private int searchArray(int [] array, int x){
 
 		OTS testOrTreeSearchInstance = new OTS(courseLabList,  slotCList, slotLList);
 
-    //System.out.println("Length of CL list: " + courseLabList.size());
 
-    //int[] testAssign = new int[183];
-    //for(int i = 0; i < testAssign.length; i++)
-    //  testAssign[i] = 1;
-    //System.out.println("Constr test result: " + testOrTreeSearchInstance.constr(testAssign));
-    //int[] slotUseCounts = new int[slotCList.size() + slotLList.size()]; // each element index corresponds to a slotId, and the contents of the element are the number of times it has been used
-    //System.out.println("number of slots: " + slotUseCounts.length);
-    int[] tAssign = testOrTreeSearchInstance.getIndividual();
+    ////////////// For testing search control 1 ////////////////////////////////
+    //int[] tAssign = testOrTreeSearchInstance.getIndividual();
+    //System.out.println("Valid individual: " + Arrays.toString(tAssign));
+
+    ////////////// For testing search control 2 ////////////////////////////////
+    int[] assign2 = {8, 23, 44, 26, 36, 53, 38, 2, 32, 48, 41, 24, 36, 28, 10, 53, 46, 28, 26, 36, 34, 21, 22, 52, 44, 40, 48, 47, 13, 22, 31, 35, 49, 41, 28, 18, 24, 51, 30, 28, 10, 42, 49, 45, 28, 30, 34, 8, 5, 33, 51, 30, 40, 52, 23, 27, 3, 43, 29, 25, 31, 9, 43, 23, 33, 24, 12, 25, 52, 39, 9, 6, 43, 38, 52, 50, 3, 35, 18, 44, 24, 17, 29, 23, 26, 5, 51, 15, 29, 44, 50, 40, 19, 28, 31, 45, 8, 30, 9, 32, 39, 11, 52, 40, 43, 17, 29, 49, 44, 14, 30, 27, 47, 25, 1, 37, 30, 20, 38, 25, 6, 40, 52, 2, 50, 27, 44, 39, 3, 37, 43, 49, 23, 4, 42, 10, 27, 2, 29, 5, 46, 1, 39, 9, 23, 20, 40, 15, 31, 29, 3, 36, 51, 19, 24, 50, 8, 26, 37, 7, 43, 49, 6, 25, 24, 14, 38, 4, 26, 31, 38, 18, 7, 51, 27, 49, 26, 50, 18, 31, 25, 17, 41};
+    int[] assign1 = {12, 51, 47, 31, 48, 29, 23, 7, 45, 53, 47, 49, 22, 36, 14, 44, 48, 29, 26, 49, 53, 6, 41, 26, 37, 51, 24, 52, 21, 33, 51, 29, 31, 30, 37, 14, 28, 25, 22, 38, 18, 44, 36, 50, 28, 33, 24, 18, 10, 43, 32, 34, 37, 27, 24, 25, 3, 51, 25, 32, 26, 4, 30, 31, 28, 26, 18, 36, 45, 34, 13, 6, 37, 30, 26, 23, 5, 43, 19, 50, 23, 9, 28, 46, 27, 10, 35, 20, 30, 24, 36, 51, 7, 44, 23, 40, 3, 26, 10, 35, 37, 5, 36, 52, 24, 17, 29, 31, 52, 9, 31, 28, 27, 50, 6, 43, 30, 2, 49, 38, 15, 28, 29, 19, 23, 40, 51, 31, 8, 40, 43, 25, 49, 5, 39, 6, 41, 1, 49, 9, 44, 15, 50, 18, 39, 17, 37, 11, 23, 40, 7, 39, 27, 3, 41, 39, 19, 30, 24, 4, 39, 46, 20, 50, 29, 10, 50, 1, 40, 52, 52, 4, 18, 38, 27, 36, 52, 44, 2, 49, 40, 8, 27};
+    int[] tAssign = testOrTreeSearchInstance.control2(assign1, assign2);
     System.out.println("Valid individual: " + Arrays.toString(tAssign));
+    int mutations = 0;
+    for(int i = 0; i < tAssign.length; i++){
+      if(tAssign[i] != assign1[i] && tAssign[i] != assign2[i])
+        mutations++;
+    }
+    System.out.println("Number of mutations: " + mutations);
+
   }
 
 
