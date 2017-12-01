@@ -36,14 +36,14 @@ public class OTS{
   // @param courseSlots     - list of possible time slots that can hold courseLab objects of type course
   // @param labSlots        - the list of possible time slots that can hold courseLab objects of type lab
   ////
-  public OTS(ArrayList <CourseLab> coursesAndLabs,  ArrayList<Slot> courseSlots, ArrayList<Slot> labSlots){
+  public OTS(ArrayList <CourseLab> coursesAndLabs,  ArrayList<Slot> courseSlots, ArrayList<Slot> labSlots, int [] rootArray){
     this.courseLabList = coursesAndLabs;
     this.slotCList = courseSlots;
     this.slotLList = labSlots;
     this.slotList =  new ArrayList<Slot>();
     this.slotList.addAll(this.slotCList);
     this.slotList.addAll(this.slotLList);
-    this.root = new otsNode(null, new int[courseLabList.size()]);
+    this.root = new otsNode(null, rootArray);
   }
 
   //Nested class for Otree instantiation
@@ -483,7 +483,7 @@ private int searchArray(int [] array, int x){
 
 // main method for testing - TODO: delete when class fully implemented and tested
   public static void main(String[] args){
-    Parser aParser = new Parser("deptinst2.txt");
+    Parser aParser = new Parser("deptinst1.txt");
     aParser.start();
     ArrayList<CourseLab> courseLabList = aParser.getCourseLabList();
     ArrayList<Slot> slotCList = aParser.getCourseSlotList();
@@ -493,7 +493,7 @@ private int searchArray(int [] array, int x){
     //System.out.println(slotCList.size());
     //System.out.println(slotLList.size());
 
-    OTS testOrTreeSearchInstance = new OTS(courseLabList,  slotCList, slotLList);
+    OTS testOrTreeSearchInstance = new OTS(courseLabList,  slotCList, slotLList, aParser.getPartialAssign());
 
 
     ////////////// For testing search control 1 ////////////////////////////////
