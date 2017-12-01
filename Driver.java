@@ -82,8 +82,8 @@ public class Driver extends JFrame{
 	        setSize(480, 320);
 	        setLocationRelativeTo(null);    // centers on screen
 	    }
-/*
-	public static void main(String[]args){
+
+/*	public static void main(String[]args){
 
 		String input =  null;
 		File file = null;
@@ -113,8 +113,8 @@ public class Driver extends JFrame{
 
 		ArrayList<CourseLab> courseLabList = aParser.getCourseLabList();
 		ArrayList<Slot> slotCList = aParser.getCourseSlotList();
-		ArrayList<Slot> slotLList = aParser.getLabSlotList();*/
-/*
+		ArrayList<Slot> slotLList = aParser.getLabSlotList();
+
 		OTS tester = new OTS(courseLabList,  slotCList, slotLList);
 
 		int [] anIndividual = tester.getIndividual();

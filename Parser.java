@@ -86,7 +86,7 @@ public class Parser {
 			populateOverlappingSlotsList();
 			parseGeneralNotCompatible();
 			addTuesUnwanted();
-			add813Unwanted();
+			add813913Unwanted();
 			printLists();
 			buf.close();
 		}
@@ -593,8 +593,32 @@ public class Parser {
 		}
 	}
 	
-	private void add813Unwanted(){
-
+	private void add813913Unwanted(){
+		//CPSC 813 constraint
+		for (int i = 0; i<slotCList.size(); i++){
+			Slot aSlot = slotCList.get(i);
+			//find the course slots that overlap with the time slot 18:00-19:00 on Tuesdays
+			if ((aSlot.getEnd().toString().equals("18:30") || aSlot.getStart().toString().equals("18:30")) && aSlot.getDay().equals("TU")) 
+			{
+				//find the CPSC 313 Lec sections and add the slotId to their unwantedList				
+				for (int j = 0; j<courseLabList.size(); j++){
+					CourseLab aCourseLab = courseLabList.get(j);
+					if (aCourseLab.isCourse() && (aCourseLab.getGeneralName().equals("CPSC 313") || aCourseLab.getGeneralName().equals("CPSC 413"))){
+						ArrayList<Integer> unwantedList = aCourseLab.getUnWantedList();
+						unwantedList.add(aSlot.getId());
+						//also add the slotId to the Lec sections that CPSC Lec sections cannot overlap with
+						ArrayList<CourseLab> incompatibleList = aCourseLab.getNotCompatibleCoursesLabs();
+						for (int k = 0; k< incompatibleList.size(); k++){
+							CourseLab bCourseLab = incompatibleList.get(k);
+							if (bCourseLab.isCourse()){
+								ArrayList<Integer> bUnwantedList = bCourseLab.getUnWantedList();
+								bUnwantedList.add(aSlot.getId());
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	
 		 //Check for lecture slots that overlap with other lecture slots
