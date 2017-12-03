@@ -61,11 +61,11 @@ public class OTS{
       this.solvedStatus = TBD;
       if (parent == null){
         this.depth = 0;
-        System.out.println("********************** DUBUG: Root node created.");
+//        System.out.println("********************** DUBUG: Root node created.");
       }
       else{
         this.depth = parent.getDepth() + 1;
-        System.out.println("********************** DUBUG: Non-root node created.");
+//        System.out.println("********************** DUBUG: Non-root node created.");
       }
       this.children = new ArrayList<otsNode>();
     }
@@ -194,10 +194,10 @@ private int searchArray(int [] array, int x){
   private otsNode chooseNode(otsNode aNode){
     ArrayList<otsNode> children = aNode.getChildren();
     ArrayList<otsNode> validChildren = new ArrayList<>();
-    if(aNode.getParent() == null){
-      System.out.println("********************** DUBUG: In chooseNode(root)");
-      System.out.println("********************** DUBUG: root has " + children.size() + " children");
-    }
+//    if(aNode.getParent() == null){
+//      System.out.println("********************** DUBUG: In chooseNode(root)");
+//      System.out.println("********************** DUBUG: root has " + children.size() + " children");
+//    }
 
     for (int i=0; i<children.size(); i++){					                            // Check if the children are valid vectors or not.
       if (children.get(i).getSolvedStatus() != NO && constr(children.get(i).getAssign()) == true){ // Add valid children to a separate list
@@ -209,11 +209,11 @@ private int searchArray(int [] array, int x){
         //children.remove(i);
       }
     }
-    if(aNode.getParent() == null){
-        System.out.println("********************** DUBUG: root has " + validChildren.size() + " valid children.");
-
-    }
-//    aNode.setChildren(validChildren);                                         // This should allow for invalid children to be garbage collected?
+//    if(aNode.getParent() == null){
+//        System.out.println("********************** DUBUG: root has " + validChildren.size() + " valid children.");
+//
+//    }
+    aNode.setChildren(validChildren);                                         // This should allow for invalid children to be garbage collected?
     int randSize = validChildren.size();
     if (randSize == 0){				                                                  // If all children are invalid, go back to the aNode's parent node and choose a different node
        aNode.setSolvedStatus(NO);
@@ -255,7 +255,7 @@ private int searchArray(int [] array, int x){
       //choose one at random
       Random rand = new Random();
       int parent = rand.nextInt(2);                                           // If zero, use parent1, else use parent2
-      System.out.println("**********************DEBUG: parent " + parent + " chosen.");
+//      System.out.println("**********************DEBUG: parent " + parent + " chosen.");
       //find the child with this partial assignment vector and then return that node
       for (otsNode child : children){
         if(Arrays.equals(child.getAssign(), parents[parent]))
@@ -302,7 +302,7 @@ private int searchArray(int [] array, int x){
 				//System.out.println("unwantedId: "+unwantedId);
 				if (unwantedId == slotId){
 					//System.out.println(courseLabList.get(i).getName()+" did not want "+unwantedId);
-          System.out.println("*******************DEBUG: Constr-unwanted failed");
+                    //System.out.println("*******************DEBUG: Constr-unwanted failed");
 					return false;
 				}
 			}
@@ -318,7 +318,7 @@ private int searchArray(int [] array, int x){
 					//System.out.println("courseIndex: "+courseIndex);
 					//System.out.println("slotId: "+slotId+" otherSlotId: "+otherSlotId);
 					//System.out.println("Incompatible: "+courseLabList.get(i).getName()+", "+courseLabList.get(courseIndex-1).getName());
-          System.out.println("*******************DEBUG: Constr-incompatability failed");
+                    //System.out.println("*******************DEBUG: Constr-incompatability failed");
 					return false;
 				}
 			}
@@ -337,8 +337,8 @@ private int searchArray(int [] array, int x){
                 if(courseNumber >= 500 & assign[i] != 0){
                   int aCourseInSlot = assign[i];
                   if(seniorCourseSlotIds.contains(aCourseInSlot)){
-                      System.out.println("*******************DEBUG: Constr-500 Level in different slots failed with: ");
-                      System.out.println(Arrays.toString(assign));
+                      //System.out.println("*******************DEBUG: Constr-500 Level in different slots failed with: ");
+                      //System.out.println(Arrays.toString(assign));
                       return false;
                   }
                   else
@@ -355,9 +355,9 @@ private int searchArray(int [] array, int x){
                 if(aCourseLab.isCourse() && (aCourseLab.getLectureNumber() >= 9)){   //check if if course lecture num >= 9
                     int courseStartHour = ((slotCList.get(assign[i]-1)).getStart()).getHour();
                     if(courseStartHour < 18){
-                        System.out.println(aCourseLab.getName());
-                        System.out.println("*******************DEBUG: Constr- lecture numbers>9 in different slots failed with: ");
-                        System.out.println(Arrays.toString(assign));
+                        //System.out.println(aCourseLab.getName());
+                        //System.out.println("*******************DEBUG: Constr- lecture numbers>9 in different slots failed with: ");
+                        //System.out.println(Arrays.toString(assign));
                         return false;
                     }
                 }
@@ -383,18 +383,17 @@ private int searchArray(int [] array, int x){
                         //System.out.println("slot id: " + slotCList.get(j).getId());       //DEGUG statement TODO: delete when done debugging
                         //System.out.println("course max for this slot: " + slotCList.get(j).getMax());//DEGUG statement TODO: delete when done debugging
                         //System.out.println("courses assigned to this slot: " + slotUseCounts[j]);//DEGUG statement TODO: delete when done debugging
-                        System.out.println("*******************DEBUG: Constr- coursemax failed: ");
-                        System.out.println("Coursemax: " + slotCList.get(j).getMax());
-                        System.out.println("Number of courses in slot with id " + (j+1) + ": " + slotUseCounts[j]);
-
+                        //System.out.println("*******************DEBUG: Constr- coursemax failed: ");
+                        //System.out.println("Coursemax: " + slotCList.get(j).getMax());
+                        //System.out.println("Number of courses in slot with id " + (j+1) + ": " + slotUseCounts[j]);
                         return false;
                     }
                 }
                 else{
                     if(slotUseCounts[j] > slotLList.get(j - slotCList.size()).getMax()){
-                        System.out.println("*******************DEBUG: Constr- labmax failed: ");
-                        System.out.println("Labmax: " + (slotLList.get(j - slotCList.size()).getMax()));
-                        System.out.println("Number of courses in slot with id " + ((j - slotCList.size())+1) + ": " + slotUseCounts[j]);
+                        //System.out.println("*******************DEBUG: Constr- labmax failed: ");
+                        //System.out.println("Labmax: " + (slotLList.get(j - slotCList.size()).getMax()));
+                        //System.out.println("Number of courses in slot with id " + ((j - slotCList.size())+1) + ": " + slotUseCounts[j]);
                         return false;
                     }
                 }
@@ -426,13 +425,13 @@ private int searchArray(int [] array, int x){
       altern(root);
       ArrayList<otsNode> childrenOfRoot = root.getChildren();
 
-      System.out.println("********************** DUBUG: Returned from altern(root)");
-      System.out.println("********************** DUBUG: Root has " + childrenOfRoot.size() + " children.");
-      System.out.println("********************** DUBUG: assignment vectors of children of root:");
+      //System.out.println("********************** DUBUG: Returned from altern(root)");
+      //System.out.println("********************** DUBUG: Root has " + childrenOfRoot.size() + " children.");
+      //System.out.println("********************** DUBUG: assignment vectors of children of root:");
       for(int i = 0; i < childrenOfRoot.size(); i++){                             ////////////////////////////////DEBUG
           int[] cAssign = childrenOfRoot.get(i).getAssign();
-          System.out.println("********************** DUBUG: " + Arrays.toString(cAssign));
-          System.out.println("****************************** DUBUG: this child has " + childrenOfRoot.get(i).getChildren().size() + " children.");
+          //System.out.println("********************** DUBUG: " + Arrays.toString(cAssign));
+          //System.out.println("****************************** DUBUG: this child has " + childrenOfRoot.get(i).getChildren().size() + " children.");
       }
 
 		 otsNode currentNode = root;
@@ -442,7 +441,7 @@ private int searchArray(int [] array, int x){
                  return empty;
              }
 		     currentNode = chooseNode(currentNode);
-         System.out.println("********************** DUBUG: returned from chooseNode");
+             //System.out.println("********************** DUBUG: returned from chooseNode");
 			   if (isFullVector(currentNode)){
 				       foundIndividual = 1;
 			   }
@@ -468,10 +467,15 @@ private int searchArray(int [] array, int x){
   // NOTE: this assumes a new instance of OTS so that root is null.
   ////
   public int[] control2(int[] assign1, int[] assign2){
+    long terminateSearchAtThisTime = System.currentTimeMillis() + 1000;
     int foundIndividual = 0;
     altern(root);                                                               // expand root node/ instantiate its list of children
     otsNode currentNode = root;
     while(foundIndividual == 0){
+      if (System.currentTimeMillis() > terminateSearchAtThisTime) {
+          int[] empty = new int[0];
+          return empty;
+      }
       currentNode = chooseNode2(currentNode, assign1, assign2);
       if(isFullVector(currentNode))
         foundIndividual = 1;
@@ -501,7 +505,7 @@ private int searchArray(int [] array, int x){
 
     ////////////// For testing search control 1 ////////////////////////////////
     int[] tAssign = testOrTreeSearchInstance.getIndividual();
-    System.out.println("Valid individual: " + Arrays.toString(tAssign));
+    //System.out.println("Valid individual: " + Arrays.toString(tAssign));
 
     ////////////// For testing search control 2 ////////////////////////////////
 /*

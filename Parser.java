@@ -32,6 +32,7 @@ public class Parser {
 	private ArrayList<CourseLab> courseLabList;
 	private int []				partialAssign;
 	private ArrayList<ArrayList<CourseLab>> sameCoursesList;
+	private boolean validFileGiven;
 
 
 	public Parser() {
@@ -53,6 +54,7 @@ public class Parser {
 		this.courseLabList = new ArrayList<>();
 		this.sameCoursesList = new ArrayList<>();
 		this.filepath	= filepath;
+		this.validFileGiven = true;
 	}
 
 	/**
@@ -159,9 +161,13 @@ public class Parser {
 	public int [] getPartialAssign(){
 		return partialAssign;
 	}
-	
+
 	public ArrayList<ArrayList<CourseLab>> getSameCoursesList(){
 		return sameCoursesList;
+	}
+	
+	public boolean getValidFileGiven(){
+		return validFileGiven;
 	}
 
 
@@ -320,11 +326,11 @@ public class Parser {
 
 
 	}
-	
+
 	/*
 	 * parse through the Not Compatible list, and add the courseLabs that are not compatible to each other's notCompatibleLists
 	 * @param buffered reader
-	 */ 
+	 */
 
 	private void parseNotCompatible(BufferedReader buf){
 		String[] entry;
@@ -385,7 +391,7 @@ public class Parser {
 	/*
 	 * Parse unwanted list
 	 * @param bufferedreader
-	 */ 
+	 */
 
 
 	private void parseUnwanted(BufferedReader buf){
@@ -408,7 +414,7 @@ public class Parser {
 				int h1 = Integer.parseInt(hm[0]);
 				int m1 = Integer.parseInt(hm[1]);
 				LocalTime time = LocalTime.of(h1, m1);
-				System.out.println("LocalTime: "+time.toString()); 		
+				System.out.println("LocalTime: "+time.toString());
 
 
 				for (int i = 0; i < courseLabList.size(); i++){			//find the courseLab with the exact same name
@@ -448,19 +454,19 @@ public class Parser {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/*
 	 * parse Preference list
 	 * @param bufferedreader
-	 */ 
+	 */
 	private void parsePreferences(BufferedReader buf){
 		String line ="";
 		String[] entry;
 		String[] hm;
 		try {
-			line = buf.readLine();	
-			while(!line.equals("")) {	
-				System.out.println(line);	
+			line = buf.readLine();
+			while(!line.equals("")) {
+				System.out.println(line);
 				entry = line.split(",");								//delimit statement
 				//remove extra spaces
 				for (int i = 0; i< entry.length; i++){					//split line by ",", entry[0] = day
@@ -468,14 +474,14 @@ public class Parser {
 					entry[i] = entry[i].replaceAll("[ ]+"," ");			//entry[3] = preference value
 					//System.out.println(entry[i]);
 				}
-																		
+
 				hm = entry[1].split(":");								//cast given time to LocalTime
 				int h1 = Integer.parseInt(hm[0]);
 				int m1 = Integer.parseInt(hm[1]);
 				LocalTime time = LocalTime.of(h1,m1);
-				
+
 				int prefVal = Integer.parseInt(entry[3]);				//cast given prefVal to integer
-				
+
 				for (int i = 0; i < courseLabList.size(); i++){			//find the courseLab with the exact same name
 					CourseLab aCourseLab = courseLabList.get(i);
 					if (entry[2].equals(aCourseLab.getName())){
@@ -507,7 +513,7 @@ public class Parser {
 						break;	//break from searching for courseLab
 					}
 				}
-				line = buf.readLine();				
+				line = buf.readLine();
 			}
 		}
 		catch(IOException e) {
@@ -517,7 +523,7 @@ public class Parser {
 	/*
 	 * parse Pair
 	 * @param BufferedReader
-	 */ 
+	 */
 	private void parsePair(BufferedReader buf){
 		String[] entry;
 		String line = "";
@@ -565,18 +571,19 @@ public class Parser {
 
 		catch(IOException e) {
 			e.printStackTrace();
-		}		
+		}
 	}
 
 	/*
 	 * parse Partial Assignment to set the partialAssign vector
 	 * @param bufferedreader
-	 */ 
+	 */
 
 	private void parsePartialAssignments(BufferedReader buf){
 		String line = "";
 		String[] entry;
 		String[] hm;
+		boolean validPartialAssign = true;
 		try {
 			line = buf.readLine();
 
@@ -602,25 +609,36 @@ public class Parser {
 						//System.out.println("entry[0]: "+entry[0]);
 						if (aCourseLab.isCourse()){						//if the courseLab is a course
 							//System.out.println(entry[1]+" "+entry[2]);
+							boolean foundSlot = false;
 							for (int j= 0; j<slotCList.size(); j++){	//find slot that matches entry[1] and time.ToString()
 								Slot aSlot = slotCList.get(j);
 								//System.out.println(aSlot.getDay()+" "+aSlot.getStart().toString());
 								if (aSlot.getDay().equals(entry[1]) && aSlot.getStart().toString().equals(time.toString())){ //if the slot is found, add the slot id to the unwantedIdsList for the courseLab
+									foundSlot = true;
 									partialAssign[i] = aSlot.getId();
 									//System.out.println(entry[1]+" "+entry[2]);
 									break; //break from searching for slot
 								}
 							}
+							if (foundSlot == false){
+								validPartialAssign = false;
+							}
 						}
-						else{											//if the courseLab is a lab
+						else{
+							boolean foundSlot = false;											//if the courseLab is a lab
 							for (int j= 0; j<slotLList.size(); j++){
 								System.out.println(j);
 								Slot aSlot = slotLList.get(j);
 								if (aSlot.getDay().equals(entry[1]) && aSlot.getStart().toString().equals(time.toString())){
+									foundSlot = true;
 									partialAssign[i] = aSlot.getId();
 									//System.out.println(entry[1]+" "+entry[2]);
 									break;	//
 								}
+							}
+							
+							if (foundSlot == false){
+								validPartialAssign = false;
 							}
 						}
 						break;	//break from searching for courseLab
@@ -635,6 +653,11 @@ public class Parser {
 				System.out.print(partialAssign[i]);
 			}
 			System.out.println();
+			
+			if (validPartialAssign == false){
+				System.out.println("partial assignment list was invalid");
+				validFileGiven = false;
+			}
 		}
 		catch(IOException e) {
 			e.printStackTrace();
@@ -695,7 +718,7 @@ public class Parser {
 				ArrayList<CourseLab> pairList = courseLabList.get(i).getPairList();
 				System.out.println(pairList.get(j).getName());
 			}
-			
+
 			System.out.println();
 		}
 	}
@@ -763,6 +786,9 @@ public class Parser {
 
 	private void add813913Unwanted(){
 		//CPSC 813 constraint
+		boolean cpsc313exists = false;
+		boolean cpsc413exists = false;
+		boolean labSlotTU18exists = false;
 		for (int i = 0; i<slotCList.size(); i++){
 			Slot aSlot = slotCList.get(i);
 			//find the course slots that overlap with the time slot 18:00-19:00 on Tuesdays
@@ -791,7 +817,8 @@ public class Parser {
 			Slot aSlot = slotLList.get(i);
 			if (aSlot.getStart().toString().equals("18:00") && aSlot.getDay().equals("TU")){
 				//find the CPSC 313/413 labs and add the slotId to their unwantedList
-				System.out.println("found");
+				labSlotTU18exists = true;
+				//System.out.println("found");
 				for (int j=0; j<courseLabList.size(); j++){
 					CourseLab aCourseLab = courseLabList.get(j);
 					if (aCourseLab.isLab() && (aCourseLab.getGeneralName().equals("CPSC 313") || aCourseLab.getGeneralName().equals("CPSC 413"))){
@@ -799,15 +826,60 @@ public class Parser {
 						unwantedList.add(aSlot.getId());
 					}
 				}
-				
+
 			}
 		}
+		
+		for (int i=0; i<courseLabList.size(); i++){
+			CourseLab aCourseLab = courseLabList.get(i);
+			if (aCourseLab.isCourse()){
+				if (aCourseLab.getGeneralName().equals("CPSC 313")){
+					cpsc313exists = true;
+				}
+				if (aCourseLab.getGeneralName().equals("CPSC 413")){
+					cpsc413exists = true;
+				}	
+			}
+		}
+		
+		if (labSlotTU18exists){
+			for (int i = 0; i<slotLList.size(); i++){
+				Slot aSlot = slotLList.get(i);
+				if (aSlot.getStart().toString().equals("18:00") && aSlot.getDay().equals("TU")){
+					int slotMax = aSlot.getMax();
+					int slotMin = aSlot.getMin();
+					if (cpsc313exists){
+						if (slotMin != 0){
+							slotMin--;
+						}
+						if (slotMax != 0){
+							slotMax--;
+						}
+					}
+					if (cpsc413exists){
+						if (slotMin != 0){
+							slotMin--;
+						}
+						if (slotMax != 0){
+							slotMax--;
+						}
+					}
+					aSlot.setMin(slotMin);
+					aSlot.setMax(slotMax);					
+				}		
+			}
+		}
+		
+		if ((cpsc313exists || cpsc413exists) && !labSlotTU18exists){
+			System.out.println("CPSC 313/413 exist(s) but not lab slot TU at 18:00!");
+			validFileGiven = false;
+		}
 	}
-	
+
 	/*
 	 * Find all the sections of the same course and group them together into sameCoursesList.
 	 * sameCoursesList is used to check for the soft constraint where different sections should be schedule into different slots
-	 */ 
+	 */
 	private void findSameCourseLectures(){
 		//find all the unique course names for lectures
 		ArrayList<String> uniqueCourseNames = new ArrayList<>();
@@ -819,7 +891,7 @@ public class Parser {
 				System.out.println("Added: "+aCourseLab.getGeneralName());
 			}
 		}
-		
+
 		//for each unique course name, compile all the lectures with the same course name into one list, and add to sameCoursesList
 		for (int i = 0;i<uniqueCourseNames.size(); i++){
 			ArrayList<CourseLab> sameCourses = new ArrayList<>();
@@ -831,7 +903,7 @@ public class Parser {
 			}
 			sameCoursesList.add(sameCourses);
 		}
-		
+
 		//print results
 		for (int i = 0; i<sameCoursesList.size(); i++){
 			ArrayList<CourseLab> sameCourses = sameCoursesList.get(i);
@@ -840,17 +912,17 @@ public class Parser {
 				System.out.println(sameCourses.get(j).getName());
 			}
 		}
-		
-		
+
+
 	}
-	
+
 	/*
 	 * This function populates each slot's overlappingSlots list.
 	 * It is used by constr to determine if two slots overlap
 	 */
 
 	private void populateOverlappingSlotsList(){
-	//Check for lecture slots that overlap with other lecture slots	
+	//Check for lecture slots that overlap with other lecture slots
 		for (int x = 0; x < slotLList.size(); x++)
 		{
 			Slot aSlot1 = slotLList.get(x);

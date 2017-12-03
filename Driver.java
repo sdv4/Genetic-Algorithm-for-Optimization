@@ -84,9 +84,11 @@ public class Driver extends JFrame{
 	    }
 
 	public static void main(String[]args){
-		Parser aParser = new Parser("SE2.txt");
+		Parser aParser = new Parser("deptinstShort.txt");
 		aParser.start();
-}	
+		System.out.println("valid file: "+aParser.getValidFileGiven());
+	}
+
 /*
 		String input =  null;
 		File file = null;
