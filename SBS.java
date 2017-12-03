@@ -2,7 +2,15 @@ import java.util.*;
 import java.util.Arrays;
 
 public class SBS{
-	protected ArrayList<CourseLab> courseLabList;
+    private static final int maxPopSize = 50;
+
+    // Instance variables
+    protected OTS orTreeSearchHelper;
+    protected int[] bestAssignmentFound;
+    protected int evalOfBestSoFar;
+    protected int generations;
+    
+    protected ArrayList<CourseLab> courseLabList;
 	protected ArrayList<Slot> slotCList;
 	protected ArrayList<Slot> slotLList;
 	protected ArrayList<Slot> slotList;
@@ -10,26 +18,40 @@ public class SBS{
 	protected int pen_labMin;
 	protected int pen_notPaired;
 	protected int pen_section;
+	protected int wMin;
+	protected int wPair;
+	protected int wPref;
+	protected int wSecDiff;
 	protected ArrayList<ArrayList<CourseLab>> sameCoursesList;
-	
-	public SBS(ArrayList <CourseLab> coursesAndLabs,  ArrayList<Slot> courseSlots, ArrayList<Slot> labSlots, ArrayList<ArrayList<CourseLab>> sameCoursesList){
-		this.courseLabList = coursesAndLabs;
-		this.slotCList = courseSlots;
-		this.slotLList = labSlots;
-		this.slotList =  new ArrayList<Slot>();
-		this.slotList.addAll(this.slotCList);
-		this.slotList.addAll(this.slotLList);
-		this.pen_courseMin = 0;
+
+    // Constructor
+    public SBS(){
+        Parser aParser = new Parser("SE.txt");
+        aParser.start();
+        courseLabList = aParser.getCourseLabList();
+        slotCList = aParser.getCourseSlotList();
+        slotLList = aParser.getLabSlotList(); 
+        this.orTreeSearchHelper = new OTS(courseLabList,  slotCList, slotLList, aParser.getPartialAssign());
+        this.bestAssignmentFound = new int[0];
+        this.evalOfBestSoFar = Integer.MAX_VALUE;
+        this.generations = 0;
+        
+        this.pen_courseMin = 0;
 		this.pen_labMin = 0;
 		this.pen_notPaired = 0;
 		this.pen_section = 0;
-		this.sameCoursesList = sameCoursesList;
+		this.wMin = 1;
+		this.wPair = 1;
+		this.wPref = 1;
+		this.wSecDiff = 1;
+		this.sameCoursesList = aParser.getSameCoursesList();
 		this.slotList =  new ArrayList<Slot>();
 		this.slotList.addAll(this.slotCList);
 		this.slotList.addAll(this.slotLList);
-	}
 
-	public void setPen_courseMin(int pen){
+    }
+    
+    public void setPen_courseMin(int pen){
 		this.pen_courseMin = pen;
 	}
 	
@@ -44,24 +66,46 @@ public class SBS{
 	public void setPen_section(int pen){
 		this.pen_section = pen;
 	}
+    
 
 //OUTLINE
 
 // 1. Build starting population
 // Let's try a starting pop of 5 for testng
+    private ArrayList<int[]> getStartPop(int size){
+        ArrayList<int[]> startPop = new ArrayList<int[]>();
+        int foundIndividuals = 0;
 
-    /*private int[][] getStartPop(int size){
-        int[] startPop = new int[size];
+        while(foundIndividuals < size){
+            int[] candidate = orTreeSearchHelper.getIndividual();
+            if(candidate.length > 0){ // add check that candidate not already in list
+                startPop.add(candidate);
+                foundIndividuals++;
+            }
+        }
 
-        Parser aParser = new Parser("deptinst2.txt");
-        aParser.start();
-        ArrayList<CourseLab> courseLabList = aParser.getCourseLabList();
-        ArrayList<Slot> slotCList = aParser.getCourseSlotList();
-        ArrayList<Slot> slotLList = aParser.getLabSlotList();
+        return startPop;
+    }
+
+//2. Build search control
+    public void searchControl(){
+        ArrayList<int[]> state = getStartPop(5);                                // Get initial population
+        System.out.println("Starting population:");/////////////////////////////NOTE: DEBUG  STATEMENT
+        for(int[] individual : state){/////////////////////////////NOTE: DEBUG  STATEMENT
+            System.out.println();/////////////////////////////NOTE: DEBUG  STATEMENT
+            System.out.println(Arrays.toString(individual));/////////////////////////////NOTE: DEBUG  STATEMENT
+        }
+        this.generations = 1;
+        while(generations < 2){                                                //TODO: change this to while true when kill switch implemented
+            state = fSelect(state);
+            this.generations++;
+        }
+        System.out.println("Eval: " + this.evalOfBestSoFar);/////////////////////////////NOTE: DEBUG  STATEMENT
+        System.out.println("Fittest Individual produced: \n" + Arrays.toString(this.bestAssignmentFound));/////////////////////////////NOTE: DEBUG  STATEMENT
 
 
-    }*/
-    
+    }
+
     /*
      * evalMinFilled checks the soft constraints for labmin and coursemin
      * @param assignment vector
@@ -205,9 +249,9 @@ public class SBS{
      * @param assignment vector
      * @return score accumulated for vector
      */
-	public int eval(int [] assign, int wMinFilled, int wPref, int wPair, int wSecDiff){
+	public int eval(int [] assign){
 		int score = 0;
-		score = evalMinFilled(assign)*wMinFilled + evalPref(assign)*wPref + evalPair(assign)*wPair + evalSecDiff(assign)*wSecDiff;
+		score = evalMinFilled(assign)*wMin + evalPref(assign)*wPref + evalPair(assign)*wPair + evalSecDiff(assign)*wSecDiff;
 		return score;
 	}
 	
@@ -231,23 +275,112 @@ public class SBS{
 
 
 
-public static void main(String[] args){
-	Parser aParser = new Parser("SE.txt");
-	aParser.start();
-    ArrayList<CourseLab> courseLabList = aParser.getCourseLabList();
-    ArrayList<Slot> slotCList = aParser.getCourseSlotList();
-    ArrayList<Slot> slotLList = aParser.getLabSlotList();
-    ArrayList<ArrayList<CourseLab>> sameCoursesList = aParser.getSameCoursesList();
-    SBS aSBS = new SBS(courseLabList, slotCList, slotLList, sameCoursesList);
-    aSBS.setPen_courseMin(1);
-    aSBS.setPen_labMin(1);
-    aSBS.setPen_notPaired(1);
-    aSBS.setPen_section(1);
-    int [] assign = {2, 5, 2, 6, 2, 2, 6, 3, 6};
-    int score = aSBS.eval(assign, 1, 1, 1, 1);
-    System.out.println(score);
+    private ArrayList<int[]> fSelect(ArrayList<int[]> currentState){
+        ArrayList<int[]> nextState = new ArrayList<int[]>();
 
-}
+        //1. Order all individuals by decreasing fitness
+        ArrayList<int[]> fit = new ArrayList<int[]>();          // Will hold currentState ordered by fitness
+        ArrayList<ArrayList<Integer>> fitnessValues = new ArrayList<ArrayList<Integer>>();
+
+        for(int i = 0; i < currentState.size(); i++){
+            int evalOfCurrent =  eval(currentState.get(i));
+            ArrayList<Integer> fitValIndexPair = new ArrayList<Integer>();
+            fitValIndexPair.add(evalOfCurrent);
+            fitValIndexPair.add(i);
+            fitnessValues.add(fitValIndexPair);                                 // Each element of fitnessValues will be a [fitValue,indexInCurrent] pair
+        }
+            // Order fitnessValues by value of first element of each pair
+            // Custom comparitor for fitness values
+            Collections.sort(fitnessValues, new Comparator<ArrayList<Integer>>() {
+                @Override
+                public int compare(ArrayList<Integer> one, ArrayList<Integer> two) {
+                    return one.get(0).compareTo(two.get(0));
+                }
+            });
+
+            if(fitnessValues.get(0).get(0) < this.evalOfBestSoFar){// Update fittest found
+                this.evalOfBestSoFar = fitnessValues.get(0).get(0);
+                this.bestAssignmentFound = currentState.get(fitnessValues.get(0).get(1));
+            }
+
+            // Step 2. determine value of FIT
+            int FIT = 0;
+
+            for(int j = 0; j < fitnessValues.size(); j++){
+                int value = fitnessValues.get(j).get(0);
+                fit.add(j, currentState.get(fitnessValues.get(j).get(1)));
+                FIT += value;
+            }
+            System.out.println();/////////////////////////////NOTE: DEBUG  STATEMENT
+            System.out.println("DEBUG: checking if fitnessValues ordered by increasing eval:");/////////////////////////////NOTE: DEBUG  STATEMENT
+            for(int i = 0; i < fitnessValues.size(); i++){/////////////////////////////NOTE: DEBUG  STATEMENT
+                System.out.println(Arrays.toString(fitnessValues.get(i).toArray()));/////////////////////////////NOTE: DEBUG  STATEMENT
+            }
+            System.out.println();                                               /////////////////////////////NOTE: DEBUG  STATEMENT
+            System.out.println("Individuals ordered by fitness:");/////////////////////////////NOTE: DEBUG  STATEMENT
+            for(int[] individual : fit){/////////////////////////////NOTE: DEBUG  STATEMENT
+                System.out.println();/////////////////////////////NOTE: DEBUG  STATEMENT
+                System.out.println(Arrays.toString(individual));/////////////////////////////NOTE: DEBUG  STATEMENT
+            }
+
+
+        System.out.println("FIT = " + FIT);/////////////////////////////NOTE: DEBUG  STATEMENT
+
+        // Step 3. Associate to each individual in the state a part of an array from 1 to FIT
+        int[] fitnessInterval = new int[FIT];
+        int spotsAllocated = 0;                                                 // Keep track of spots in fitnessInterval filled
+        for(int i = 0; i < fitnessValues.size(); i++){
+            int indexOfInd = fitnessValues.get(i).get(1);                       // Get index of individual with (i+1)'th lowest eval value
+            int spotsOfFitnessInterval = fitnessValues.get(fitnessValues.size() - i - 1).get(0);
+
+            for(int j = spotsAllocated; j < (spotsAllocated + spotsOfFitnessInterval); j++){
+                fitnessInterval[j] = indexOfInd;
+            }
+            spotsAllocated += spotsOfFitnessInterval;
+        }
+
+        // Step 4. Roulette wheel seletion of individuals
+        Random rand = new Random();
+        int parent1Index = fitnessInterval[rand.nextInt(FIT)];
+        int parent2Index = fitnessInterval[rand.nextInt(FIT)];
+        System.out.println("Index of parent 1: " + parent1Index + "\nIndex of parent 2: " + parent2Index);
+
+        // Step 5. call crossMut to get new individual for population
+        int [] child = crossMut(currentState.get(parent1Index), currentState.get(parent2Index));
+
+        int childFitness = eval(child);
+        nextState = fit;                                                        // pass ordered version of state to next state
+        nextState.add(child);                                                   // Add new individual to state
+
+
+
+
+
+        return nextState;
+    }
+
+    private int[] crossMut(int[] parent1, int[] parent2){
+        int[] child = orTreeSearchHelper.control2(parent1,parent2);
+        return child;
+    }
+
+
+
+// Make keyboard interrupt 'kill switch' that returns result when control-d pressed
+
+
+
+    public static void main(String[] args){
+        SBS testGA = new SBS();
+//        ArrayList<int[]> testStartPop = testGA.getStartPop(20);
+//        System.out.println("Starting Population:");
+//        for(int[] individual : testStartPop){
+//            System.out.println();
+//            System.out.println(Arrays.toString(individual));
+//        }
+        testGA.searchControl();
+
+    }
 
 
 } // End SBS class
