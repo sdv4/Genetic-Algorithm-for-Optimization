@@ -244,7 +244,7 @@ public class Parser {
 				m1 = Integer.parseInt(hm[1]);
 
 				//adjusts end time according to the day entry (+1hour for MWD, +1hour 30mins for TTh)
-				if(entry[0].equals("MO") || entry[0].equals("WE")) {
+				if(entry[0].equals("MO") || entry[0].equals("WE") ||entry[0].equals("TU")) {
 					h2 = h1+1;
 					m2 = m1;
 				}
@@ -252,14 +252,7 @@ public class Parser {
 					h2 = h1+2;
 					m2 = m1;
 				}
-				else {
-					h2 = h1+1;
-					m2 = m1+30;
-					if(m2>=60) {
-						h2++;
-						m2 = m2-60;
-					}
-				}
+
 				slotLList.add(new Slot(false, LocalTime.of(h1,m1), LocalTime.of(h2, m2), entry[0], Integer.parseInt(entry[2]), Integer.parseInt(entry[3])));
 				line = buf.readLine();							// reads next entry to line
 			}
@@ -775,7 +768,7 @@ public class Parser {
 			//find the course slots that overlap with the time slot 18:00-19:00 on Tuesdays
 			if ((aSlot.getEnd().toString().equals("18:30") || aSlot.getStart().toString().equals("18:30")) && aSlot.getDay().equals("TU"))
 			{
-				//find the CPSC 313 Lec sections and add the slotId to their unwantedList
+				//find the CPSC 313/413 Lec sections and add the slotId to their unwantedList
 				for (int j = 0; j<courseLabList.size(); j++){
 					CourseLab aCourseLab = courseLabList.get(j);
 					if (aCourseLab.isCourse() && (aCourseLab.getGeneralName().equals("CPSC 313") || aCourseLab.getGeneralName().equals("CPSC 413"))){
@@ -792,6 +785,21 @@ public class Parser {
 						}
 					}
 				}
+			}//add lab slot TU at 18:00 to unwantedLists of labs
+		}
+		for (int i=0; i<slotLList.size(); i++){
+			Slot aSlot = slotLList.get(i);
+			if (aSlot.getStart().toString().equals("18:00") && aSlot.getDay().equals("TU")){
+				//find the CPSC 313/413 labs and add the slotId to their unwantedList
+				System.out.println("found");
+				for (int j=0; j<courseLabList.size(); j++){
+					CourseLab aCourseLab = courseLabList.get(j);
+					if (aCourseLab.isLab() && (aCourseLab.getGeneralName().equals("CPSC 313") || aCourseLab.getGeneralName().equals("CPSC 413"))){
+						ArrayList<Integer> unwantedList = aCourseLab.getUnWantedList();
+						unwantedList.add(aSlot.getId());
+					}
+				}
+				
 			}
 		}
 	}
