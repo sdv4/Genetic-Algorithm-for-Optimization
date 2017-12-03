@@ -66,6 +66,22 @@ public class SBS{
 	public void setPen_section(int pen){
 		this.pen_section = pen;
 	}
+	
+	public void setWMin(int weight){
+		this.wMin = weight;
+	}
+	
+	public void setWPair(int weight){
+		this.wPair = weight;
+	}
+	
+	public void setWPref(int weight){
+		this.wPref = weight;
+	}
+	
+	public void setWSecDiff(int weight){
+		this.wSecDiff = weight;
+	}
     
 
 //OUTLINE
