@@ -22,8 +22,8 @@ public class Slot {
   private final LocalTime startTime;
   private final LocalTime endTime;
   private final String day;
-  private final int maxInSlot;
-  private final int minInSlot;
+  private int maxInSlot;
+  private int minInSlot;
   
   private ArrayList<Integer> overlappingSlotIDs;
   private ArrayList<Integer> assignedIDs;
@@ -79,6 +79,14 @@ public class Slot {
   
   public ArrayList<Integer>  getCoursesAssigned(){
 	return assignedIDs;
+  }
+  
+  public void setMax(int max){
+	maxInSlot = max;
+  }
+  
+  public void setMin(int min){
+	minInSlot = min;
   }
 
 }

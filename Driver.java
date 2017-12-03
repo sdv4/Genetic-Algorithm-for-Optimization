@@ -83,8 +83,13 @@ public class Driver extends JFrame{
 	        setLocationRelativeTo(null);    // centers on screen
 	    }
 
-/*	public static void main(String[]args){
+	public static void main(String[]args){
+		Parser aParser = new Parser("deptinstShort.txt");
+		aParser.start();
+		System.out.println("valid file: "+aParser.getValidFileGiven());
+	}
 
+/*
 		String input =  null;
 		File file = null;
 		do {
