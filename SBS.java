@@ -84,6 +84,7 @@ public class SBS{
 	}
     
 
+
 //OUTLINE
 
 // 1. Build starting population
@@ -378,6 +379,7 @@ public class SBS{
     private int[] crossMut(int[] parent1, int[] parent2){
         int[] child = orTreeSearchHelper.control2(parent1,parent2);
         return child;
+
     }
 
 

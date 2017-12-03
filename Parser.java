@@ -33,6 +33,7 @@ public class Parser {
 	private int []				partialAssign;
 	private ArrayList<ArrayList<CourseLab>> sameCoursesList;
 
+
 	public Parser() {
 
 	}
@@ -162,6 +163,7 @@ public class Parser {
 	public ArrayList<ArrayList<CourseLab>> getSameCoursesList(){
 		return sameCoursesList;
 	}
+
 
 	//
 	// PRIVATE METHODS
@@ -330,6 +332,7 @@ public class Parser {
 	 * parse through the Not Compatible list, and add the courseLabs that are not compatible to each other's notCompatibleLists
 	 * @param buffered reader
 	 */ 
+
 	private void parseNotCompatible(BufferedReader buf){
 		String[] entry;
 		String line = "";
@@ -350,6 +353,7 @@ public class Parser {
 				}
 				//System.out.println();
 				//find the two courseLabs specified in the statement
+
 				for (int i = 0; i<courseLabList.size(); i++){
 					CourseLab aCourseLab = courseLabList.get(i);
 					//System.out.println(aCourseLab.getName());
@@ -370,6 +374,7 @@ public class Parser {
 				courseLab1NCList = courseLab1.getNotCompatibleCoursesLabs();
 				courseLab2NCList = courseLab2.getNotCompatibleCoursesLabs();
 				//for both notCompatibleLists, add the courseLab to the other's list
+
 				courseLab1NCList.add(courseLab2);
 				courseLab2NCList.add(courseLab1);
 
@@ -388,6 +393,8 @@ public class Parser {
 	 * Parse unwanted list
 	 * @param bufferedreader
 	 */ 
+
+
 	private void parseUnwanted(BufferedReader buf){
 		String line = "";
 		String[] entry;
@@ -409,6 +416,7 @@ public class Parser {
 				int m1 = Integer.parseInt(hm[1]);
 				LocalTime time = LocalTime.of(h1, m1);
 				System.out.println("LocalTime: "+time.toString()); 		
+
 
 				for (int i = 0; i < courseLabList.size(); i++){			//find the courseLab with the exact same name
 					CourseLab aCourseLab = courseLabList.get(i);
@@ -571,6 +579,7 @@ public class Parser {
 	 * parse Partial Assignment to set the partialAssign vector
 	 * @param bufferedreader
 	 */ 
+
 	private void parsePartialAssignments(BufferedReader buf){
 		String line = "";
 		String[] entry;
@@ -580,6 +589,7 @@ public class Parser {
 
 			while(line != null && !line.equals("")) {
 				//System.out.println(line);
+
 				entry = line.split(",");
 				for (int i = 0; i< entry.length; i++){					//split line by ",", entry[0] = course name
 					entry[i] = entry[i].trim();							//entry[1] = day, entry[2] = time
@@ -591,6 +601,7 @@ public class Parser {
 				int m1 = Integer.parseInt(hm[1]);
 				LocalTime time = LocalTime.of(h1, m1);
 				//System.out.println("LocalTime: "+time.toString()); 		//cast time to LocalTime for comparison
+
 
 				for (int i = 0; i < courseLabList.size(); i++){			//find the courseLab with the exact same name
 					CourseLab aCourseLab = courseLabList.get(i);
@@ -829,6 +840,7 @@ public class Parser {
 	 * This function populates each slot's overlappingSlots list.
 	 * It is used by constr to determine if two slots overlap
 	 */
+
 	private void populateOverlappingSlotsList(){
 	//Check for lecture slots that overlap with other lecture slots	
 		for (int x = 0; x < slotLList.size(); x++)
