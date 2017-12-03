@@ -200,18 +200,20 @@ private int searchArray(int [] array, int x){
     }
 
     for (int i=0; i<children.size(); i++){					                            // Check if the children are valid vectors or not.
-      if (children.get(i).getSolvedStatus() != 2 && constr(children.get(i).getAssign()) == true){ // Add valid children to a separate list
+      if (children.get(i).getSolvedStatus() != NO && constr(children.get(i).getAssign()) == true){ // Add valid children to a separate list
         children.get(i).setSolvedStatus(TBD);
         validChildren.add(children.get(i));
       }
       else{
         children.get(i).setSolvedStatus(NO);				                              // Set invalid child's solvedStatus = NO
+        //children.remove(i);
       }
     }
     if(aNode.getParent() == null){
         System.out.println("********************** DUBUG: root has " + validChildren.size() + " valid children.");
 
     }
+//    aNode.setChildren(validChildren);                                         // This should allow for invalid children to be garbage collected?
     int randSize = validChildren.size();
     if (randSize == 0){				                                                  // If all children are invalid, go back to the aNode's parent node and choose a different node
        aNode.setSolvedStatus(NO);
@@ -481,17 +483,17 @@ private int searchArray(int [] array, int x){
 
 // main method for testing - TODO: delete when class fully implemented and tested
   public static void main(String[] args){
-    Parser aParser = new Parser("SE.txt");
+    Parser aParser = new Parser("deptinst1.txt");
     aParser.start();
     ArrayList<CourseLab> courseLabList = aParser.getCourseLabList();
     ArrayList<Slot> slotCList = aParser.getCourseSlotList();
-		ArrayList<Slot> slotLList = aParser.getLabSlotList();
+    ArrayList<Slot> slotLList = aParser.getLabSlotList();
 
-    System.out.println(courseLabList.size());
-    System.out.println(slotCList.size());
-    System.out.println(slotLList.size());
+    //System.out.println(courseLabList.size());
+    //System.out.println(slotCList.size());
+    //System.out.println(slotLList.size());
 
-		OTS testOrTreeSearchInstance = new OTS(courseLabList,  slotCList, slotLList, aParser.getPartialAssign());
+    OTS testOrTreeSearchInstance = new OTS(courseLabList,  slotCList, slotLList, aParser.getPartialAssign());
 
 
     ////////////// For testing search control 1 ////////////////////////////////
@@ -499,11 +501,12 @@ private int searchArray(int [] array, int x){
     System.out.println("Valid individual: " + Arrays.toString(tAssign));
 
     ////////////// For testing search control 2 ////////////////////////////////
-    /*
+/*
     int[] assign2 = {8, 23, 44, 26, 36, 53, 38, 2, 32, 48, 41, 24, 36, 28, 10, 53, 46, 28, 26, 36, 34, 21, 22, 52, 44, 40, 48, 47, 13, 22, 31, 35, 49, 41, 28, 18, 24, 51, 30, 28, 10, 42, 49, 45, 28, 30, 34, 8, 5, 33, 51, 30, 40, 52, 23, 27, 3, 43, 29, 25, 31, 9, 43, 23, 33, 24, 12, 25, 52, 39, 9, 6, 43, 38, 52, 50, 3, 35, 18, 44, 24, 17, 29, 23, 26, 5, 51, 15, 29, 44, 50, 40, 19, 28, 31, 45, 8, 30, 9, 32, 39, 11, 52, 40, 43, 17, 29, 49, 44, 14, 30, 27, 47, 25, 1, 37, 30, 20, 38, 25, 6, 40, 52, 2, 50, 27, 44, 39, 3, 37, 43, 49, 23, 4, 42, 10, 27, 2, 29, 5, 46, 1, 39, 9, 23, 20, 40, 15, 31, 29, 3, 36, 51, 19, 24, 50, 8, 26, 37, 7, 43, 49, 6, 25, 24, 14, 38, 4, 26, 31, 38, 18, 7, 51, 27, 49, 26, 50, 18, 31, 25, 17, 41};
     int[] assign1 = {12, 51, 47, 31, 48, 29, 23, 7, 45, 53, 47, 49, 22, 36, 14, 44, 48, 29, 26, 49, 53, 6, 41, 26, 37, 51, 24, 52, 21, 33, 51, 29, 31, 30, 37, 14, 28, 25, 22, 38, 18, 44, 36, 50, 28, 33, 24, 18, 10, 43, 32, 34, 37, 27, 24, 25, 3, 51, 25, 32, 26, 4, 30, 31, 28, 26, 18, 36, 45, 34, 13, 6, 37, 30, 26, 23, 5, 43, 19, 50, 23, 9, 28, 46, 27, 10, 35, 20, 30, 24, 36, 51, 7, 44, 23, 40, 3, 26, 10, 35, 37, 5, 36, 52, 24, 17, 29, 31, 52, 9, 31, 28, 27, 50, 6, 43, 30, 2, 49, 38, 15, 28, 29, 19, 23, 40, 51, 31, 8, 40, 43, 25, 49, 5, 39, 6, 41, 1, 49, 9, 44, 15, 50, 18, 39, 17, 37, 11, 23, 40, 7, 39, 27, 3, 41, 39, 19, 30, 24, 4, 39, 46, 20, 50, 29, 10, 50, 1, 40, 52, 52, 4, 18, 38, 27, 36, 52, 44, 2, 49, 40, 8, 27};
 */
-    /*int[] assign1 = {3, 4, 1, 5, 3, 6, 2, 6};
+/*
+    int[] assign1 = {3, 4, 1, 5, 3, 6, 2, 6};
     int[] assign2 = {2, 4, 3, 6, 1, 5, 1, 6};
     int[] tAssign = testOrTreeSearchInstance.control2(assign1, assign2);
     System.out.println("Valid individual: " + Arrays.toString(tAssign));
