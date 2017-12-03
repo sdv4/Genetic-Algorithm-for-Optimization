@@ -289,7 +289,7 @@ private int searchArray(int [] array, int x){
 	 * check if assign is valid (against hard constraints)
 	 * returns true for valid, false for invalid
 	 */
-	public boolean constr(int[] assign) {
+	public boolean constr(int[] assign) {                                          //TODO: change this back to private when done testing
 		 //In this loop, check for course incompatibility as well as unwanted time slots
 		for(int i = 0; i < assign.length; i++){
 			int slotId = assign[i];
@@ -421,23 +421,26 @@ private int searchArray(int [] array, int x){
 
   // Control 1
   public int[] getIndividual(){
-	   foundIndividual = 0;
-		altern(root);
+      long terminateSearchAtThisTime = System.currentTimeMillis() + 1000;
+      foundIndividual = 0;
+      altern(root);
+      ArrayList<otsNode> childrenOfRoot = root.getChildren();
 
-    //System.out.println("********************** DUBUG: assignment vectors of children of root:");
-    ArrayList<otsNode> childrenOfRoot = root.getChildren();
-
-    System.out.println("********************** DUBUG: Returned from altern(root)");
-    System.out.println("********************** DUBUG: Root has " + childrenOfRoot.size() + " children.");
-    System.out.println("********************** DUBUG: assignment vectors of children of root:");
-    for(int i = 0; i < childrenOfRoot.size(); i++){                             ////////////////////////////////DEBUG
-      int[] cAssign = childrenOfRoot.get(i).getAssign();
-      System.out.println("********************** DUBUG: " + Arrays.toString(cAssign));
-      System.out.println("****************************** DUBUG: this child has " + childrenOfRoot.get(i).getChildren().size() + " children.");
-    }
+      System.out.println("********************** DUBUG: Returned from altern(root)");
+      System.out.println("********************** DUBUG: Root has " + childrenOfRoot.size() + " children.");
+      System.out.println("********************** DUBUG: assignment vectors of children of root:");
+      for(int i = 0; i < childrenOfRoot.size(); i++){                             ////////////////////////////////DEBUG
+          int[] cAssign = childrenOfRoot.get(i).getAssign();
+          System.out.println("********************** DUBUG: " + Arrays.toString(cAssign));
+          System.out.println("****************************** DUBUG: this child has " + childrenOfRoot.get(i).getChildren().size() + " children.");
+      }
 
 		 otsNode currentNode = root;
 		 while (foundIndividual == 0){
+             if (System.currentTimeMillis() > terminateSearchAtThisTime) {
+                 int[] empty = new int[0];
+                 return empty;
+             }
 		     currentNode = chooseNode(currentNode);
          System.out.println("********************** DUBUG: returned from chooseNode");
 			   if (isFullVector(currentNode)){
