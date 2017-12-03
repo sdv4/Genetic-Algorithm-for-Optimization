@@ -159,7 +159,7 @@ public class Parser {
 	public int [] getPartialAssign(){
 		return partialAssign;
 	}
-	
+
 	public ArrayList<ArrayList<CourseLab>> getSameCoursesList(){
 		return sameCoursesList;
 	}
@@ -244,7 +244,7 @@ public class Parser {
 				m1 = Integer.parseInt(hm[1]);
 
 				//adjusts end time according to the day entry (+1hour for MWD, +1hour 30mins for TTh)
-				if(entry[0].equals("MO") || entry[0].equals("WE")) {
+				if(entry[0].equals("MO") || entry[0].equals("WE") ||entry[0].equals("TU")) {
 					h2 = h1+1;
 					m2 = m1;
 				}
@@ -252,14 +252,7 @@ public class Parser {
 					h2 = h1+2;
 					m2 = m1;
 				}
-				else {
-					h2 = h1+1;
-					m2 = m1+30;
-					if(m2>=60) {
-						h2++;
-						m2 = m2-60;
-					}
-				}
+
 				slotLList.add(new Slot(false, LocalTime.of(h1,m1), LocalTime.of(h2, m2), entry[0], Integer.parseInt(entry[2]), Integer.parseInt(entry[3])));
 				line = buf.readLine();							// reads next entry to line
 			}
@@ -327,11 +320,11 @@ public class Parser {
 
 
 	}
-	
+
 	/*
 	 * parse through the Not Compatible list, and add the courseLabs that are not compatible to each other's notCompatibleLists
 	 * @param buffered reader
-	 */ 
+	 */
 
 	private void parseNotCompatible(BufferedReader buf){
 		String[] entry;
@@ -392,7 +385,7 @@ public class Parser {
 	/*
 	 * Parse unwanted list
 	 * @param bufferedreader
-	 */ 
+	 */
 
 
 	private void parseUnwanted(BufferedReader buf){
@@ -415,7 +408,7 @@ public class Parser {
 				int h1 = Integer.parseInt(hm[0]);
 				int m1 = Integer.parseInt(hm[1]);
 				LocalTime time = LocalTime.of(h1, m1);
-				System.out.println("LocalTime: "+time.toString()); 		
+				System.out.println("LocalTime: "+time.toString());
 
 
 				for (int i = 0; i < courseLabList.size(); i++){			//find the courseLab with the exact same name
@@ -455,19 +448,19 @@ public class Parser {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/*
 	 * parse Preference list
 	 * @param bufferedreader
-	 */ 
+	 */
 	private void parsePreferences(BufferedReader buf){
 		String line ="";
 		String[] entry;
 		String[] hm;
 		try {
-			line = buf.readLine();	
-			while(!line.equals("")) {	
-				System.out.println(line);	
+			line = buf.readLine();
+			while(!line.equals("")) {
+				System.out.println(line);
 				entry = line.split(",");								//delimit statement
 				//remove extra spaces
 				for (int i = 0; i< entry.length; i++){					//split line by ",", entry[0] = day
@@ -475,14 +468,14 @@ public class Parser {
 					entry[i] = entry[i].replaceAll("[ ]+"," ");			//entry[3] = preference value
 					//System.out.println(entry[i]);
 				}
-																		
+
 				hm = entry[1].split(":");								//cast given time to LocalTime
 				int h1 = Integer.parseInt(hm[0]);
 				int m1 = Integer.parseInt(hm[1]);
 				LocalTime time = LocalTime.of(h1,m1);
-				
+
 				int prefVal = Integer.parseInt(entry[3]);				//cast given prefVal to integer
-				
+
 				for (int i = 0; i < courseLabList.size(); i++){			//find the courseLab with the exact same name
 					CourseLab aCourseLab = courseLabList.get(i);
 					if (entry[2].equals(aCourseLab.getName())){
@@ -514,7 +507,7 @@ public class Parser {
 						break;	//break from searching for courseLab
 					}
 				}
-				line = buf.readLine();				
+				line = buf.readLine();
 			}
 		}
 		catch(IOException e) {
@@ -524,7 +517,7 @@ public class Parser {
 	/*
 	 * parse Pair
 	 * @param BufferedReader
-	 */ 
+	 */
 	private void parsePair(BufferedReader buf){
 		String[] entry;
 		String line = "";
@@ -572,13 +565,13 @@ public class Parser {
 
 		catch(IOException e) {
 			e.printStackTrace();
-		}		
+		}
 	}
 
 	/*
 	 * parse Partial Assignment to set the partialAssign vector
 	 * @param bufferedreader
-	 */ 
+	 */
 
 	private void parsePartialAssignments(BufferedReader buf){
 		String line = "";
@@ -702,7 +695,7 @@ public class Parser {
 				ArrayList<CourseLab> pairList = courseLabList.get(i).getPairList();
 				System.out.println(pairList.get(j).getName());
 			}
-			
+
 			System.out.println();
 		}
 	}
@@ -775,7 +768,7 @@ public class Parser {
 			//find the course slots that overlap with the time slot 18:00-19:00 on Tuesdays
 			if ((aSlot.getEnd().toString().equals("18:30") || aSlot.getStart().toString().equals("18:30")) && aSlot.getDay().equals("TU"))
 			{
-				//find the CPSC 313 Lec sections and add the slotId to their unwantedList
+				//find the CPSC 313/413 Lec sections and add the slotId to their unwantedList
 				for (int j = 0; j<courseLabList.size(); j++){
 					CourseLab aCourseLab = courseLabList.get(j);
 					if (aCourseLab.isCourse() && (aCourseLab.getGeneralName().equals("CPSC 313") || aCourseLab.getGeneralName().equals("CPSC 413"))){
@@ -792,14 +785,29 @@ public class Parser {
 						}
 					}
 				}
+			}//add lab slot TU at 18:00 to unwantedLists of labs
+		}
+		for (int i=0; i<slotLList.size(); i++){
+			Slot aSlot = slotLList.get(i);
+			if (aSlot.getStart().toString().equals("18:00") && aSlot.getDay().equals("TU")){
+				//find the CPSC 313/413 labs and add the slotId to their unwantedList
+				System.out.println("found");
+				for (int j=0; j<courseLabList.size(); j++){
+					CourseLab aCourseLab = courseLabList.get(j);
+					if (aCourseLab.isLab() && (aCourseLab.getGeneralName().equals("CPSC 313") || aCourseLab.getGeneralName().equals("CPSC 413"))){
+						ArrayList<Integer> unwantedList = aCourseLab.getUnWantedList();
+						unwantedList.add(aSlot.getId());
+					}
+				}
+
 			}
 		}
 	}
-	
+
 	/*
 	 * Find all the sections of the same course and group them together into sameCoursesList.
 	 * sameCoursesList is used to check for the soft constraint where different sections should be schedule into different slots
-	 */ 
+	 */
 	private void findSameCourseLectures(){
 		//find all the unique course names for lectures
 		ArrayList<String> uniqueCourseNames = new ArrayList<>();
@@ -811,7 +819,7 @@ public class Parser {
 				System.out.println("Added: "+aCourseLab.getGeneralName());
 			}
 		}
-		
+
 		//for each unique course name, compile all the lectures with the same course name into one list, and add to sameCoursesList
 		for (int i = 0;i<uniqueCourseNames.size(); i++){
 			ArrayList<CourseLab> sameCourses = new ArrayList<>();
@@ -823,7 +831,7 @@ public class Parser {
 			}
 			sameCoursesList.add(sameCourses);
 		}
-		
+
 		//print results
 		for (int i = 0; i<sameCoursesList.size(); i++){
 			ArrayList<CourseLab> sameCourses = sameCoursesList.get(i);
@@ -832,17 +840,17 @@ public class Parser {
 				System.out.println(sameCourses.get(j).getName());
 			}
 		}
-		
-		
+
+
 	}
-	
+
 	/*
 	 * This function populates each slot's overlappingSlots list.
 	 * It is used by constr to determine if two slots overlap
 	 */
 
 	private void populateOverlappingSlotsList(){
-	//Check for lecture slots that overlap with other lecture slots	
+	//Check for lecture slots that overlap with other lecture slots
 		for (int x = 0; x < slotLList.size(); x++)
 		{
 			Slot aSlot1 = slotLList.get(x);

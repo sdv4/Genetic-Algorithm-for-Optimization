@@ -2,14 +2,15 @@ import java.util.*;
 import java.util.Arrays;
 
 public class SBS{
-    private static final int maxPopSize = 50;
+    private static final int maxPopSize = 500;
+    private static final int cullToSize = 350;
 
     // Instance variables
     protected OTS orTreeSearchHelper;
     protected int[] bestAssignmentFound;
     protected int evalOfBestSoFar;
     protected int generations;
-    
+
     protected ArrayList<CourseLab> courseLabList;
 	protected ArrayList<Slot> slotCList;
 	protected ArrayList<Slot> slotLList;
@@ -26,16 +27,16 @@ public class SBS{
 
     // Constructor
     public SBS(){
-        Parser aParser = new Parser("SE.txt");
+        Parser aParser = new Parser("deptinst1.txt");
         aParser.start();
         courseLabList = aParser.getCourseLabList();
         slotCList = aParser.getCourseSlotList();
-        slotLList = aParser.getLabSlotList(); 
+        slotLList = aParser.getLabSlotList();
         this.orTreeSearchHelper = new OTS(courseLabList,  slotCList, slotLList, aParser.getPartialAssign());
         this.bestAssignmentFound = new int[0];
         this.evalOfBestSoFar = Integer.MAX_VALUE;
         this.generations = 0;
-        
+
         this.pen_courseMin = 0;
 		this.pen_labMin = 0;
 		this.pen_notPaired = 0;
@@ -50,39 +51,39 @@ public class SBS{
 		this.slotList.addAll(this.slotLList);
 
     }
-    
+
     public void setPen_courseMin(int pen){
 		this.pen_courseMin = pen;
 	}
-	
+
 	public void setPen_labMin(int pen){
 		this.pen_labMin = pen;
 	}
-	
+
 	public void setPen_notPaired(int pen){
 		this.pen_notPaired = pen;
 	}
-	
+
 	public void setPen_section(int pen){
 		this.pen_section = pen;
 	}
-	
+
 	public void setWMin(int weight){
 		this.wMin = weight;
 	}
-	
+
 	public void setWPair(int weight){
 		this.wPair = weight;
 	}
-	
+
 	public void setWPref(int weight){
 		this.wPref = weight;
 	}
-	
+
 	public void setWSecDiff(int weight){
 		this.wSecDiff = weight;
 	}
-    
+
 
 
 //OUTLINE
@@ -105,17 +106,20 @@ public class SBS{
     }
 
 //2. Build search control
-    public void searchControl(){
-        ArrayList<int[]> state = getStartPop(5);                                // Get initial population
-        System.out.println("Starting population:");/////////////////////////////NOTE: DEBUG  STATEMENT
-        for(int[] individual : state){/////////////////////////////NOTE: DEBUG  STATEMENT
-            System.out.println();/////////////////////////////NOTE: DEBUG  STATEMENT
-            System.out.println(Arrays.toString(individual));/////////////////////////////NOTE: DEBUG  STATEMENT
-        }
+    public void searchControl(int startSize, int generationsToRun){
+        ArrayList<int[]> state = getStartPop(startSize);                                // Get initial population
+//            System.out.println("Starting population:");/////////////////////////////NOTE: DEBUG  STATEMENT
+//            for(int[] individual : state){/////////////////////////////NOTE: DEBUG  STATEMENT
+//            System.out.println();/////////////////////////////NOTE: DEBUG  STATEMENT
+//            System.out.println(Arrays.toString(individual));/////////////////////////////NOTE: DEBUG  STATEMENT
+//        }
         this.generations = 1;
-        while(generations < 2){                                                //TODO: change this to while true when kill switch implemented
+        while(generations < generationsToRun){                                                //TODO: change this to while true when kill switch implemented
             state = fSelect(state);
+
             this.generations++;
+            if(this.generations % 100 == 0)
+                System.out.println("Current generation: " + this.generations);
         }
         System.out.println("Eval: " + this.evalOfBestSoFar);/////////////////////////////NOTE: DEBUG  STATEMENT
         System.out.println("Fittest Individual produced: \n" + Arrays.toString(this.bestAssignmentFound));/////////////////////////////NOTE: DEBUG  STATEMENT
@@ -130,43 +134,43 @@ public class SBS{
      */
     public int evalMinFilled(int [] assign){
 		int score = 0;
-		
+
 		// Make lists to track each time a slot is used by a course or lab
 		int[] slotUseCounts = new int[slotCList.size() + slotLList.size()];   // each element index corresponds to a slotId, and the contents of the element are the number of times it has been used
-		for(int i = 0; i < assign.length; i++){                               // For each slot used in assign - track how many times it was used	  
+		for(int i = 0; i < assign.length; i++){                               // For each slot used in assign - track how many times it was used
 		  if(assign[i] != 0)
 			slotUseCounts[(assign[i])-1]++;
 		}
-		
+
 		//Check each slot that was used to see if min uses violated
-		for(int j = 0; j < slotUseCounts.length; j++){                        
+		for(int j = 0; j < slotUseCounts.length; j++){
 			if(j < slotCList.size()){ //if checking course slot
 				if(slotUseCounts[j] < slotCList.get(j).getMin()){
 					//System.out.println("slot id: " + slotCList.get(j).getId());       //DEGUG statement TODO: delete when done debugging
 					//System.out.println("course max for this slot: " + slotCList.get(j).getMax());//DEGUG statement TODO: delete when done debugging
 					//System.out.println("courses assigned to this slot: " + slotUseCounts[j]);//DEGUG statement TODO: delete when done debugging
-					System.out.println("*******************DEBUG: courseMin violated");
-					System.out.println("Coursemin: " + slotCList.get(j).getMin());
-					System.out.println("Number of courses in slot with id " + (j+1) + ": " + slotUseCounts[j]);
+//					System.out.println("*******************DEBUG: courseMin violated");
+//					System.out.println("Coursemin: " + slotCList.get(j).getMin());
+//					System.out.println("Number of courses in slot with id " + (j+1) + ": " + slotUseCounts[j]);
 					score += pen_courseMin;
-					
+
 				}
 			}
 			else{ //if checking lab slot
 				if(slotUseCounts[j] < slotLList.get(j - slotCList.size()).getMin()){
-					System.out.println("*******************DEBUG: labMin violated ");
-					System.out.println("Labmin: " + (slotLList.get(j - slotCList.size()).getMin()));
-					System.out.println("Number of courses in slot with id " + (j+1) + ": " + slotUseCounts[j]);
+					//System.out.println("*******************DEBUG: labMin violated ");
+					//System.out.println("Labmin: " + (slotLList.get(j - slotCList.size()).getMin()));
+					//System.out.println("Number of courses in slot with id " + (j+1) + ": " + slotUseCounts[j]);
 					score += pen_labMin;
 				}
 			}
-		  
+
 		}
-		
-		System.out.println("evalMinFilled score: "+score);
+
+//		System.out.println("evalMinFilled score: "+score);
 		return score;
 	}
-	
+
 	/*
      * evalMinFilled checks the soft constraint for preferences
      * @param assignment vector
@@ -175,7 +179,7 @@ public class SBS{
 	public int evalPref(int [] assign){
 		int score = 0;
 		//for each courseLab, check the slotPrefList if it is greater than zero
-		for(int i = 0; i < assign.length; i++){                               
+		for(int i = 0; i < assign.length; i++){
 		  if (courseLabList.get(i).getSlotPrefList().size() > 0){
 			ArrayList<slotPref> slotPrefList = courseLabList.get(i).getSlotPrefList();
 			//for each slotPref found in slotPrefList of a course, get the preferred slotId
@@ -188,17 +192,17 @@ public class SBS{
 				}
 				//if the courseLab is not assigned to the preferred slot
 				else{
-					System.out.println("slotPref violated: "+courseLabList.get(i).getName()+",SlotId: "+aSlotId+", PrefVal:"+aSlotPref.getPrefVal()); 
+//					System.out.println("slotPref violated: "+courseLabList.get(i).getName()+",SlotId: "+aSlotId+", PrefVal:"+aSlotPref.getPrefVal());
 					score += aSlotPref.getPrefVal();
 				}
-				
+
 			}
 		  }
 		}
-		System.out.println("evalPref score: "+score);
-		return score;		
+//		System.out.println("evalPref score: "+score);
+		return score;
 	}
-	
+
 	/*
      * evalMinFilled checks the soft constraint for pairs
      * @param assignment vector
@@ -217,17 +221,17 @@ public class SBS{
 					continue;
 				}
 				else{//else they do not overlap
-					System.out.println("Courses not paired: "+courseLabList.get(i).getName()+" in slot "+assign[i]+", "+courseLabList.get(pairIndex).getName()+" in slot "+assign[pairIndex]);
+	//				System.out.println("Courses not paired: "+courseLabList.get(i).getName()+" in slot "+assign[i]+", "+courseLabList.get(pairIndex).getName()+" in slot "+assign[pairIndex]);
 					score += pen_notPaired;
 				}
-				
+
 			}
-		
+
 		}
-		System.out.println("evalPair score: "+score);
+	//	System.out.println("evalPair score: "+score);
 		return score;
 	}
-	
+
 	/*
      * evalMinFilled checks the soft constraints for different sections of a course being assigned to different time slots
      * @param assignment vector
@@ -247,20 +251,20 @@ public class SBS{
 					for(int k=j+1; k<sameCourses.size(); k++){	//check for overlap of aCourseLab1 with the courseLabs that follow
 						CourseLab aCourseLab2 = sameCourses.get(k);
 						int aCourseLabIndex2 = aCourseLab2.getId()-1;
-						
+
 						if (assign[aCourseLabIndex1] == assign[aCourseLabIndex2]){ //if sections overlap
-							System.out.println("Different sections overlap: "+aCourseLab1.getName()+", "+aCourseLab2.getName());
+							//System.out.println("Different sections overlap: "+aCourseLab1.getName()+", "+aCourseLab2.getName());
 							score += pen_section;
 						}
-						
+
 					}
 				}
 			}
 		}
-		System.out.println("evalSecDiff score: "+score);
+		//System.out.println("evalSecDiff score: "+score);
 		return score;
 	}
-	
+
 	/*
      * eval assigns a score based on the four soft constraints and given weights
      * @param assignment vector
@@ -271,12 +275,12 @@ public class SBS{
 		score = evalMinFilled(assign)*wMin + evalPref(assign)*wPref + evalPair(assign)*wPair + evalSecDiff(assign)*wSecDiff;
 		return score;
 	}
-	
+
 	/*
 	 * Function checks if the two time slots overlap in time including between course slots and lab slots
 	 * @param The slotIds of the two slots to be compared
 	 * @return Return true if slots overlap, false otherwise
-	 */ 
+	 */
 	private boolean slotsOverlap(int slotId, int otherSlotId){
 		if (slotId == otherSlotId){
 			return true;
@@ -293,6 +297,7 @@ public class SBS{
 
 
     private ArrayList<int[]> fSelect(ArrayList<int[]> currentState){
+
         ArrayList<int[]> nextState = new ArrayList<int[]>();
 
         //1. Order all individuals by decreasing fitness
@@ -318,6 +323,9 @@ public class SBS{
             if(fitnessValues.get(0).get(0) < this.evalOfBestSoFar){// Update fittest found
                 this.evalOfBestSoFar = fitnessValues.get(0).get(0);
                 this.bestAssignmentFound = currentState.get(fitnessValues.get(0).get(1));
+                System.out.println("New fittest individual found:");
+                System.out.println("Eval = " + this.evalOfBestSoFar);
+                System.out.println(Arrays.toString(this.bestAssignmentFound));
             }
 
             // Step 2. determine value of FIT
@@ -328,20 +336,20 @@ public class SBS{
                 fit.add(j, currentState.get(fitnessValues.get(j).get(1)));
                 FIT += value;
             }
-            System.out.println();/////////////////////////////NOTE: DEBUG  STATEMENT
-            System.out.println("DEBUG: checking if fitnessValues ordered by increasing eval:");/////////////////////////////NOTE: DEBUG  STATEMENT
-            for(int i = 0; i < fitnessValues.size(); i++){/////////////////////////////NOTE: DEBUG  STATEMENT
-                System.out.println(Arrays.toString(fitnessValues.get(i).toArray()));/////////////////////////////NOTE: DEBUG  STATEMENT
-            }
-            System.out.println();                                               /////////////////////////////NOTE: DEBUG  STATEMENT
-            System.out.println("Individuals ordered by fitness:");/////////////////////////////NOTE: DEBUG  STATEMENT
-            for(int[] individual : fit){/////////////////////////////NOTE: DEBUG  STATEMENT
-                System.out.println();/////////////////////////////NOTE: DEBUG  STATEMENT
-                System.out.println(Arrays.toString(individual));/////////////////////////////NOTE: DEBUG  STATEMENT
-            }
+//            System.out.println();/////////////////////////////NOTE: DEBUG  STATEMENT
+//            System.out.println("DEBUG: checking if fitnessValues ordered by increasing eval:");/////////////////////////////NOTE: DEBUG  STATEMENT
+            //for(int i = 0; i < fitnessValues.size(); i++){/////////////////////////////NOTE: DEBUG  STATEMENT
+            //    System.out.println(Arrays.toString(fitnessValues.get(i).toArray()));/////////////////////////////NOTE: DEBUG  STATEMENT
+            //}
+//            System.out.println();                                               /////////////////////////////NOTE: DEBUG  STATEMENT
+//            System.out.println("Individuals ordered by fitness:");/////////////////////////////NOTE: DEBUG  STATEMENT
+            //for(int[] individual : fit){/////////////////////////////NOTE: DEBUG  STATEMENT
+            //    System.out.println();/////////////////////////////NOTE: DEBUG  STATEMENT
+            //    System.out.println(Arrays.toString(individual));/////////////////////////////NOTE: DEBUG  STATEMENT
+            //}
 
 
-        System.out.println("FIT = " + FIT);/////////////////////////////NOTE: DEBUG  STATEMENT
+//        System.out.println("FIT = " + FIT);/////////////////////////////NOTE: DEBUG  STATEMENT
 
         // Step 3. Associate to each individual in the state a part of an array from 1 to FIT
         int[] fitnessInterval = new int[FIT];
@@ -360,12 +368,24 @@ public class SBS{
         Random rand = new Random();
         int parent1Index = fitnessInterval[rand.nextInt(FIT)];
         int parent2Index = fitnessInterval[rand.nextInt(FIT)];
-        System.out.println("Index of parent 1: " + parent1Index + "\nIndex of parent 2: " + parent2Index);
+//        System.out.println("Index of parent 1: " + parent1Index + "\nIndex of parent 2: " + parent2Index);
 
         // Step 5. call crossMut to get new individual for population
-        int [] child = crossMut(currentState.get(parent1Index), currentState.get(parent2Index));
+        int [] child = new int[0];
+        while(child.length == 0 || (currentState.contains(child))){
+            child = crossMut(currentState.get(parent1Index), currentState.get(parent2Index));
+        }
 
-        int childFitness = eval(child);
+        //int childFitness = eval(child);
+        if(fit.size() > this.maxPopSize){
+            System.out.println("Population size: " + fit.size());
+            while(fit.size() > this.cullToSize)
+                fit.remove(fit.size()-1);
+            fit.subList((fit.size() - 51),(fit.size() - 1));
+            System.out.println("Population culled");
+            System.out.println("Population size: " + fit.size());
+
+        }
         nextState = fit;                                                        // pass ordered version of state to next state
         nextState.add(child);                                                   // Add new individual to state
 
@@ -375,6 +395,7 @@ public class SBS{
 
         return nextState;
     }
+
 
     private int[] crossMut(int[] parent1, int[] parent2){
         int[] child = orTreeSearchHelper.control2(parent1,parent2);
@@ -396,7 +417,7 @@ public class SBS{
 //            System.out.println();
 //            System.out.println(Arrays.toString(individual));
 //        }
-        testGA.searchControl();
+        testGA.searchControl(100,10000);
 
     }
 
