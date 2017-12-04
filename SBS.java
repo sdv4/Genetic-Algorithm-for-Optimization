@@ -2,8 +2,8 @@ import java.util.*;
 import java.util.Arrays;
 
 public class SBS{
-    private static final int maxPopSize = 500;
-    private static final int cullToSize = 350;
+    private static final int maxPopSize = 1500;
+    private static final int cullToSize = 1200;
 
     // Instance variables
     protected OTS orTreeSearchHelper;
@@ -24,6 +24,7 @@ public class SBS{
 	protected int wPref;
 	protected int wSecDiff;
 	protected ArrayList<ArrayList<CourseLab>> sameCoursesList;
+    protected double aveFitnessOfInds;
 
     // Constructor
     public SBS(){
@@ -99,6 +100,7 @@ public class SBS{
             if(candidate.length > 0){ // add check that candidate not already in list
                 startPop.add(candidate);
                 foundIndividuals++;
+                System.out.println("Individuals found for start population: " + foundIndividuals);
             }
         }
 
@@ -118,8 +120,10 @@ public class SBS{
             state = fSelect(state);
 
             this.generations++;
+            if(this.generations % 10 == 0)
+                System.out.print(".");
             if(this.generations % 100 == 0)
-                System.out.println("Current generation: " + this.generations);
+                System.out.println("Current generation: " + this.generations + " average FIT: " + this.aveFitnessOfInds);
         }
         System.out.println("Eval: " + this.evalOfBestSoFar);/////////////////////////////NOTE: DEBUG  STATEMENT
         System.out.println("Fittest Individual produced: \n" + Arrays.toString(this.bestAssignmentFound));/////////////////////////////NOTE: DEBUG  STATEMENT
@@ -336,6 +340,7 @@ public class SBS{
                 fit.add(j, currentState.get(fitnessValues.get(j).get(1)));
                 FIT += value;
             }
+            this.aveFitnessOfInds = FIT/fit.size();
 //            System.out.println();/////////////////////////////NOTE: DEBUG  STATEMENT
 //            System.out.println("DEBUG: checking if fitnessValues ordered by increasing eval:");/////////////////////////////NOTE: DEBUG  STATEMENT
             //for(int i = 0; i < fitnessValues.size(); i++){/////////////////////////////NOTE: DEBUG  STATEMENT
@@ -417,7 +422,7 @@ public class SBS{
 //            System.out.println();
 //            System.out.println(Arrays.toString(individual));
 //        }
-        testGA.searchControl(100,10000);
+        testGA.searchControl(100,30000);
 
     }
 
