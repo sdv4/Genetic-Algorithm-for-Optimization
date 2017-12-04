@@ -32,6 +32,7 @@ public class Parser {
 	private ArrayList<CourseLab> courseLabList;
 	private int []				partialAssign;
 	private ArrayList<ArrayList<CourseLab>> sameCoursesList;
+	private boolean validFileGiven;
 
 
 	public Parser() {
@@ -53,6 +54,7 @@ public class Parser {
 		this.courseLabList = new ArrayList<>();
 		this.sameCoursesList = new ArrayList<>();
 		this.filepath	= filepath;
+		this.validFileGiven = true;
 	}
 
 	/**
@@ -162,6 +164,10 @@ public class Parser {
 
 	public ArrayList<ArrayList<CourseLab>> getSameCoursesList(){
 		return sameCoursesList;
+	}
+	
+	public boolean getValidFileGiven(){
+		return validFileGiven;
 	}
 
 
@@ -577,6 +583,7 @@ public class Parser {
 		String line = "";
 		String[] entry;
 		String[] hm;
+		boolean validPartialAssign = true;
 		try {
 			line = buf.readLine();
 
@@ -602,25 +609,36 @@ public class Parser {
 						//System.out.println("entry[0]: "+entry[0]);
 						if (aCourseLab.isCourse()){						//if the courseLab is a course
 							//System.out.println(entry[1]+" "+entry[2]);
+							boolean foundSlot = false;
 							for (int j= 0; j<slotCList.size(); j++){	//find slot that matches entry[1] and time.ToString()
 								Slot aSlot = slotCList.get(j);
 								//System.out.println(aSlot.getDay()+" "+aSlot.getStart().toString());
 								if (aSlot.getDay().equals(entry[1]) && aSlot.getStart().toString().equals(time.toString())){ //if the slot is found, add the slot id to the unwantedIdsList for the courseLab
+									foundSlot = true;
 									partialAssign[i] = aSlot.getId();
 									//System.out.println(entry[1]+" "+entry[2]);
 									break; //break from searching for slot
 								}
 							}
+							if (foundSlot == false){
+								validPartialAssign = false;
+							}
 						}
-						else{											//if the courseLab is a lab
+						else{
+							boolean foundSlot = false;											//if the courseLab is a lab
 							for (int j= 0; j<slotLList.size(); j++){
 								System.out.println(j);
 								Slot aSlot = slotLList.get(j);
 								if (aSlot.getDay().equals(entry[1]) && aSlot.getStart().toString().equals(time.toString())){
+									foundSlot = true;
 									partialAssign[i] = aSlot.getId();
 									//System.out.println(entry[1]+" "+entry[2]);
 									break;	//
 								}
+							}
+							
+							if (foundSlot == false){
+								validPartialAssign = false;
 							}
 						}
 						break;	//break from searching for courseLab
@@ -635,6 +653,11 @@ public class Parser {
 				System.out.print(partialAssign[i]);
 			}
 			System.out.println();
+			
+			if (validPartialAssign == false){
+				System.out.println("partial assignment list was invalid");
+				validFileGiven = false;
+			}
 		}
 		catch(IOException e) {
 			e.printStackTrace();
@@ -763,6 +786,9 @@ public class Parser {
 
 	private void add813913Unwanted(){
 		//CPSC 813 constraint
+		boolean cpsc313exists = false;
+		boolean cpsc413exists = false;
+		boolean labSlotTU18exists = false;
 		for (int i = 0; i<slotCList.size(); i++){
 			Slot aSlot = slotCList.get(i);
 			//find the course slots that overlap with the time slot 18:00-19:00 on Tuesdays
@@ -791,7 +817,8 @@ public class Parser {
 			Slot aSlot = slotLList.get(i);
 			if (aSlot.getStart().toString().equals("18:00") && aSlot.getDay().equals("TU")){
 				//find the CPSC 313/413 labs and add the slotId to their unwantedList
-				System.out.println("found");
+				labSlotTU18exists = true;
+				//System.out.println("found");
 				for (int j=0; j<courseLabList.size(); j++){
 					CourseLab aCourseLab = courseLabList.get(j);
 					if (aCourseLab.isLab() && (aCourseLab.getGeneralName().equals("CPSC 313") || aCourseLab.getGeneralName().equals("CPSC 413"))){
@@ -801,6 +828,51 @@ public class Parser {
 				}
 
 			}
+		}
+		
+		for (int i=0; i<courseLabList.size(); i++){
+			CourseLab aCourseLab = courseLabList.get(i);
+			if (aCourseLab.isCourse()){
+				if (aCourseLab.getGeneralName().equals("CPSC 313")){
+					cpsc313exists = true;
+				}
+				if (aCourseLab.getGeneralName().equals("CPSC 413")){
+					cpsc413exists = true;
+				}	
+			}
+		}
+		
+		if (labSlotTU18exists){
+			for (int i = 0; i<slotLList.size(); i++){
+				Slot aSlot = slotLList.get(i);
+				if (aSlot.getStart().toString().equals("18:00") && aSlot.getDay().equals("TU")){
+					int slotMax = aSlot.getMax();
+					int slotMin = aSlot.getMin();
+					if (cpsc313exists){
+						if (slotMin != 0){
+							slotMin--;
+						}
+						if (slotMax != 0){
+							slotMax--;
+						}
+					}
+					if (cpsc413exists){
+						if (slotMin != 0){
+							slotMin--;
+						}
+						if (slotMax != 0){
+							slotMax--;
+						}
+					}
+					aSlot.setMin(slotMin);
+					aSlot.setMax(slotMax);					
+				}		
+			}
+		}
+		
+		if ((cpsc313exists || cpsc413exists) && !labSlotTU18exists){
+			System.out.println("CPSC 313/413 exist(s) but not lab slot TU at 18:00!");
+			validFileGiven = false;
 		}
 	}
 
