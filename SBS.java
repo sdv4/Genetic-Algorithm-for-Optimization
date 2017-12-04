@@ -386,7 +386,6 @@ public class SBS{
             System.out.println("Population size: " + fit.size());
             while(fit.size() > this.cullToSize)
                 fit.remove(fit.size()-1);
-            fit.subList((fit.size() - 51),(fit.size() - 1));
             System.out.println("Population culled");
             System.out.println("Population size: " + fit.size());
 
@@ -422,7 +421,7 @@ public class SBS{
 //            System.out.println();
 //            System.out.println(Arrays.toString(individual));
 //        }
-        testGA.searchControl(100,30000);
+        testGA.searchControl(100,10000);
 
     }
 
