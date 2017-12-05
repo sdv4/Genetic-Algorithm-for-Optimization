@@ -27,6 +27,7 @@ public class OTS{
   protected ArrayList<Slot> slotLList;
   protected ArrayList<Slot> slotList;
   protected int foundIndividual;
+  protected int[] partialAssignment;
 
   ////
   // Constructor - creates an Or-tree based search instance that will produce a
@@ -44,6 +45,7 @@ public class OTS{
     this.slotList.addAll(this.slotCList);
     this.slotList.addAll(this.slotLList);
     this.root = new otsNode(null, rootArray);
+    this.partialAssignment = rootArray;
   }
 
   //Nested class for Otree instantiation
@@ -290,40 +292,6 @@ private int searchArray(int [] array, int x){
 	 * returns true for valid, false for invalid
 	 */
 	public boolean constr(int[] assign) {                                          //TODO: change this back to private when done testing
-		 //In this loop, check for course incompatibility as well as unwanted time slots
-		for(int i = 0; i < assign.length; i++){
-			int slotId = assign[i];
-			if (slotId == 0){ continue;}//no slot index assigned, move to next index
-
-			//-----check that the course is not assigned to an unwanted slot. This includes the tuesday at 11:00 slot for courses
-			ArrayList<Integer> unwantedList = courseLabList.get(i).getUnWantedList();
-			for (int j=0; j<unwantedList.size();j++){
-				int unwantedId = unwantedList.get(j);
-				//System.out.println("unwantedId: "+unwantedId);
-				if (unwantedId == slotId){
-					//System.out.println(courseLabList.get(i).getName()+" did not want "+unwantedId);
-                    //System.out.println("*******************DEBUG: Constr-unwanted failed");
-					return false;
-				}
-			}
-
-			//-----check for incompatibility with other courses
-			ArrayList<CourseLab> incompatibleList = this.courseLabList.get(i).getNotCompatibleCoursesLabs();
-			for (int j=0; j<incompatibleList.size(); j++){		//incompatibleLists can be optimized later****
-				int courseIndex = incompatibleList.get(j).getId();
-				int otherSlotId = assign[courseIndex-1];
-				if (otherSlotId == 0){ continue;}
-				if (slotsOverlap(slotId, otherSlotId))
-				{
-					//System.out.println("courseIndex: "+courseIndex);
-					//System.out.println("slotId: "+slotId+" otherSlotId: "+otherSlotId);
-					//System.out.println("Incompatible: "+courseLabList.get(i).getName()+", "+courseLabList.get(courseIndex-1).getName());
-                    //System.out.println("*******************DEBUG: Constr-incompatability failed");
-					return false;
-				}
-			}
-		}//end incompatibility check
-
 
           //// Ensure that all 500 level courses are in different slots ////
           ////                                                          ////
@@ -399,6 +367,42 @@ private int searchArray(int [] array, int x){
                 }
               }
           }// End for#3
+
+            //
+            //In this loop, check for course incompatibility as well as unwanted time slots
+            //
+            for(int i = 0; i < assign.length; i++){
+                int slotId = assign[i];
+                if (slotId == 0){ continue;}//no slot index assigned, move to next index
+
+                //-----check that the course is not assigned to an unwanted slot. This includes the tuesday at 11:00 slot for courses
+                ArrayList<Integer> unwantedList = courseLabList.get(i).getUnWantedList();
+                for (int j=0; j<unwantedList.size();j++){
+                    int unwantedId = unwantedList.get(j);
+                    //System.out.println("unwantedId: "+unwantedId);
+                    if (unwantedId == slotId){
+                        //System.out.println(courseLabList.get(i).getName()+" did not want "+unwantedId);
+                        //System.out.println("*******************DEBUG: Constr-unwanted failed");
+                        return false;
+                    }
+                }
+
+                //-----check for incompatibility with other courses
+                ArrayList<CourseLab> incompatibleList = this.courseLabList.get(i).getNotCompatibleCoursesLabs();
+                for (int j=0; j<incompatibleList.size(); j++){		//incompatibleLists can be optimized later****
+                    int courseIndex = incompatibleList.get(j).getId();
+                    int otherSlotId = assign[courseIndex-1];
+                    if (otherSlotId == 0){ continue;}
+                    if (slotsOverlap(slotId, otherSlotId))
+                    {
+                        //System.out.println("courseIndex: "+courseIndex);
+                        //System.out.println("slotId: "+slotId+" otherSlotId: "+otherSlotId);
+                        //System.out.println("Incompatible: "+courseLabList.get(i).getName()+", "+courseLabList.get(courseIndex-1).getName());
+                        //System.out.println("*******************DEBUG: Constr-incompatability failed");
+                        return false;
+                    }
+                }
+            }//end incompatibility check
 
           return true;
      }// End constr

@@ -24,7 +24,7 @@ public class Slot {
   private final String day;
   private int maxInSlot;
   private int minInSlot;
-  
+
   private ArrayList<Integer> overlappingSlotIDs;
   private ArrayList<Integer> assignedIDs;
 
@@ -72,21 +72,27 @@ public class Slot {
   public int getMin(){
     return minInSlot;
   }
-  
+
   public ArrayList<Integer>  getOverlappingSlots(){
 	return overlappingSlotIDs;
   }
-  
+
   public ArrayList<Integer>  getCoursesAssigned(){
 	return assignedIDs;
   }
-  
+
   public void setMax(int max){
 	maxInSlot = max;
   }
-  
+
   public void setMin(int min){
 	minInSlot = min;
+  }
+
+  public String getSlotInfo(){
+      String info = this.day + ", " + (this.startTime).toString();
+      return info;
+
   }
 
 }

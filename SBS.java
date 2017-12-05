@@ -2,8 +2,14 @@ import java.util.*;
 import java.util.Arrays;
 
 public class SBS{
-    private static final int maxPopSize = 1500;
-    private static final int cullToSize = 1200;
+    //private static final int maxPopSize = 500;
+    //private static final int cullToSize = 400;
+    //private static final int maxPopSize = 1500; //for deptinst1
+    //private static final int cullToSize = 1200; //for deptinst1
+    private static final int maxPopSize = 1000; //for deptinst2
+    private static final int cullToSize = 800; //for deptinst2
+    //private static final int maxPopSize = 60;
+    //private static final int cullToSize = 50;
 
     // Instance variables
     protected OTS orTreeSearchHelper;
@@ -28,7 +34,8 @@ public class SBS{
 
     // Constructor
     public SBS(){
-        Parser aParser = new Parser("deptinst1.txt");
+        //Parser aParser = new Parser("tooManyCourses.txt");
+        Parser aParser = new Parser("deptinst2.txt");
         aParser.start();
         courseLabList = aParser.getCourseLabList();
         slotCList = aParser.getCourseSlotList();
@@ -85,12 +92,25 @@ public class SBS{
 		this.wSecDiff = weight;
 	}
 
+    public int getBestEval(){
+        return this.evalOfBestSoFar;
+    }
 
+    public int[] getBestAssign(){
+        return this.bestAssignmentFound;
+    }
+
+    public ArrayList<CourseLab> getIndexVector(){
+        return this.courseLabList;
+    }
+
+    public ArrayList<Slot> getSlotList(){
+        return this.slotList;
+    }
 
 //OUTLINE
 
 // 1. Build starting population
-// Let's try a starting pop of 5 for testng
     private ArrayList<int[]> getStartPop(int size){
         ArrayList<int[]> startPop = new ArrayList<int[]>();
         int foundIndividuals = 0;
@@ -409,19 +429,57 @@ public class SBS{
 
 
 
-// Make keyboard interrupt 'kill switch' that returns result when control-d pressed
+// Static class used to output the best assinment and eval value found when
+// program stopped by user.
+static class OutputSchedule extends Thread {
 
+    private SBS searchInst;
 
+    public OutputSchedule(SBS searchInstance){
+        this.searchInst = searchInstance;
+    }
+
+    public void run() {
+        System.out.println("\n\nSearch stopped.\n");
+        System.out.println("Most optimal schedule found so far: \n");
+        System.out.println("Eval-value: " + this.searchInst.getBestEval());
+        System.out.println();
+        int[] bestAssign = searchInst.getBestAssign();
+        ArrayList<Slot> slotList = searchInst.getSlotList();
+        //System.out.println(Arrays.toString(bestAssign));
+        ArrayList<CourseLab> indexVector = searchInst.getIndexVector();
+        for(int i = 0; i < bestAssign.length; i++){
+            int slotIdInAssign = bestAssign[i];
+            String slotInfo = slotList.get(slotIdInAssign-1).getSlotInfo();
+            String outputString = indexVector.get(i).getName();
+            System.out.format("%-30s",outputString);
+            System.out.println(": " + slotInfo);
+        }
+        System.out.println();
+
+  }
+}
+	// TO profile in VisualVM, run as: java -Xverify:none SBS
 
     public static void main(String[] args){
-        SBS testGA = new SBS();
-//        ArrayList<int[]> testStartPop = testGA.getStartPop(20);
-//        System.out.println("Starting Population:");
-//        for(int[] individual : testStartPop){
-//            System.out.println();
-//            System.out.println(Arrays.toString(individual));
-//        }
-        testGA.searchControl(100,10000);
+        try {
+
+            SBS testGA = new SBS();
+            Runtime.getRuntime().addShutdownHook(new OutputSchedule(testGA));
+
+    //        ArrayList<int[]> testStartPop = testGA.getStartPop(20);
+    //        System.out.println("Starting Population:");
+    //        for(int[] individual : testStartPop){
+    //            System.out.println();
+    //            System.out.println(Arrays.toString(individual));
+    //        }
+    		Scanner scanner = new Scanner(System.in);
+      		System.out.println("Press Enter to begin\t");
+         	    	scanner.nextLine();
+            //testGA.searchControl(500,1000); //for depinst1
+            testGA.searchControl(100,2000);
+        } catch (Exception e){
+            e.printStackTrace();}
 
     }
 
