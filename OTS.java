@@ -218,8 +218,13 @@ private int searchArray(int [] array, int x){
     aNode.setChildren(validChildren);                                         // This should allow for invalid children to be garbage collected?
     int randSize = validChildren.size();
     if (randSize == 0){				                                                  // If all children are invalid, go back to the aNode's parent node and choose a different node
-       aNode.setSolvedStatus(NO);
-       return chooseNode(aNode.getParent());
+        aNode.setSolvedStatus(NO);
+        if(aNode.getParent() != null)
+            return chooseNode(aNode.getParent());
+        else{
+            System.out.println("Error: Invalid input file. Hard constraints cannot be satisfied.");
+            System.exit(0);
+        }
     }
     randSize = validChildren.size();
     Random rand = new Random();
