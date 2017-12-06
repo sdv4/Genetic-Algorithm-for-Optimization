@@ -1,5 +1,6 @@
 import java.util.*;
 import java.util.Arrays;
+import java.io.File;
 
 public class SBS{
     //private static final int maxPopSize = 500;
@@ -471,21 +472,23 @@ static class OutputSchedule extends Thread {
 
     public void run() {
         System.out.println("\n\nSearch stopped.\n");
-        System.out.println("Most optimal schedule found so far: \n");
-        System.out.println("Eval-value: " + this.searchInst.getBestEval());
-        System.out.println();
-        int[] bestAssign = searchInst.getBestAssign();
-        ArrayList<Slot> slotList = searchInst.getSlotList();
-        //System.out.println(Arrays.toString(bestAssign));
-        ArrayList<CourseLab> indexVector = searchInst.getIndexVector();
-        for(int i = 0; i < bestAssign.length; i++){
-            int slotIdInAssign = bestAssign[i];
-            String slotInfo = slotList.get(slotIdInAssign-1).getSlotInfo();
-            String outputString = indexVector.get(i).getName();
-            System.out.format("%-30s",outputString);
-            System.out.println(": " + slotInfo);
+        if (this.searchInst.getBestEval() < Integer.MAX_VALUE){
+            System.out.println("Most optimal schedule found so far: \n");
+            System.out.println("Eval-value: " + this.searchInst.getBestEval());
+            System.out.println();
+            int[] bestAssign = searchInst.getBestAssign();
+            ArrayList<Slot> slotList = searchInst.getSlotList();
+            //System.out.println(Arrays.toString(bestAssign));
+            ArrayList<CourseLab> indexVector = searchInst.getIndexVector();
+            for(int i = 0; i < bestAssign.length; i++){
+                int slotIdInAssign = bestAssign[i];
+                String slotInfo = slotList.get(slotIdInAssign-1).getSlotInfo();
+                String outputString = indexVector.get(i).getName();
+                System.out.format("%-30s",outputString);
+                System.out.println(": " + slotInfo);
+            }
+            System.out.println();
         }
-        System.out.println();
 
   }
 }
@@ -495,28 +498,36 @@ static class OutputSchedule extends Thread {
         try {
             if(args.length == 9){
                 String inputFile = args[0];
-                System.out.println("\nStarting search on input file " + inputFile);
-                SBS testGA = new SBS(inputFile);
+                File f = new File(inputFile);
+                if(f.exists() && !f.isDirectory()) {
 
-                // Set weights and penalties for search //
-                testGA.setPen_courseMin(Integer.parseInt(args[1]));
-                testGA.setPen_labMin(Integer.parseInt(args[2]));
-                testGA.setPen_notPaired(Integer.parseInt(args[3]));
-                testGA.setPen_section(Integer.parseInt(args[4]));
-                testGA.setWMin(Integer.parseInt(args[5]));
-                testGA.setWPair(Integer.parseInt(args[6]));
-                testGA.setWPref(Integer.parseInt(args[7]));
-                testGA.setWSecDiff(Integer.parseInt(args[8]));
+                    System.out.println("\nStarting search on input file " + inputFile + ".\nPress Control-D at any time to end search.");
+                    SBS testGA = new SBS(inputFile);
+
+                    // Set weights and penalties for search //
+                    testGA.setPen_courseMin(Integer.parseInt(args[1]));
+                    testGA.setPen_labMin(Integer.parseInt(args[2]));
+                    testGA.setPen_notPaired(Integer.parseInt(args[3]));
+                    testGA.setPen_section(Integer.parseInt(args[4]));
+                    testGA.setWMin(Integer.parseInt(args[5]));
+                    testGA.setWPair(Integer.parseInt(args[6]));
+                    testGA.setWPref(Integer.parseInt(args[7]));
+                    testGA.setWSecDiff(Integer.parseInt(args[8]));
 
 
-                Runtime.getRuntime().addShutdownHook(new OutputSchedule(testGA)); // Build "kill swithch"
+                    Runtime.getRuntime().addShutdownHook(new OutputSchedule(testGA)); // Build "kill swithch"
 
-                //Wait for user to start search
-                Scanner scanner = new Scanner(System.in);
-          		System.out.println("\nPress Enter to begin\t");
-             	    	scanner.nextLine();
-                //testGA.searchControl(500,1000); //for depinst1
-                testGA.searchControl(0,500);// for small input files **Note, if starting with 0 as start pop size, size will be length of courseLabList
+                    //Wait for user to start search
+                    Scanner scanner = new Scanner(System.in);
+              		System.out.println("\nPress Enter to begin\t");
+                 	    	scanner.nextLine();
+                    //testGA.searchControl(500,1000); //for depinst1
+                    testGA.searchControl(0,500);// for small input files **Note, if starting with 0 as start pop size, size will be length of courseLabList
+                }
+                else{
+                    System.out.println("\nError: " + inputFile + " does not exist in the current directory.\n");
+                    System.exit(0);
+                }
             }
             else{
                 System.out.print("\nError: wrong command line arguments.\n");

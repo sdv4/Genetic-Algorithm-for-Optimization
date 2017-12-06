@@ -222,7 +222,7 @@ private int searchArray(int [] array, int x){
         if(aNode.getParent() != null)
             return chooseNode(aNode.getParent());
         else{
-            System.out.println("Error: Invalid input file. Hard constraints cannot be satisfied.");
+            System.out.println("Error: Hard constraints cannot be satisfied given current input file.");
             System.exit(0);
         }
     }
