@@ -33,32 +33,33 @@ public class SBS{
     protected double aveFitnessOfInds;
 
     // Constructor
-    public SBS(){
-        Parser aParser = new Parser("test4fail.txt");
-        //Parser aParser = new Parser("deptinst2.txt");
+    public SBS(String inputFileName){
+
+        //Parser aParser = new Parser("test4fail.txt");
+        Parser aParser = new Parser(inputFileName);
         aParser.start();
         boolean validFile = aParser.getValidFileGiven();
         if(!validFile){
             System.out.println("Error: Invalid input file. Hard constraints cannot be satisfied.");
             System.exit(0);
         }
-        
-        
-  
-        
+
+
+
+
         courseLabList = aParser.getCourseLabList();
         slotCList = aParser.getCourseSlotList();
         slotLList = aParser.getLabSlotList();
         this.orTreeSearchHelper = new OTS(courseLabList,  slotCList, slotLList, aParser.getPartialAssign());
         int [] partialAssign = aParser.getPartialAssign();
-        
+
         boolean validPartialAssign = orTreeSearchHelper.constr(partialAssign);
-        
+
         if (!validPartialAssign){
 			System.out.println("Error: Partial Assign Vector violated the hard constraints. Exiting");
 			System.exit(0);
 		}
-        
+
         this.bestAssignmentFound = new int[0];
         this.evalOfBestSoFar = Integer.MAX_VALUE;
         this.generations = 0;
@@ -492,14 +493,36 @@ static class OutputSchedule extends Thread {
 
     public static void main(String[] args){
         try {
+            if(args.length == 9){
+                String inputFile = args[0];
+                System.out.println("\nStarting search on input file " + inputFile);
+                SBS testGA = new SBS(inputFile);
 
-            SBS testGA = new SBS();
-            Runtime.getRuntime().addShutdownHook(new OutputSchedule(testGA));
-    		Scanner scanner = new Scanner(System.in);
-      		System.out.println("Press Enter to begin\t");
-         	    	scanner.nextLine();
-            //testGA.searchControl(500,1000); //for depinst1
-            testGA.searchControl(0,500);// for small input files
+                // Set weights and penalties for search //
+                testGA.setPen_courseMin(Integer.parseInt(args[1]));
+                testGA.setPen_labMin(Integer.parseInt(args[2]));
+                testGA.setPen_notPaired(Integer.parseInt(args[3]));
+                testGA.setPen_section(Integer.parseInt(args[4]));
+                testGA.setWMin(Integer.parseInt(args[5]));
+                testGA.setWPair(Integer.parseInt(args[6]));
+                testGA.setWPref(Integer.parseInt(args[7]));
+                testGA.setWSecDiff(Integer.parseInt(args[8]));
+
+
+                Runtime.getRuntime().addShutdownHook(new OutputSchedule(testGA)); // Build "kill swithch"
+
+                //Wait for user to start search
+                Scanner scanner = new Scanner(System.in);
+          		System.out.println("\nPress Enter to begin\t");
+             	    	scanner.nextLine();
+                //testGA.searchControl(500,1000); //for depinst1
+                testGA.searchControl(0,500);// for small input files **Note, if starting with 0 as start pop size, size will be length of courseLabList
+            }
+            else{
+                System.out.print("\nError: wrong command line arguments.\n");
+                System.out.println("\nUsage:\njava SBS <inputFile.txt> <pen_courseMin> <pen_labMin> <pen_notPaired> <pen_section>" +
+                    " <wMin> <wPair> <wPref> <wSecDiff>");
+            }
         } catch (Exception e){
             e.printStackTrace();}
 
