@@ -34,7 +34,7 @@ public class SBS{
 
     // Constructor
     public SBS(){
-        Parser aParser = new Parser("deptinst1.txt");
+        Parser aParser = new Parser("test4fail.txt");
         //Parser aParser = new Parser("deptinst2.txt");
         aParser.start();
         boolean validFile = aParser.getValidFileGiven();
@@ -42,18 +42,31 @@ public class SBS{
             System.out.println("Error: Invalid input file. Hard constraints cannot be satisfied.");
             System.exit(0);
         }
+        
+        
+  
+        
         courseLabList = aParser.getCourseLabList();
         slotCList = aParser.getCourseSlotList();
         slotLList = aParser.getLabSlotList();
         this.orTreeSearchHelper = new OTS(courseLabList,  slotCList, slotLList, aParser.getPartialAssign());
+        int [] partialAssign = aParser.getPartialAssign();
+        
+        boolean validPartialAssign = orTreeSearchHelper.constr(partialAssign);
+        
+        if (!validPartialAssign){
+			System.out.println("Error: Partial Assign Vector violated the hard constraints. Exiting");
+			System.exit(0);
+		}
+        
         this.bestAssignmentFound = new int[0];
         this.evalOfBestSoFar = Integer.MAX_VALUE;
         this.generations = 0;
 
-        this.pen_courseMin = 0;
-		this.pen_labMin = 0;
-		this.pen_notPaired = 0;
-		this.pen_section = 0;
+        this.pen_courseMin = 1;
+		this.pen_labMin = 1;
+		this.pen_notPaired = 1;
+		this.pen_section = 1;
 		this.wMin = 1;
 		this.wPair = 1;
 		this.wPref = 1;

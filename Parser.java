@@ -664,7 +664,7 @@ public class Parser {
 		}
 	}
 
-	private void printLists() {
+	public void printLists() {
 		System.out.println("List of courses:");
 		for(int i = 0; i<courseList.size(); i++) {
 			System.out.println(courseList.get(i).name()+" LEC: "+courseList.get(i).getLecNum());
@@ -855,6 +855,10 @@ public class Parser {
 						if (slotMax != 0){
 							slotMax--;
 						}
+						else{
+							System.out.println("Can't schedule CPSC 813. Tu 18:00 lab is already full. Exiting");
+							System.exit(0);
+						}
 					}
 					if (cpsc413exists){
 						if (slotMin != 0){
@@ -862,6 +866,10 @@ public class Parser {
 						}
 						if (slotMax != 0){
 							slotMax--;
+						}
+						else{
+							System.out.println("Can't schedule CPSC 913. Tu 18:00 lab is already full. Exiting");
+							System.exit(0);
 						}
 					}
 					aSlot.setMin(slotMin);
