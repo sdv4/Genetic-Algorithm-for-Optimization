@@ -99,7 +99,7 @@ public class Parser {
 			addTuesUnwanted();
 			add813913Unwanted();
 			findSameCourseLectures();
-			printLists();
+			//printLists();
 			buf.close();
 		}
 		catch (FileNotFoundException e){
@@ -165,7 +165,7 @@ public class Parser {
 	public ArrayList<ArrayList<CourseLab>> getSameCoursesList(){
 		return sameCoursesList;
 	}
-	
+
 	public boolean getValidFileGiven(){
 		return validFileGiven;
 	}
@@ -359,16 +359,16 @@ public class Parser {
 					if (entry[0].equals(aCourseLab.getName()))
 					{
 						courseLab1 = aCourseLab;
-						System.out.print(entry[0]+", ");
+						//System.out.print(entry[0]+", ");
 					}
 					else if (entry[1].equals(aCourseLab.getName()))
 					{
 						courseLab2 = aCourseLab;
-						System.out.print(entry[1]+", ");
+						//System.out.print(entry[1]+", ");
 					}
 				}
 
-				System.out.println();
+				//System.out.println();
 				//get the notCompatibleLists for the two courseLabs in the statement
 				courseLab1NCList = courseLab1.getNotCompatibleCoursesLabs();
 				courseLab2NCList = courseLab2.getNotCompatibleCoursesLabs();
@@ -414,7 +414,7 @@ public class Parser {
 				int h1 = Integer.parseInt(hm[0]);
 				int m1 = Integer.parseInt(hm[1]);
 				LocalTime time = LocalTime.of(h1, m1);
-				System.out.println("LocalTime: "+time.toString());
+			//	System.out.println("LocalTime: "+time.toString());
 
 
 				for (int i = 0; i < courseLabList.size(); i++){			//find the courseLab with the exact same name
@@ -466,7 +466,7 @@ public class Parser {
 		try {
 			line = buf.readLine();
 			while(!line.equals("")) {
-				System.out.println(line);
+				//System.out.println(line);
 				entry = line.split(",");								//delimit statement
 				//remove extra spaces
 				for (int i = 0; i< entry.length; i++){					//split line by ",", entry[0] = day
@@ -501,7 +501,7 @@ public class Parser {
 						}
 						else{											//if the courseLab is a lab
 							for (int j= 0; j<slotLList.size(); j++){
-								System.out.println(j);
+								//System.out.println(j);
 								Slot aSlot = slotLList.get(j);
 								if (aSlot.getDay().equals(entry[0]) && aSlot.getStart().toString().equals(time.toString())){
 									ArrayList<slotPref> slotPrefList = aCourseLab.getSlotPrefList();
@@ -527,7 +527,7 @@ public class Parser {
 	private void parsePair(BufferedReader buf){
 		String[] entry;
 		String line = "";
-		System.out.println(courseLabList.size());
+		//System.out.println(courseLabList.size());
 		CourseLab courseLab1 = courseLabList.get(0);
 		CourseLab courseLab2 = courseLabList.get(1);
 		ArrayList<CourseLab> courseLab1PairList = courseLab1.getPairList();
@@ -549,16 +549,16 @@ public class Parser {
 					if (entry[0].equals(aCourseLab.getName()))
 					{
 						courseLab1 = aCourseLab;
-						System.out.print(entry[0]+", ");
+						//System.out.print(entry[0]+", ");
 					}
 					else if (entry[1].equals(aCourseLab.getName()))
 					{
 						courseLab2 = aCourseLab;
-						System.out.print(entry[1]+", ");
+						//System.out.print(entry[1]+", ");
 					}
 				}
 
-				System.out.println();
+				//System.out.println();
 
 				courseLab1PairList = courseLab1.getPairList();			//add one of the courseLabs to the other's pairList
 
@@ -627,7 +627,7 @@ public class Parser {
 						else{
 							boolean foundSlot = false;											//if the courseLab is a lab
 							for (int j= 0; j<slotLList.size(); j++){
-								System.out.println(j);
+							//	System.out.println(j);
 								Slot aSlot = slotLList.get(j);
 								if (aSlot.getDay().equals(entry[1]) && aSlot.getStart().toString().equals(time.toString())){
 									foundSlot = true;
@@ -636,7 +636,7 @@ public class Parser {
 									break;	//
 								}
 							}
-							
+
 							if (foundSlot == false){
 								validPartialAssign = false;
 							}
@@ -648,12 +648,12 @@ public class Parser {
 				if (line == null)
 					break;
 			}
-			System.out.print("partialAssign: ");
-			for (int i = 0; i<courseLabList.size(); i++){
-				System.out.print(partialAssign[i]);
-			}
-			System.out.println();
-			
+			//System.out.print("partialAssign: ");
+	//		for (int i = 0; i<courseLabList.size(); i++){
+		//		System.out.print(partialAssign[i]);
+			//}
+			//System.out.println();
+
 			if (validPartialAssign == false){
 				System.out.println("partial assignment list was invalid");
 				validFileGiven = false;
@@ -829,7 +829,7 @@ public class Parser {
 
 			}
 		}
-		
+
 		for (int i=0; i<courseLabList.size(); i++){
 			CourseLab aCourseLab = courseLabList.get(i);
 			if (aCourseLab.isCourse()){
@@ -838,10 +838,10 @@ public class Parser {
 				}
 				if (aCourseLab.getGeneralName().equals("CPSC 413")){
 					cpsc413exists = true;
-				}	
+				}
 			}
 		}
-		
+
 		if (labSlotTU18exists){
 			for (int i = 0; i<slotLList.size(); i++){
 				Slot aSlot = slotLList.get(i);
@@ -865,11 +865,11 @@ public class Parser {
 						}
 					}
 					aSlot.setMin(slotMin);
-					aSlot.setMax(slotMax);					
-				}		
+					aSlot.setMax(slotMax);
+				}
 			}
 		}
-		
+
 		if ((cpsc313exists || cpsc413exists) && !labSlotTU18exists){
 			System.out.println("CPSC 313/413 exist(s) but not lab slot TU at 18:00!");
 			validFileGiven = false;
@@ -888,7 +888,7 @@ public class Parser {
 			if (!uniqueCourseNames.contains(aCourseLab.getGeneralName()) && aCourseLab.isCourse())
 			{
 				uniqueCourseNames.add(aCourseLab.getGeneralName());
-				System.out.println("Added: "+aCourseLab.getGeneralName());
+				//System.out.println("Added: "+aCourseLab.getGeneralName());
 			}
 		}
 
@@ -905,13 +905,13 @@ public class Parser {
 		}
 
 		//print results
-		for (int i = 0; i<sameCoursesList.size(); i++){
-			ArrayList<CourseLab> sameCourses = sameCoursesList.get(i);
-			System.out.println("Group: ");
-			for (int j = 0; j<sameCourses.size(); j++){
-				System.out.println(sameCourses.get(j).getName());
-			}
-		}
+//		for (int i = 0; i<sameCoursesList.size(); i++){
+//			ArrayList<CourseLab> sameCourses = sameCoursesList.get(i);
+//			System.out.println("Group: ");
+//			for (int j = 0; j<sameCourses.size(); j++){
+//				System.out.println(sameCourses.get(j).getName());
+//			}
+//		}
 
 
 	}

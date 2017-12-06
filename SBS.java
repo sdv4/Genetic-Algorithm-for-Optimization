@@ -6,10 +6,10 @@ public class SBS{
     //private static final int cullToSize = 400;
     //private static final int maxPopSize = 1500; //for deptinst1
     //private static final int cullToSize = 1200; //for deptinst1
-    private static final int maxPopSize = 1000; //for deptinst2
-    private static final int cullToSize = 800; //for deptinst2
-    //private static final int maxPopSize = 60;
-    //private static final int cullToSize = 50;
+    private static final int maxPopSize = 500; //for deptinst2
+    private static final int cullToSize = 400; //for deptinst2
+    //private static final int maxPopSize = 60; // for small input files
+    //private static final int cullToSize = 50; // for small input files
 
     // Instance variables
     protected OTS orTreeSearchHelper;
@@ -34,9 +34,14 @@ public class SBS{
 
     // Constructor
     public SBS(){
-        //Parser aParser = new Parser("tooManyCourses.txt");
-        Parser aParser = new Parser("deptinst2.txt");
+        Parser aParser = new Parser("deptinst1.txt");
+        //Parser aParser = new Parser("deptinst2.txt");
         aParser.start();
+        boolean validFile = aParser.getValidFileGiven();
+        if(!validFile){
+            System.out.println("Error: Invalid input file. Hard constraints cannot be satisfied.");
+            System.exit(0);
+        }
         courseLabList = aParser.getCourseLabList();
         slotCList = aParser.getCourseSlotList();
         slotLList = aParser.getLabSlotList();
@@ -129,7 +134,12 @@ public class SBS{
 
 //2. Build search control
     public void searchControl(int startSize, int generationsToRun){
-        ArrayList<int[]> state = getStartPop(startSize);                                // Get initial population
+        int size;
+        if(startSize == 0)
+            size = this.courseLabList.size();
+        else
+            size = startSize;
+        ArrayList<int[]> state = getStartPop(size);                                // Get initial population
 //            System.out.println("Starting population:");/////////////////////////////NOTE: DEBUG  STATEMENT
 //            for(int[] individual : state){/////////////////////////////NOTE: DEBUG  STATEMENT
 //            System.out.println();/////////////////////////////NOTE: DEBUG  STATEMENT
@@ -347,9 +357,15 @@ public class SBS{
             if(fitnessValues.get(0).get(0) < this.evalOfBestSoFar){// Update fittest found
                 this.evalOfBestSoFar = fitnessValues.get(0).get(0);
                 this.bestAssignmentFound = currentState.get(fitnessValues.get(0).get(1));
-                System.out.println("New fittest individual found:");
-                System.out.println("Eval = " + this.evalOfBestSoFar);
-                System.out.println(Arrays.toString(this.bestAssignmentFound));
+                if(this.evalOfBestSoFar > 0){
+                    System.out.println("New fittest individual found:");
+                    System.out.println("Eval = " + this.evalOfBestSoFar);
+                    System.out.println(Arrays.toString(this.bestAssignmentFound));
+                }
+                else{
+                    System.out.println("\n**** In the unlikely event that you are seeing this message,\n it is because an assignment with an Eval value of 0 was found. ****\n");
+                    System.exit(0);
+                }
             }
 
             // Step 2. determine value of FIT
@@ -466,18 +482,11 @@ static class OutputSchedule extends Thread {
 
             SBS testGA = new SBS();
             Runtime.getRuntime().addShutdownHook(new OutputSchedule(testGA));
-
-    //        ArrayList<int[]> testStartPop = testGA.getStartPop(20);
-    //        System.out.println("Starting Population:");
-    //        for(int[] individual : testStartPop){
-    //            System.out.println();
-    //            System.out.println(Arrays.toString(individual));
-    //        }
     		Scanner scanner = new Scanner(System.in);
       		System.out.println("Press Enter to begin\t");
          	    	scanner.nextLine();
             //testGA.searchControl(500,1000); //for depinst1
-            testGA.searchControl(100,2000);
+            testGA.searchControl(0,500);// for small input files
         } catch (Exception e){
             e.printStackTrace();}
 
