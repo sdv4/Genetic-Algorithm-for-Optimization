@@ -17,7 +17,8 @@ public class SBS{
     protected int[] bestAssignmentFound;
     protected int evalOfBestSoFar;
     protected int generations;
-
+	protected Parser aParser;
+	
     protected ArrayList<CourseLab> courseLabList;
 	protected ArrayList<Slot> slotCList;
 	protected ArrayList<Slot> slotLList;
@@ -37,11 +38,11 @@ public class SBS{
     public SBS(String inputFileName){
 
         //Parser aParser = new Parser("test4fail.txt");
-        Parser aParser = new Parser(inputFileName);
+        aParser = new Parser(inputFileName);
         aParser.start();
         boolean validFile = aParser.getValidFileGiven();
         if(!validFile){
-            System.out.println("Error: Invalid input file. Hard constraints cannot be satisfied.");
+            System.out.println("Error: Hard constraints cannot be satisfied given current input file.");
             System.exit(0);
         }
 
@@ -127,6 +128,10 @@ public class SBS{
     public ArrayList<Slot> getSlotList(){
         return this.slotList;
     }
+    
+    public Parser getParser(){
+		return this.aParser;
+	}
 
 //OUTLINE
 
@@ -465,9 +470,10 @@ public class SBS{
 static class OutputSchedule extends Thread {
 
     private SBS searchInst;
-
-    public OutputSchedule(SBS searchInstance){
+	private Parser aParser;
+    public OutputSchedule(SBS searchInstance, Parser aParser){
         this.searchInst = searchInstance;
+        this.aParser = aParser;
     }
 
     public void run() {
@@ -487,6 +493,16 @@ static class OutputSchedule extends Thread {
                 System.out.format("%-30s",outputString);
                 System.out.println(": " + slotInfo);
             }
+            if (aParser.getCpsc313exists()){
+				String outputString = "CPSC 813";
+				System.out.format("%-30s", outputString);
+				System.out.println(": TU, 18:00");
+			}
+			if (aParser.getCpsc413exists()){
+				String outputString = "CPSC 913";
+				System.out.format("%-30s", outputString);
+				System.out.println(": TU, 18:00");
+			}
             System.out.println();
         }
 
@@ -503,6 +519,7 @@ static class OutputSchedule extends Thread {
 
                     System.out.println("\nStarting search on input file " + inputFile + ".\nPress Control-D at any time to end search.");
                     SBS testGA = new SBS(inputFile);
+                    Parser aParser = testGA.getParser();
 
                     // Set weights and penalties for search //
                     testGA.setPen_courseMin(Integer.parseInt(args[1]));
@@ -515,7 +532,7 @@ static class OutputSchedule extends Thread {
                     testGA.setWSecDiff(Integer.parseInt(args[8]));
 
 
-                    Runtime.getRuntime().addShutdownHook(new OutputSchedule(testGA)); // Build "kill swithch"
+                    Runtime.getRuntime().addShutdownHook(new OutputSchedule(testGA, aParser)); // Build "kill swithch"
 
                     //Wait for user to start search
                     Scanner scanner = new Scanner(System.in);
