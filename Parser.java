@@ -871,7 +871,7 @@ public class Parser {
 							slotMax--;
 						}
 						else{
-							System.out.println("Can't schedule CPSC 813. Tu 18:00 lab is already full. Exiting");
+							System.out.println("Can't schedule CPSC 813 given current input file. Exiting");
 							System.exit(0);
 						}
 					}
@@ -883,7 +883,7 @@ public class Parser {
 							slotMax--;
 						}
 						else{
-							System.out.println("Can't schedule CPSC 913. Tu 18:00 lab is already full. Exiting");
+							System.out.println("Can't schedule CPSC 913 given current input file. Exiting");
 							System.exit(0);
 						}
 					}
