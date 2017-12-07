@@ -1,10 +1,18 @@
 /**
- * @author Chi Zhang
- * version: 1
- * date: 11-11-2017
- */
-//This is a generalized class for Course or Lab objects;
-//Id's for all courses/labs will be unique.
+*
+* CourseLab.java
+*
+* This is a generalized class for Course or Lab objects;
+* ID's for all courses/labs will be unique.
+*
+* @author Chi Zhang
+* @author Kevin Naval
+* @author Justina Lem
+* @author Shane Sims
+*
+* @version 6 December 2017
+*/
+
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,13 +30,12 @@ public class CourseLab {
 	private final String general;
 	private final String specificLecture;
 
-	private ArrayList<CourseLab> notCompatibleCoursesLabs;//replaces associatedLecture/Course/Lab, plus additional not compatible CourseLabs
-	private int slotId = -1;//default value is -1 for unassigned slot
+	private ArrayList<CourseLab> notCompatibleCoursesLabs;						//replaces associatedLecture/Course/Lab, plus additional not compatible CourseLabs
+	private int slotId = -1;													//default value is -1 for unassigned slot
 	private ArrayList<Integer> unwantedSlotIds;
 	private ArrayList<slotPref> slotPrefList;
 	private ArrayList<CourseLab> pairList;
 
-//TODO: provide documentation for this constructor. What is int id argument for?
 	public CourseLab(String name, int id, int lectureNumber, int labNumber, boolean isCourse, boolean isLab, CourseLab associatedLecture){
 		this.name = name;
 		this.id = counter.incrementAndGet();
@@ -102,11 +109,11 @@ public class CourseLab {
 	public ArrayList<Integer> getUnWantedList(){
 		return this.unwantedSlotIds;
 	}
-	
+
 	public ArrayList<slotPref> getSlotPrefList(){
 		return this.slotPrefList;
 	}
-	
+
 	public ArrayList<CourseLab> getPairList(){
 		return this.pairList;
 	}
