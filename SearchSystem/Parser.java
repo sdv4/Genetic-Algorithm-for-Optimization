@@ -37,6 +37,9 @@ public class Parser {
 	private int []				partialAssign;
 	private ArrayList<ArrayList<CourseLab>> sameCoursesList;
 	private boolean validFileGiven;
+	private boolean cpsc313exists;
+	private boolean cpsc413exists;
+	private boolean labSlotTU18exists;
 
 
 	public Parser() {
@@ -171,6 +174,18 @@ public class Parser {
 
 	public boolean getValidFileGiven(){
 		return validFileGiven;
+	}
+
+	public boolean getCpsc313exists(){
+		return cpsc313exists;
+	}
+
+	public boolean getCpsc413exists(){
+		return cpsc413exists;
+	}
+
+	public boolean getLabSlotTU18exists(){
+		return labSlotTU18exists;
 	}
 
 
@@ -720,9 +735,9 @@ public class Parser {
 
 	private void add813913Unwanted(){
 		//CPSC 813 constraint
-		boolean cpsc313exists = false;
-		boolean cpsc413exists = false;
-		boolean labSlotTU18exists = false;
+		cpsc313exists = false;
+		cpsc413exists = false;
+		labSlotTU18exists = false;
 		for (int i = 0; i<slotCList.size(); i++){
 			Slot aSlot = slotCList.get(i);
 			//find the course slots that overlap with the time slot 18:00-19:00 on Tuesdays
@@ -811,7 +826,8 @@ public class Parser {
 			}
 		}
 		if ((cpsc313exists || cpsc413exists) && !labSlotTU18exists){
-			System.out.println("CPSC 313/413 exist(s) but not lab slot TU at 18:00!");
+			System.out.println("CPSC 313/413 exist(s) but not lab slot TU at 18:00! Exiting");
+			System.exit(0);
 			validFileGiven = false;
 		}
 	}

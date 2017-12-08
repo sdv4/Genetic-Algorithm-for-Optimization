@@ -1,0 +1,30 @@
+Name:
+parallelpen
+
+Course slots:
+MO, 8:00, 1, 1
+MO, 9:00, 2, 2
+MO, 10:00, 3, 3
+
+Lab slots:
+
+Courses:
+CPSC 101 LEC 01
+CPSC 101 LEC 02
+CPSC 101 LEC 03
+CPSC 101 LEC 04
+CPSC 102 LEC 01
+CPSC 102 LEC 02
+
+Labs:
+
+Not compatible:
+
+Unwanted:
+
+Preferences:
+
+Pair:
+
+Partial assignments:
+

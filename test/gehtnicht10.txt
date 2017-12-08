@@ -1,0 +1,28 @@
+Name:
+gehtnicht10
+
+Course slots:
+MO, 8:00, 1, 1
+TU, 17:00, 2, 1
+
+Lab slots:
+TU, 14:00, 4, 2
+
+Courses:
+CPSC 413 LEC 01
+CPSC 434 LEC 01
+
+Labs:
+CPSC 434 LEC 01 TUT 01
+
+Not compatible:
+CPSC 413 LEC 01, CPSC 434 LEC 01
+
+Unwanted:
+
+Preferences:
+
+Pair:
+
+Partial assignments:
+

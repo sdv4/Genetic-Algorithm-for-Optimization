@@ -1,0 +1,32 @@
+Name:
+gehtnicht8
+
+Course slots:
+MO, 8:00, 2, 1
+MO, 9:00, 2, 1
+TU, 8:00, 2, 1
+
+Lab slots:
+TU, 14:00, 4, 2
+
+Courses:
+CPSC 533 LEC 01
+CPSC 534 LEC 01
+CPSC 535 LEC 01
+CPSC 536 LEC 01
+
+Labs:
+CPSC 533 LEC 01 TUT 01
+
+Not compatible:
+CPSC 536 LEC 01, CPSC 533 LEC 01
+
+Unwanted:
+
+Preferences:
+MO, 8:00, CPSC 533 LEC 01, 10
+
+Pair:
+
+Partial assignments:
+
