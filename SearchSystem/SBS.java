@@ -498,7 +498,7 @@ public class SBS{
             else{
                 System.out.print("\nError: wrong command line arguments.\n");
                 System.out.println("\nUsage:\njava SBS <inputFile.txt> <pen_courseMin> <pen_labMin> <pen_notPaired> <pen_section>" +
-                    " <wMin> <wPair> <wPref> <wSecDiff>");
+                    " <wMinFilled> <wPair> <wPref> <wSecDiff>");
             }
         } catch (Exception e){e.printStackTrace();}
     }

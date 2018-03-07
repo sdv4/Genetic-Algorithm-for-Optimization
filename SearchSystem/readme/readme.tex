@@ -1,0 +1,435 @@
+\documentclass[11pt]{article}
+\usepackage{array,& url, kantlipsum, listings, xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx, float, courier}
+\usepackage[section]{placeins}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{longtable}
+\graphicspath{ {output/} }
+
+\lstdefinestyle{terminal}
+{
+    backgroundcolor=\color{white},
+    basicstyle=\footnotesize\color{black}\ttfamily,
+    frame=tb,
+    numbers=left
+}
+\makeatletter
+\long\def\@makecaption#1#2{%
+	\vskip\abovecaptionskip
+		\bfseries #1: #2\par
+	\vskip\belowcaptionskip}%
+\makeatother
+
+\title{Search System Documentation \& Department Instance Solutions \\CPSC 433 Fall 2017 \\ 8 December 2017}
+\author{
+\begin{tabular}{c c c c}
+Shane Sims & Justina Lem & Kevin Naval & Chi Zhang\tabularnewline
+ID: 00300601 & ID: 10055800 & ID: 10082739 & ID: 10158320 \tabularnewline
+\end{tabular}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Running the Search System}
+In directory containing SBS.java, OTS.java, Parser.java, slotPref.java, CourseLab.java, Slot.java, Lab.java, Course.java, and the input .txt file, issue the following commands:
+\begin{lstlisting}[style=terminal, title={Compiling Search System}]
+javac *.java
+\end{lstlisting}
+
+\begin{lstlisting}[style=terminal, title={Running the Search System}]
+java SBS <inputFile.txt> <pen_courseMin> <pen_labMin> <pen_notPaired> <pen_section>
+	 	<wMinFilled> <wPair> <wPref> <wSecDiff>
+\end{lstlisting}
+
+\section*{Solution for \texttt{department1}}
+Eval-value: 3525
+\setlength\LTleft\parindent
+\setlength\LTright\fill
+
+\begin{longtable}{l l r}
+CPSC 203 LEC 01               	&\hspace*{1.5cm}: TU,& 08:00\tabularnewline
+CPSC 203 LEC 01 TUT 01       	&\hspace*{1.5cm}: FR,& 18:00\tabularnewline
+CPSC 203 LEC 01 TUT 02       	&\hspace*{1.5cm}: TU,& 13:00\tabularnewline
+CPSC 203 LEC 01 TUT 03       	&\hspace*{1.5cm}: TU,& 15:00\tabularnewline
+CPSC 203 LEC 01 TUT 04       	&\hspace*{1.5cm}: FR,& 16:00\tabularnewline
+CPSC 203 LEC 01 TUT 05       	&\hspace*{1.5cm}: MO,& 19:00\tabularnewline
+CPSC 203 LEC 01 TUT 06       	&\hspace*{1.5cm}: MO,& 10:00\tabularnewline
+CPSC 203 LEC 02               	&\hspace*{1.5cm}: MO,& 08:00\tabularnewline
+CPSC 203 LEC 02 TUT 07     	&\hspace*{1.5cm}: TU,& 15:00\tabularnewline
+CPSC 203 LEC 02 TUT 08       	&\hspace*{1.5cm}: TU,& 16:00\tabularnewline
+CPSC 203 LEC 02 TUT 09       	&\hspace*{1.5cm}: FR,& 14:00\tabularnewline
+CPSC 203 LEC 02 TUT 10       	&\hspace*{1.5cm}: FR,& 12:00\tabularnewline
+CPSC 203 LEC 02 TUT 11        &\hspace*{1.5cm}: MO,& 18:00\tabularnewline
+CPSC 203 LEC 02 TUT 12       	&\hspace*{1.5cm}: MO,& 10:00\tabularnewline
+CPSC 203 LEC 03              	&\hspace*{1.5cm}: MO,& 11:00\tabularnewline
+CPSC 203 LEC 03 TUT 13     	&\hspace*{1.5cm}: MO,& 09:00\tabularnewline
+CPSC 203 LEC 03 TUT 14       	&\hspace*{1.5cm}: MO,& 14:00\tabularnewline
+CPSC 203 LEC 03 TUT 15       	&\hspace*{1.5cm}: FR,& 10:00\tabularnewline
+CPSC 203 LEC 03 TUT 16       	&\hspace*{1.5cm}: FR,& 12:00\tabularnewline
+CPSC 203 LEC 03 TUT 17       	&\hspace*{1.5cm}: TU,& 12:00\tabularnewline
+CPSC 203 LEC 03 TUT 18       	&\hspace*{1.5cm}: TU,& 08:00\tabularnewline
+CPSC 203 LEC 04              	&\hspace*{1.5cm}: MO,& 17:00\tabularnewline
+CPSC 203 LEC 04 TUT 19       	&\hspace*{1.5cm}:  MO,& 18:00\tabularnewline
+CPSC 203 LEC 04 TUT 20       	&\hspace*{1.5cm}:  MO,& 08:00\tabularnewline
+CPSC 203 LEC 04 TUT 21       	&\hspace*{1.5cm}:  TU,& 16:00\tabularnewline
+CPSC 203 LEC 04 TUT 22       	&\hspace*{1.5cm}:  TU,& 08:00\tabularnewline
+CPSC 203 LEC 04 TUT 23       	&\hspace*{1.5cm}:  FR,& 10:00\tabularnewline
+CPSC 203 LEC 04 TUT 24       	&\hspace*{1.5cm}:  MO,& 10:00\tabularnewline
+CPSC 203 LEC 95               	&\hspace*{1.5cm}:  MO,& 19:00\tabularnewline
+CPSC 203 LEC 95 TUT 95        &\hspace*{1.5cm}:  TU,& 19:00\tabularnewline
+CPSC 203 LEC 95 TUT 96        &\hspace*{1.5cm}:  MO,& 17:00\tabularnewline
+CPSC 203 LEC 95 TUT 97        &\hspace*{1.5cm}:  FR,& 16:00\tabularnewline
+CPSC 203 LEC 95 TUT 98        &\hspace*{1.5cm}:  TU,& 20:00\tabularnewline
+CPSC 203 LEC 95 TUT 99        &\hspace*{1.5cm}:  TU,& 17:00\tabularnewline
+CPSC 203 LEC 95 TUT 90        &\hspace*{1.5cm}:  MO,& 16:00\tabularnewline
+CPSC 215 LEC 01               	&\hspace*{1.5cm}:  MO,& 08:00\tabularnewline
+CPSC 215 LEC 01 TUT 01        &\hspace*{1.5cm}:  MO,& 16:00\tabularnewline
+CPSC 215 LEC 01 TUT 02        &\hspace*{1.5cm}:  FR,& 10:00\tabularnewline
+CPSC 215 LEC 01 TUT 03        &\hspace*{1.5cm}:  MO,& 12:00\tabularnewline
+CPSC 215 LEC 01 TUT 04        &\hspace*{1.5cm}:  TU,& 11:00\tabularnewline
+CPSC 231 LEC 01               	&\hspace*{1.5cm}:  TU,& 14:00\tabularnewline
+CPSC 231 LEC 01 TUT 01        &\hspace*{1.5cm}:  MO,& 13:00\tabularnewline
+CPSC 231 LEC 01 TUT 02        &\hspace*{1.5cm}:  FR,& 10:00\tabularnewline
+CPSC 231 LEC 01 TUT 03        &\hspace*{1.5cm}:  TU,& 12:00\tabularnewline
+CPSC 231 LEC 01 TUT 04        &\hspace*{1.5cm}:  FR,& 12:00\tabularnewline
+CPSC 231 LEC 01 TUT 05        &\hspace*{1.5cm}:  TU,& 17:00\tabularnewline
+CPSC 231 LEC 01 TUT 06        &\hspace*{1.5cm}:  TU,& 09:00\tabularnewline
+CPSC 233 LEC 01               &\hspace*{1.5cm}: MO,& 15:00\tabularnewline
+CPSC 233 LEC 02               &\hspace*{1.5cm}:   MO,& 11:00\tabularnewline
+CPSC 233 TUT 01               &\hspace*{1.5cm}:   TU,& 15:00\tabularnewline
+CPSC 233 TUT 02               &\hspace*{1.5cm}:   FR,& 12:00\tabularnewline
+CPSC 233 TUT 03               &\hspace*{1.5cm}:   FR,& 14:00\tabularnewline
+CPSC 233 TUT 04               &\hspace*{1.5cm}:   TU,& 14:00\tabularnewline
+CPSC 233 TUT 05               &\hspace*{1.5cm}:   TU,& 13:00\tabularnewline
+CPSC 233 TUT 06               &\hspace*{1.5cm}:   TU,& 16:00\tabularnewline
+CPSC 233 TUT 07               &\hspace*{1.5cm}:  FR,& 16:00\tabularnewline
+CPSC 265 LEC 01               &\hspace*{1.5cm}:  TU,& 09:00\tabularnewline
+CPSC 265 LEC 01 TUT 01        &\hspace*{1.5cm}:  MO,& 14:00\tabularnewline
+CPSC 265 LEC 01 TUT 02        &\hspace*{1.5cm}:  MO,& 17:00\tabularnewline
+CPSC 265 LEC 01 TUT 03        &\hspace*{1.5cm}:  TU,& 16:00\tabularnewline
+CPSC 265 LEC 01 TUT 04        &\hspace*{1.5cm}:  TU,& 11:00\tabularnewline
+CPSC 265 LEC 02               &\hspace*{1.5cm}:  TU,& 17:00\tabularnewline
+CPSC 265 LEC 02 TUT 05        &\hspace*{1.5cm}:  MO,& 09:00\tabularnewline
+CPSC 265 LEC 02 TUT 06        &\hspace*{1.5cm}:  TU,& 10:00\tabularnewline
+CPSC 265 LEC 02 TUT 07        &\hspace*{1.5cm}:  TU,& 15:00\tabularnewline
+CPSC 265 LEC 02 TUT 08        &\hspace*{1.5cm}:  FR,& 14:00\tabularnewline
+CPSC 313 LEC 01               &\hspace*{1.5cm}:  MO,& 17:00\tabularnewline
+CPSC 313 LEC 01 TUT 01        &\hspace*{1.5cm}:  MO,& 15:00\tabularnewline
+CPSC 313 LEC 01 TUT 02        &\hspace*{1.5cm}:  TU,& 16:00\tabularnewline
+CPSC 313 LEC 01 TUT 03        &\hspace*{1.5cm}:  TU,& 17:00\tabularnewline
+CPSC 321 LEC 01               &\hspace*{1.5cm}:  TU,& 12:00\tabularnewline
+CPSC 331 LEC 01               &\hspace*{1.5cm}:  MO,& 14:00\tabularnewline
+CPSC 331 LEC 01 TUT 01        &\hspace*{1.5cm}:  TU,& 17:00\tabularnewline
+CPSC 331 LEC 01 TUT 02        &\hspace*{1.5cm}:  TU,& 13:00\tabularnewline
+CPSC 331 LEC 01 TUT 03        &\hspace*{1.5cm}:  FR,& 16:00\tabularnewline
+CPSC 331 LEC 01 TUT 04        &\hspace*{1.5cm}:  FR,& 16:00\tabularnewline
+CPSC 333 LEC 01               &\hspace*{1.5cm}:  MO,& 11:00\tabularnewline
+CPSC 333 LEC 01 TUT 01        &\hspace*{1.5cm}:  TU,& 13:00\tabularnewline
+CPSC 335 LEC 01               &\hspace*{1.5cm}:  MO,& 09:00\tabularnewline
+CPSC 335 LEC 01 TUT 01        &\hspace*{1.5cm}:  TU,& 15:00\tabularnewline
+CPSC 335 LEC 01 TUT 02        &\hspace*{1.5cm}:  MO,& 16:00\tabularnewline
+CPSC 349 LEC 01               &\hspace*{1.5cm}:  TU,& 14:00\tabularnewline
+CPSC 349 LEC 01 TUT 01        &\hspace*{1.5cm}:  FR,& 10:00\tabularnewline
+CPSC 349 LEC 01 TUT 02        &\hspace*{1.5cm}:  MO,& 14:00\tabularnewline
+CPSC 349 LEC 01 TUT 03        &\hspace*{1.5cm}:  MO,& 16:00\tabularnewline
+CPSC 355 LEC 01               &\hspace*{1.5cm}:  TU,& 15:00\tabularnewline
+CPSC 355 LEC 01 TUT 01        &\hspace*{1.5cm}:  TU,& 13:00\tabularnewline
+CPSC 411 LEC 01               &\hspace*{1.5cm}:  MO,& 13:00\tabularnewline
+CPSC 411 LEC 01 TUT 01        &\hspace*{1.5cm}:  TU,& 14:00\tabularnewline
+CPSC 411 LEC 01 TUT 02        &\hspace*{1.5cm}:  TU,& 12:00\tabularnewline
+CPSC 411 LEC 01 TUT 03        &\hspace*{1.5cm}:  MO,& 09:00\tabularnewline
+CPSC 411 LEC 01 TUT 04        &\hspace*{1.5cm}:  MO,& 12:00\tabularnewline
+CPSC 413 LEC 01               &\hspace*{1.5cm}:  MO,& 17:00\tabularnewline
+CPSC 413 LEC 01 TUT 01        &\hspace*{1.5cm}:  TU,& 16:00\tabularnewline
+CPSC 413 LEC 01 TUT 02        &\hspace*{1.5cm}:  MO,& 11:00\tabularnewline
+CPSC 413 LEC 01 TUT 03        &\hspace*{1.5cm}:  FR,& 10:00\tabularnewline
+CPSC 421 LEC 01               &\hspace*{1.5cm}:  MO,& 15:00\tabularnewline
+CPSC 421 TUT 01               &\hspace*{1.5cm}:  MO,& 11:00\tabularnewline
+CPSC 433 LEC 01               &\hspace*{1.5cm}:  TU,& 12:00\tabularnewline
+CPSC 433 TUT 01               &\hspace*{1.5cm}:  TU,& 11:00\tabularnewline
+CPSC 433 TUT 02               &\hspace*{1.5cm}:  TU,& 09:00\tabularnewline
+CPSC 441 LEC 01               &\hspace*{1.5cm}:  MO,& 10:00\tabularnewline
+CPSC 441 LEC 01 TUT 01        &\hspace*{1.5cm}:  MO,& 16:00\tabularnewline
+CPSC 441 LEC 01 TUT 02        &\hspace*{1.5cm}:  TU,& 19:00\tabularnewline
+CPSC 441 LEC 01 TUT 03        &\hspace*{1.5cm}:  TU,& 13:00\tabularnewline
+CPSC 441 LEC 02               &\hspace*{1.5cm}:  TU,& 15:00\tabularnewline
+CPSC 441 LEC 02 TUT 04        &\hspace*{1.5cm}:  TU,& 12:00\tabularnewline
+CPSC 441 LEC 02 TUT 05        &\hspace*{1.5cm}:  TU,& 11:00\tabularnewline
+CPSC 441 LEC 02 TUT 06        &\hspace*{1.5cm}:  MO,& 09:00\tabularnewline
+CPSC 453 LEC 01               &\hspace*{1.5cm}:  MO,& 12:00\tabularnewline
+CPSC 453 TUT 01               &\hspace*{1.5cm}:  TU,& 11:00\tabularnewline
+CPSC 453 TUT 02               &\hspace*{1.5cm}:  MO,& 11:00\tabularnewline
+CPSC 453 TUT 03               &\hspace*{1.5cm}:  MO,& 14:00\tabularnewline
+CPSC 453 TUT 04               &\hspace*{1.5cm}:  TU,& 14:00\tabularnewline
+CPSC 455 LEC 01               &\hspace*{1.5cm}:  MO,& 11:00\tabularnewline
+CPSC 455 TUT 01               &\hspace*{1.5cm}:  MO,& 14:00\tabularnewline
+CPSC 455 TUT 02               &\hspace*{1.5cm}:  TU,& 12:00\tabularnewline
+CPSC 457 LEC 01               &\hspace*{1.5cm}:  TU,& 09:00\tabularnewline
+CPSC 457 LEC 01 TUT 01        &\hspace*{1.5cm}:  MO,& 12:00\tabularnewline
+CPSC 457 LEC 01 TUT 02        &\hspace*{1.5cm}:  TU,& 14:00\tabularnewline
+CPSC 457 LEC 02               &\hspace*{1.5cm}:  MO,& 20:00\tabularnewline
+CPSC 457 LEC 02 TUT 03        &\hspace*{1.5cm}:  MO,& 17:00\tabularnewline
+CPSC 457 LEC 02 TUT 04        &\hspace*{1.5cm}: MO,& 10:00\tabularnewline
+CPSC 471 LEC 01               &\hspace*{1.5cm}: MO,& 14:00\tabularnewline
+CPSC 471 TUT 01               &\hspace*{1.5cm}: MO,& 15:00\tabularnewline
+CPSC 471 TUT 02               &\hspace*{1.5cm}: MO,& 09:00\tabularnewline
+CPSC 471 TUT 03               &\hspace*{1.5cm}: TU,& 09:00\tabularnewline
+CPSC 471 TUT 04               &\hspace*{1.5cm}: FR,& 12:00\tabularnewline
+CPSC 481 LEC 01               &\hspace*{1.5cm}: TU,& 08:00\tabularnewline
+CPSC 481 LEC 01 TUT 01        &\hspace*{1.5cm}: TU,& 10:00\tabularnewline
+CPSC 481 LEC 01 TUT 02        &\hspace*{1.5cm}: MO,& 11:00\tabularnewline
+CPSC 481 LEC 01 TUT 03        &\hspace*{1.5cm}: FR,& 16:00\tabularnewline
+CPSC 481 LEC 01 TUT 04        &\hspace*{1.5cm}: MO,& 13:00\tabularnewline
+CPSC 510 LEC 01               &\hspace*{1.5cm}: MO,& 15:00\tabularnewline
+CPSC 510 TUT 01               &\hspace*{1.5cm}: MO,& 10:00\tabularnewline
+CPSC 511 LEC 01               &\hspace*{1.5cm}: TU,& 17:00\tabularnewline
+CPSC 511 TUT 01               &\hspace*{1.5cm}: MO,& 16:00\tabularnewline
+CPSC 517 LEC 01               &\hspace*{1.5cm}: TU,& 09:00\tabularnewline
+CPSC 517 TUT 01               &\hspace*{1.5cm}: MO,& 09:00\tabularnewline
+CPSC 519 LEC 01               &\hspace*{1.5cm}: TU,& 12:00\tabularnewline
+CPSC 519 TUT 01               &\hspace*{1.5cm}: TU,& 09:00\tabularnewline
+CPSC 523 LEC 01               &\hspace*{1.5cm}: MO,& 17:00\tabularnewline
+CPSC 523 TUT 01               &\hspace*{1.5cm}: TU,& 10:00\tabularnewline
+CPSC 525 LEC 01               &\hspace*{1.5cm}: MO,& 12:00\tabularnewline
+CPSC 525 TUT 01               &\hspace*{1.5cm}: MO,& 11:00\tabularnewline
+CPSC 557 LEC 01               &\hspace*{1.5cm}: MO,& 16:00\tabularnewline
+CPSC 557 TUT 01               &\hspace*{1.5cm}: MO,& 17:00\tabularnewline
+CPSC 559 LEC 01               &\hspace*{1.5cm}: MO,& 11:00\tabularnewline
+CPSC 559 TUT 01               &\hspace*{1.5cm}: TU,& 15:00\tabularnewline
+CPSC 559 TUT 02               &\hspace*{1.5cm}: TU,& 12:00\tabularnewline
+CPSC 565 LEC 01               &\hspace*{1.5cm}: MO,& 10:00\tabularnewline
+CPSC 565 TUT 01               &\hspace*{1.5cm}: TU,& 11:00\tabularnewline
+CPSC 565 TUT 02               &\hspace*{1.5cm}: MO,& 11:00\tabularnewline
+CPSC 581 LEC 01               &\hspace*{1.5cm}: MO,& 13:00\tabularnewline
+CPSC 581 TUT 01               &\hspace*{1.5cm}: FR,& 12:00\tabularnewline
+CPSC 581 TUT 02               &\hspace*{1.5cm}: TU,& 09:00\tabularnewline
+CPSC 587 LEC 01               &\hspace*{1.5cm}: TU,& 18:00\tabularnewline
+CPSC 587 TUT 01               &\hspace*{1.5cm}: FR,& 14:00\tabularnewline
+CPSC 587 TUT 02               &\hspace*{1.5cm}: MO,& 10:00\tabularnewline
+CPSC 589 LEC 01               &\hspace*{1.5cm}: MO,& 09:00\tabularnewline
+CPSC 589 TUT 01               &\hspace*{1.5cm}: TU,& 20:00\tabularnewline
+CPSC 589 TUT 02               &\hspace*{1.5cm}: MO,& 15:00\tabularnewline
+CPSC 591 LEC 01               &\hspace*{1.5cm}: TU,& 14:00\tabularnewline
+CPSC 591 TUT 01               &\hspace*{1.5cm}: MO,& 13:00\tabularnewline
+CPSC 591 TUT 02               &\hspace*{1.5cm}: MO,& 19:00\tabularnewline
+CPSC 594 LEC 01               &\hspace*{1.5cm}: MO,& 18:00\tabularnewline
+CPSC 594 TUT 01               &\hspace*{1.5cm}: MO,& 15:00\tabularnewline
+SENG 311 LEC 01               &\hspace*{1.5cm}: TU,& 17:00\tabularnewline
+SENG 311 TUT 01               &\hspace*{1.5cm}: TU,& 14:00\tabularnewline
+SENG 311 TUT 02               &\hspace*{1.5cm}: TU,& 10:00\tabularnewline
+SENG 311 TUT 03               &\hspace*{1.5cm}: MO,& 15:00\tabularnewline
+SENG 411 LEC 01               &\hspace*{1.5cm}: MO,& 09:00\tabularnewline
+SENG 411 LEC 02               &\hspace*{1.5cm}: MO,& 16:00\tabularnewline
+SENG 411 TUT 01               &\hspace*{1.5cm}: MO,& 12:00\tabularnewline
+SENG 411 TUT 02               &\hspace*{1.5cm}: MO,& 15:00\tabularnewline
+SENG 411 TUT 03               &\hspace*{1.5cm}: MO,& 08:00\tabularnewline
+SENG 411 TUT 04               &\hspace*{1.5cm}: FR,& 08:00\tabularnewline
+SENG 411 TUT 05               &\hspace*{1.5cm}:  TU,& 14:00\tabularnewline
+SENG 511 LEC 01             &\hspace*{1.5cm}: TU,& 15:00\tabularnewline
+SENG 511 TUT 01           &\hspace*{1.5cm}: FR,& 18:00\tabularnewline
+SENG 511 TUT 02               &\hspace*{1.5cm}:  FR,& 08:00\tabularnewline
+SENG 513 LEC 01            &\hspace*{1.5cm}: MO,& 14:00\tabularnewline
+SENG 513 TUT 01          &\hspace*{1.5cm}: MO,& 20:00\tabularnewline
+CPSC 813                     &\hspace*{1.5cm}: TU,& 18:00\tabularnewline
+CPSC 913                     &\hspace*{1.5cm}: TU,& 18:00\tabularnewline
+\end{longtable}
+
+\section*{Solution for \texttt{department2}}
+\setlength\LTleft\parindent
+\setlength\LTright\fill
+Eval-value: 8866
+
+\begin{longtable}{l l r}
+CPSC 203 LEC 01               &\hspace*{1.5cm}: TU,& 08:00\tabularnewline
+CPSC 203 LEC 01 TUT 01        &\hspace*{1.5cm}: TU,& 17:00\tabularnewline
+CPSC 203 LEC 01 TUT 02        &\hspace*{1.5cm}: FR,& 18:00\tabularnewline
+CPSC 203 LEC 01 TUT 03        &\hspace*{1.5cm}: MO,& 18:00\tabularnewline
+CPSC 203 LEC 01 TUT 04        &\hspace*{1.5cm}: MO,& 20:00\tabularnewline
+CPSC 203 LEC 01 TUT 05        &\hspace*{1.5cm}: TU,& 11:00\tabularnewline
+CPSC 203 LEC 01 TUT 06        &\hspace*{1.5cm}: TU,& 10:00\tabularnewline
+CPSC 203 LEC 02               &\hspace*{1.5cm}: MO,& 08:00\tabularnewline
+CPSC 203 LEC 02 TUT 07        &\hspace*{1.5cm}: FR,& 08:00\tabularnewline
+CPSC 203 LEC 02 TUT 08        &\hspace*{1.5cm}: FR,& 14:00\tabularnewline
+CPSC 203 LEC 02 TUT 09        &\hspace*{1.5cm}: FR,& 18:00\tabularnewline
+CPSC 203 LEC 02 TUT 10        &\hspace*{1.5cm}: TU,& 13:00\tabularnewline
+CPSC 203 LEC 02 TUT 11        &\hspace*{1.5cm}: MO,& 09:00\tabularnewline
+CPSC 203 LEC 02 TUT 12        &\hspace*{1.5cm}: MO,& 09:00\tabularnewline
+CPSC 203 LEC 03               &\hspace*{1.5cm}: MO,& 18:00\tabularnewline
+CPSC 203 LEC 03 TUT 13        &\hspace*{1.5cm}: MO,& 09:00\tabularnewline
+CPSC 203 LEC 03 TUT 14        &\hspace*{1.5cm}: TU,& 11:00\tabularnewline
+CPSC 203 LEC 03 TUT 15        &\hspace*{1.5cm}: FR,& 08:00\tabularnewline
+CPSC 203 LEC 03 TUT 16        &\hspace*{1.5cm}: MO,& 11:00\tabularnewline
+CPSC 203 LEC 03 TUT 17        &\hspace*{1.5cm}: MO,& 10:00\tabularnewline
+CPSC 203 LEC 03 TUT 18        &\hspace*{1.5cm}: TU,& 08:00\tabularnewline
+CPSC 203 LEC 04               &\hspace*{1.5cm}: MO,& 10:00\tabularnewline
+CPSC 203 LEC 04 TUT 19        &\hspace*{1.5cm}: TU,& 11:00\tabularnewline
+CPSC 203 LEC 04 TUT 20        &\hspace*{1.5cm}: MO,& 09:00\tabularnewline
+CPSC 203 LEC 04 TUT 21        &\hspace*{1.5cm}: MO,& 14:00\tabularnewline
+CPSC 203 LEC 04 TUT 22        &\hspace*{1.5cm}: FR,& 12:00\tabularnewline
+CPSC 203 LEC 04 TUT 23        &\hspace*{1.5cm}: FR,& 14:00\tabularnewline
+CPSC 203 LEC 04 TUT 24        &\hspace*{1.5cm}: FR,& 14:00\tabularnewline
+CPSC 203 LEC 95               &\hspace*{1.5cm}: MO,& 19:00\tabularnewline
+CPSC 203 LEC 95 TUT 95        &\hspace*{1.5cm}: TU,& 17:00\tabularnewline
+CPSC 203 LEC 95 TUT 96        &\hspace*{1.5cm}: FR,& 16:00\tabularnewline
+CPSC 203 LEC 95 TUT 97        &\hspace*{1.5cm}: MO,& 17:00\tabularnewline
+CPSC 203 LEC 95 TUT 98        &\hspace*{1.5cm}: MO,& 18:00\tabularnewline
+CPSC 203 LEC 95 TUT 99        &\hspace*{1.5cm}: TU,& 20:00\tabularnewline
+CPSC 203 LEC 95 TUT 90        &\hspace*{1.5cm}: FR,& 14:00\tabularnewline
+CPSC 215 LEC 01               &\hspace*{1.5cm}: TU,& 08:00\tabularnewline
+CPSC 215 LEC 01 TUT 01        &\hspace*{1.5cm}: FR,& 12:00\tabularnewline
+CPSC 215 LEC 01 TUT 02        &\hspace*{1.5cm}: MO,& 16:00\tabularnewline
+CPSC 215 LEC 01 TUT 03        &\hspace*{1.5cm}: TU,& 19:00\tabularnewline
+CPSC 215 LEC 01 TUT 04        &\hspace*{1.5cm}: FR,& 10:00\tabularnewline
+CPSC 231 LEC 01               &\hspace*{1.5cm}: MO,& 17:00\tabularnewline
+CPSC 231 LEC 01 TUT 01        &\hspace*{1.5cm}: FR,& 14:00\tabularnewline
+CPSC 231 LEC 01 TUT 02        &\hspace*{1.5cm}: FR,& 10:00\tabularnewline
+CPSC 231 LEC 01 TUT 03        &\hspace*{1.5cm}: TU,& 17:00\tabularnewline
+CPSC 231 LEC 01 TUT 04        &\hspace*{1.5cm}: MO,& 10:00\tabularnewline
+CPSC 231 LEC 01 TUT 05        &\hspace*{1.5cm}: FR,& 16:00\tabularnewline
+CPSC 231 LEC 01 TUT 06        &\hspace*{1.5cm}: MO,& 15:00\tabularnewline
+CPSC 233 LEC 01               &\hspace*{1.5cm}: MO,& 14:00\tabularnewline
+CPSC 233 LEC 02               &\hspace*{1.5cm}: MO,& 15:00\tabularnewline
+CPSC 233 TUT 01               &\hspace*{1.5cm}: MO,& 16:00\tabularnewline
+CPSC 233 TUT 02               &\hspace*{1.5cm}: MO,& 13:00\tabularnewline
+CPSC 233 TUT 03               &\hspace*{1.5cm}: MO,& 10:00\tabularnewline
+CPSC 233 TUT 04               &\hspace*{1.5cm}: MO,& 09:00\tabularnewline
+CPSC 233 TUT 05               &\hspace*{1.5cm}: TU,& 09:00\tabularnewline
+CPSC 233 TUT 06               &\hspace*{1.5cm}: TU,& 14:00\tabularnewline
+CPSC 233 TUT 07               &\hspace*{1.5cm}: TU,& 14:00\tabularnewline
+CPSC 265 LEC 01               &\hspace*{1.5cm}: TU,& 14:00\tabularnewline
+CPSC 265 LEC 01 TUT 01        &\hspace*{1.5cm}: TU,& 17:00\tabularnewline
+CPSC 265 LEC 01 TUT 02        &\hspace*{1.5cm}: TU,& 16:00\tabularnewline
+CPSC 265 LEC 01 TUT 03        &\hspace*{1.5cm}: TU,& 11:00\tabularnewline
+CPSC 265 LEC 01 TUT 04        &\hspace*{1.5cm}: TU,& 10:00\tabularnewline
+CPSC 265 LEC 02               &\hspace*{1.5cm}: MO,& 11:00\tabularnewline
+CPSC 265 LEC 02 TUT 05        &\hspace*{1.5cm}: MO,& 15:00\tabularnewline
+CPSC 265 LEC 02 TUT 06        &\hspace*{1.5cm}: MO,& 10:00\tabularnewline
+CPSC 265 LEC 02 TUT 07        &\hspace*{1.5cm}: TU,& 10:00\tabularnewline
+CPSC 265 LEC 02 TUT 08        &\hspace*{1.5cm}: MO,& 12:00\tabularnewline
+CPSC 313 LEC 01               &\hspace*{1.5cm}: MO,& 17:00\tabularnewline
+CPSC 313 LEC 01 TUT 01        &\hspace*{1.5cm}: TU,& 11:00\tabularnewline
+CPSC 313 LEC 01 TUT 02        &\hspace*{1.5cm}: TU,& 13:00\tabularnewline
+CPSC 313 LEC 01 TUT 03        &\hspace*{1.5cm}: FR,& 16:00\tabularnewline
+CPSC 321 LEC 01               &\hspace*{1.5cm}: MO,& 12:00\tabularnewline
+CPSC 331 LEC 01               &\hspace*{1.5cm}: TU,& 15:30\tabularnewline
+CPSC 331 LEC 01 TUT 01        &\hspace*{1.5cm}: TU,& 14:00\tabularnewline
+CPSC 331 LEC 01 TUT 02        &\hspace*{1.5cm}: MO,& 19:00\tabularnewline
+CPSC 331 LEC 01 TUT 03        &\hspace*{1.5cm}: FR,& 10:00\tabularnewline
+CPSC 331 LEC 01 TUT 04        &\hspace*{1.5cm}: MO,& 10:00\tabularnewline
+CPSC 333 LEC 01               &\hspace*{1.5cm}: MO,& 15:00\tabularnewline
+CPSC 333 LEC 01 TUT 01        &\hspace*{1.5cm}: MO,& 17:00\tabularnewline
+CPSC 335 LEC 01               &\hspace*{1.5cm}: MO,& 14:00\tabularnewline
+CPSC 335 LEC 01 TUT 01        &\hspace*{1.5cm}: FR,& 14:00\tabularnewline
+CPSC 335 LEC 01 TUT 02        &\hspace*{1.5cm}: MO,& 12:00\tabularnewline
+CPSC 349 LEC 01               &\hspace*{1.5cm}: TU,& 14:00\tabularnewline
+CPSC 349 LEC 01 TUT 01        &\hspace*{1.5cm}: FR,& 10:00\tabularnewline
+CPSC 349 LEC 01 TUT 02        &\hspace*{1.5cm}: TU,& 13:00\tabularnewline
+CPSC 349 LEC 01 TUT 03        &\hspace*{1.5cm}: MO,& 16:00\tabularnewline
+CPSC 355 LEC 01               &\hspace*{1.5cm}: MO,& 11:00\tabularnewline
+CPSC 355 LEC 01 TUT 01        &\hspace*{1.5cm}: MO,& 15:00\tabularnewline
+CPSC 411 LEC 01               &\hspace*{1.5cm}: MO,& 15:00\tabularnewline
+CPSC 411 LEC 01 TUT 01        &\hspace*{1.5cm}: MO,& 17:00\tabularnewline
+CPSC 411 LEC 01 TUT 02        &\hspace*{1.5cm}: FR,& 12:00\tabularnewline
+CPSC 411 LEC 01 TUT 03        &\hspace*{1.5cm}: MO,& 10:00\tabularnewline
+CPSC 411 LEC 01 TUT 04        &\hspace*{1.5cm}: MO,& 11:00\tabularnewline
+CPSC 413 LEC 01               &\hspace*{1.5cm}: MO,& 17:00\tabularnewline
+CPSC 413 LEC 01 TUT 01        &\hspace*{1.5cm}: TU,& 16:00\tabularnewline
+CPSC 413 LEC 01 TUT 02        &\hspace*{1.5cm}: TU,& 14:00\tabularnewline
+CPSC 413 LEC 01 TUT 03        &\hspace*{1.5cm}: MO,& 16:00\tabularnewline
+CPSC 421 LEC 01               &\hspace*{1.5cm}: MO,& 13:00\tabularnewline
+CPSC 421 TUT 01               &\hspace*{1.5cm}: MO,& 09:00\tabularnewline
+CPSC 433 LEC 01               &\hspace*{1.5cm}: TU,& 12:30\tabularnewline
+CPSC 433 TUT 01               &\hspace*{1.5cm}: MO,& 15:00\tabularnewline
+CPSC 433 TUT 02               &\hspace*{1.5cm}: FR,& 16:00\tabularnewline
+CPSC 441 LEC 01               &\hspace*{1.5cm}: MO,& 11:00\tabularnewline
+CPSC 441 LEC 01 TUT 01        &\hspace*{1.5cm}: TU,& 16:00\tabularnewline
+CPSC 441 LEC 01 TUT 02        &\hspace*{1.5cm}: TU,& 12:00\tabularnewline
+CPSC 441 LEC 01 TUT 03        &\hspace*{1.5cm}: FR,& 16:00\tabularnewline
+CPSC 441 LEC 02               &\hspace*{1.5cm}: MO,& 12:00\tabularnewline
+CPSC 441 LEC 02 TUT 04        &\hspace*{1.5cm}: MO,& 11:00\tabularnewline
+CPSC 441 LEC 02 TUT 05        &\hspace*{1.5cm}: FR,& 10:00\tabularnewline
+CPSC 441 LEC 02 TUT 06        &\hspace*{1.5cm}: MO,& 13:00\tabularnewline
+CPSC 453 LEC 01               &\hspace*{1.5cm}: MO,& 10:00\tabularnewline
+CPSC 453 TUT 01               &\hspace*{1.5cm}: TU,& 14:00\tabularnewline
+CPSC 453 TUT 02               &\hspace*{1.5cm}: FR,& 16:00\tabularnewline
+CPSC 453 TUT 03               &\hspace*{1.5cm}: TU,& 11:00\tabularnewline
+CPSC 453 TUT 04               &\hspace*{1.5cm}: TU,& 15:00\tabularnewline
+CPSC 455 LEC 01               &\hspace*{1.5cm}: MO,& 14:00\tabularnewline
+CPSC 455 TUT 01               &\hspace*{1.5cm}: TU,& 14:00\tabularnewline
+CPSC 455 TUT 02               &\hspace*{1.5cm}: MO,& 11:00\tabularnewline
+CPSC 457 LEC 01               &\hspace*{1.5cm}: TU,& 09:30\tabularnewline
+CPSC 457 LEC 01 TUT 01        &\hspace*{1.5cm}: TU,& 15:00\tabularnewline
+CPSC 457 LEC 01 TUT 02        &\hspace*{1.5cm}: MO,& 12:00\tabularnewline
+CPSC 457 LEC 02               &\hspace*{1.5cm}: TU,& 14:00\tabularnewline
+CPSC 457 LEC 02 TUT 03        &\hspace*{1.5cm}: TU,& 12:00\tabularnewline
+CPSC 457 LEC 02 TUT 04        &\hspace*{1.5cm}: TU,& 09:00\tabularnewline
+CPSC 471 LEC 01               &\hspace*{1.5cm}: MO,& 16:00\tabularnewline
+CPSC 471 TUT 01               &\hspace*{1.5cm}: MO,& 13:00\tabularnewline
+CPSC 471 TUT 02               &\hspace*{1.5cm}: MO,& 14:00\tabularnewline
+CPSC 471 TUT 03               &\hspace*{1.5cm}: TU,& 09:00\tabularnewline
+CPSC 471 TUT 04               &\hspace*{1.5cm}: MO,& 11:00\tabularnewline
+CPSC 481 LEC 01               &\hspace*{1.5cm}: TU,& 15:30\tabularnewline
+CPSC 481 LEC 01 TUT 01        &\hspace*{1.5cm}: TU,& 09:00\tabularnewline
+CPSC 481 LEC 01 TUT 02        &\hspace*{1.5cm}: TU,& 08:00\tabularnewline
+CPSC 481 LEC 01 TUT 03        &\hspace*{1.5cm}: MO,& 08:00\tabularnewline
+CPSC 481 LEC 01 TUT 04        &\hspace*{1.5cm}: MO,& 17:00\tabularnewline
+CPSC 510 LEC 01               &\hspace*{1.5cm}: TU,& 17:00\tabularnewline
+CPSC 510 TUT 01               &\hspace*{1.5cm}: TU,& 09:00\tabularnewline
+CPSC 511 LEC 01               &\hspace*{1.5cm}: TU,& 15:30\tabularnewline
+CPSC 511 TUT 01               &\hspace*{1.5cm}: MO,& 17:00\tabularnewline
+CPSC 517 LEC 01               &\hspace*{1.5cm}: TU,& 12:30\tabularnewline
+CPSC 517 TUT 01               &\hspace*{1.5cm}: MO,& 11:00\tabularnewline
+CPSC 519 LEC 01               &\hspace*{1.5cm}: TU,& 14:00\tabularnewline
+CPSC 519 TUT 01               &\hspace*{1.5cm}: MO,& 14:00\tabularnewline
+CPSC 523 LEC 01               &\hspace*{1.5cm}: MO,& 09:00\tabularnewline
+CPSC 523 TUT 01               &\hspace*{1.5cm}: TU,& 15:00\tabularnewline
+CPSC 525 LEC 01               &\hspace*{1.5cm}: MO,& 16:00\tabularnewline
+CPSC 525 TUT 01               &\hspace*{1.5cm}: MO,& 20:00\tabularnewline
+CPSC 557 LEC 01               &\hspace*{1.5cm}: MO,& 15:00\tabularnewline
+CPSC 557 TUT 01               &\hspace*{1.5cm}: TU,& 12:00\tabularnewline
+CPSC 559 LEC 01               &\hspace*{1.5cm}: MO,& 14:00\tabularnewline
+CPSC 559 TUT 01               &\hspace*{1.5cm}: TU,& 10:00\tabularnewline
+CPSC 559 TUT 02               &\hspace*{1.5cm}: MO,& 16:00\tabularnewline
+CPSC 565 LEC 01               &\hspace*{1.5cm}: MO,& 10:00\tabularnewline
+CPSC 565 TUT 01               &\hspace*{1.5cm}: MO,& 16:00\tabularnewline
+CPSC 565 TUT 02               &\hspace*{1.5cm}: FR,& 12:00\tabularnewline
+CPSC 581 LEC 01               &\hspace*{1.5cm}: MO,& 13:00\tabularnewline
+CPSC 581 TUT 01               &\hspace*{1.5cm}: TU,& 10:00\tabularnewline
+CPSC 581 TUT 02               &\hspace*{1.5cm}: TU,& 20:00\tabularnewline
+CPSC 587 LEC 01               &\hspace*{1.5cm}: MO,& 11:00\tabularnewline
+CPSC 587 TUT 01               &\hspace*{1.5cm}: TU,& 15:00\tabularnewline
+CPSC 587 TUT 02               &\hspace*{1.5cm}: FR,& 12:00\tabularnewline
+CPSC 589 LEC 01               &\hspace*{1.5cm}: MO,& 17:00\tabularnewline
+CPSC 589 TUT 01               &\hspace*{1.5cm}: TU,& 13:00\tabularnewline
+CPSC 589 TUT 02               &\hspace*{1.5cm}: FR,& 10:00\tabularnewline
+CPSC 591 LEC 01               &\hspace*{1.5cm}: MO,& 12:00\tabularnewline
+CPSC 591 TUT 01               &\hspace*{1.5cm}: TU,& 17:00\tabularnewline
+CPSC 591 TUT 02               &\hspace*{1.5cm}: MO,& 08:00\tabularnewline
+CPSC 594 LEC 01               &\hspace*{1.5cm}: MO,& 20:00\tabularnewline
+CPSC 594 TUT 01               &\hspace*{1.5cm}: MO,& 14:00\tabularnewline
+SENG 311 LEC 01               &\hspace*{1.5cm}: TU,& 17:00\tabularnewline
+SENG 311 TUT 01               &\hspace*{1.5cm}: MO,& 14:00\tabularnewline
+SENG 311 TUT 02               &\hspace*{1.5cm}: MO,& 14:00\tabularnewline
+SENG 311 TUT 03               &\hspace*{1.5cm}: TU,& 12:00\tabularnewline
+SENG 411 LEC 01               &\hspace*{1.5cm}: MO,& 09:00\tabularnewline
+SENG 411 LEC 02               &\hspace*{1.5cm}: MO,& 09:00\tabularnewline
+SENG 411 TUT 01               &\hspace*{1.5cm}: TU,& 15:00\tabularnewline
+SENG 411 TUT 02               &\hspace*{1.5cm}: MO,& 15:00\tabularnewline
+SENG 411 TUT 03               &\hspace*{1.5cm}: TU,& 12:00\tabularnewline
+SENG 411 TUT 04               &\hspace*{1.5cm}: TU,& 17:00\tabularnewline
+SENG 411 TUT 05               &\hspace*{1.5cm}: FR,& 12:00\tabularnewline
+SENG 511 LEC 01               &\hspace*{1.5cm}: TU,& 18:30\tabularnewline
+SENG 511 TUT 01               &\hspace*{1.5cm}: TU,& 10:00\tabularnewline
+SENG 511 TUT 02               &\hspace*{1.5cm}: MO,& 12:00\tabularnewline
+SENG 513 LEC 01               &\hspace*{1.5cm}: TU,& 09:30\tabularnewline
+SENG 513 TUT 01               &\hspace*{1.5cm}: TU,& 13:00\tabularnewline
+CPSC 813                      &\hspace*{1.5cm}: TU,& 18:00\tabularnewline
+CPSC 913                      &\hspace*{1.5cm}: TU,& 18:00\tabularnewline
+
+\end{longtable}
+
+\end{document}
+
