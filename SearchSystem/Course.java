@@ -5,10 +5,8 @@
 * Class whose instances are represantative of course objects for the given search
 * instance.
 *
-* @author Justina Lem
-* @author Kevin Naval
-* @author Chi Zhang
 * @author Shane Sims
+* @author Justina Lem
 *
 * @version 6 December 2017
 */

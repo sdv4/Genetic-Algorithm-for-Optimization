@@ -5,10 +5,8 @@
 * This is a generalized class for Course or Lab objects;
 * ID's for all courses/labs will be unique.
 *
-* @author Chi Zhang
-* @author Kevin Naval
-* @author Justina Lem
 * @author Shane Sims
+* @author Justina Lem
 *
 * @version 6 December 2017
 */

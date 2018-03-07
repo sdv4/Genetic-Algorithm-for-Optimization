@@ -3,10 +3,9 @@
 * A class implementing time slots, which can be either a course or lab/tutorial
 * type timeslot
 *
-* @author Justina Lem
-* @author Kevin Naval
-* @author Chi Zhang
 * @author Shane Sims
+* @author Justina Lem
+*
 *
 * @version 6 December 2017
 */

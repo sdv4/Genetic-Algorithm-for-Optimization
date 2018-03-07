@@ -8,7 +8,6 @@
 *
 * @author Kevin Naval
 * @author Justina Lem
-* @author Chi Zhang
 * @author Shane Sims
 *
 * @version 6 December 2017

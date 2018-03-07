@@ -6,10 +6,8 @@
 * of a department scheduling problem, where this problem meets the preconditions
 * listed on the course website for CPSC433 Fall 2017.
 *
-* @author Justina Lem
-* @author Kevin Naval
-* @author Chi Zhang
 * @author Shane Sims
+* @author Justina Lem
 *
 * @version 6 December 2017
 */

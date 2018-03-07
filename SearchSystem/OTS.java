@@ -6,9 +6,6 @@
 * of the or-tree. It can be used as the global environment for Or-tree seaches
 * conducted in the scope of our larger set based search environment
 *
-* @author Justina Lem
-* @author Kevin Naval
-* @author Chi Zhang
 * @author Shane Sims
 *
 * @version 6 December 2017
