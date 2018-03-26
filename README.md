@@ -1,4 +1,4 @@
-# Agenetic Algorithm for Optimizatin
+# Agenetic Algorithm for Optimization
 This algorithm implements a genetic algorithm used to solve a scheduling problem as it pertains to a computer science department's scheduling of courses, tutorials, and labs to time slots. In particular it finds an optimal solution to a specific scheduling problem, as defined by the following hard and soft constraints:
 
  Hard constraints:
